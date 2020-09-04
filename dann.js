@@ -138,7 +138,7 @@ class DANNeuralNetwork {
             let afunc = "";
             if (i == 0) {
                 str = "Input Layer: ";
-                afunc = "      ";
+                afunc = "       ";
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
                 afunc = this.aFunc[i-1].name;
@@ -148,8 +148,9 @@ class DANNeuralNetwork {
             console.log("    " + afunc + " " + str + Matrix.toArray(this.Layers[i]).length);
         }
         console.log(" ");
-        console.log("  Learning rate:")
-
+        console.log("  Other Values: ");
+        console.log("    Learning rate: " + this.lr);
+        console.log("    Latest loss: " + this.loss);
     }
 }
 
