@@ -130,15 +130,15 @@ class DANNeuralNetwork {
         return ans;
     }
     log() {
-        
-        for (let i = 0; i < this.layers.length;i++) {
+
+        for (let i = 0; i < this.Layers.length;i++) {
             let str = "Hidden Layer: ";
             if (i == 0) {
                 str = "Input Layer: ";
-            } else if (i == this.layers.length-1) {
+            } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
             }
-            console.log(str + this.layers[i]);
+            console.log(str + this.Layers[i]);
         }
 
     }
