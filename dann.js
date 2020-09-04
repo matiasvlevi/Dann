@@ -140,7 +140,7 @@ class DANNeuralNetwork {
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
             }
-            console.log("    " + JSON.stringify(this.aFunc[i]) + str + Matrix.toArray(this.Layers[i]).length);
+            console.log("    " + this.aFunc[i].name + " " + str + Matrix.toArray(this.Layers[i]).length);
         }
         console.log(" ");
         console.log("  Learning rate:")
