@@ -129,6 +129,18 @@ class DANNeuralNetwork {
 
         return ans;
     }
+    log() {
+        for (let i = 0; i < this.layers.length;i++) {
+            let str = "Hidden Layer: ";
+            if (i == 0) {
+                str = "Input Layer: ";
+            } else if (i == this.layers.length-1) {
+                str = "Output Layer: ";
+            }
+            console.log(str + this.layers[i]);
+        }
+
+    }
 }
 
 class Matrix {
