@@ -130,6 +130,7 @@ class DANNeuralNetwork {
         return ans;
     }
     log() {
+        console.log("de");
         for (let i = 0; i < this.layers.length;i++) {
             let str = "Hidden Layer: ";
             if (i == 0) {
