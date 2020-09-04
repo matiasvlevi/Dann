@@ -141,11 +141,11 @@ class DANNeuralNetwork {
                 afunc = "       ";
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
-                afunc = this.aFunc[i-1].name;
+                afunc = "  ("+this.aFunc[i-1].name+")";
             } else {
-                afunc = this.aFunc[i-1].name;
+                afunc = "  ("+this.aFunc[i-1].name+")";
             }
-            console.log("    " + str + Matrix.toArray(this.Layers[i]).length + "  ("+afunc+")");
+            console.log("    " + str + Matrix.toArray(this.Layers[i]).length + aFunc);
         }
         console.log(" ");
         console.log("  Other Values: ");
