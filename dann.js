@@ -135,12 +135,17 @@ class DANNeuralNetwork {
         console.log("  Layers:")
         for (let i = 0; i < this.Layers.length;i++) {
             let str = "Hidden Layer: ";
+            let afunc = "";
             if (i == 0) {
                 str = "Input Layer: ";
+                afunc = "      ";
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
+                afunc = this.aFunc[i+1].name;
+            } else {
+                afunc = this.aFunc[i+1].name;
             }
-            console.log("    " + this.aFunc[i].name + " " + str + Matrix.toArray(this.Layers[i]).length);
+            console.log("    " + afunc + " " + str + Matrix.toArray(this.Layers[i]).length);
         }
         console.log(" ");
         console.log("  Learning rate:")
