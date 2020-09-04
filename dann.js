@@ -140,8 +140,10 @@ class DANNeuralNetwork {
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
             }
-            console.log("    " + str + Matrix.toArray(this.Layers[i]).length);
+            console.log("    " + JSON.stringify(this.aFunc[i]) + str + Matrix.toArray(this.Layers[i]).length);
         }
+        console.log(" ");
+        console.log("  Learning rate:")
 
     }
 }
@@ -349,4 +351,73 @@ class Matrix {
             }
         }
     }
+}
+
+//Activations:
+
+function sigmoid(x) {
+    return 1/(1+exp(-x));
+}
+function sigmoid_d(x) {
+    let x1 = sigmoid(x);
+    return x1 * (1 - x1);
+}
+function leakySigmoid(x) {
+    return 1/(1+exp(-x))+(x/100);
+}
+function leakySigmoid_d(x) {
+    let x1 = leakySigmoid(x);
+    return x1 * (1 - x1);
+}
+function siLU(x) {
+
+    return x/(1+exp(-x));
+}
+function siLU_d(x) {
+    let top = (1 + exp(-x))+(x*exp(-x));
+    let down = pow(1 + exp(-x), 2);
+    return top/down;
+}
+function tanH(x) {
+
+    let top = exp(x) - exp(-x);
+    let down = exp(x)+ exp(-x);
+
+    return 0.5*(top/down)+0.5;
+}
+function tanH_d(x) {
+
+    return 1 - pow(tanH(x),2);
+}
+function leakyReLU(x) {
+    if (x >= 0) {
+        return 1*x;
+    } else {
+        return 0.01*x;
+    }
+
+}
+function leakyReLU_d(x) {
+    if (x >= 0) {
+        return 1;
+    } else {
+        return 0.01;
+    }
+
+}
+function reLU(x) {
+    if (x >= 0) {
+        return 1*x;
+    } else {
+        return 0;
+    }
+
+}
+function reLU_d(x) {
+    if (x >= 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+
 }
