@@ -84,7 +84,7 @@ class DANNeuralNetwork {
         this.loss = this.calcMeanLossError(this.outs,t);
 
     }
-    activationsFunctions(layer,function_,function_d) {
+    activation(layer,function_,function_d) {
         this.aFunc[layer] = function_;
         this.aFunc_d[layer] = function_d;
     }
