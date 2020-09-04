@@ -137,7 +137,7 @@ class DANNeuralNetwork {
             let str = "Hidden Layer: ";
             let afunc = "";
             if (i == 0) {
-                str = "Input Layer: ";
+                str = " Input Layer: ";
                 afunc = "       ";
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
@@ -358,7 +358,41 @@ class Matrix {
         }
     }
 }
+class Graph {
+    constructor(x,y,w,h) {
+        this.pos = createVector(x,y);
+        this.w = w;
+        this.h = h;
 
+        this.s = 1;
+        this.min = 0;
+        this.max = 1;
+        this.lines = [];
+        this.color = [];
+    }
+    addValue(x,color) {
+        this.color.push(color)
+        this.lines.push(x);
+    }
+    update() {
+        noFill();
+        for (let a = 0; a < this.lines.length; a++) {
+            stroke(this.color[a]);
+            beginShape();
+            if (this.lines[a].length/int(this.s) >= this.w*int(this.s)) {
+                this.s*=2;
+            }
+
+            for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
+                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.w,this.h)+this.pos.y));
+            }
+            endShape();
+        }
+
+        noStroke();
+    }
+
+}
 //Activations:
 
 function sigmoid(x) {
