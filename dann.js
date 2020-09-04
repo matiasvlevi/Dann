@@ -138,7 +138,7 @@ class DANNeuralNetwork {
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
             }
-            console.log(str + this.Layers[i]);
+            console.log(str + Matrix.toArray(this.Layers[i]));
         }
 
     }
