@@ -145,7 +145,7 @@ class DANNeuralNetwork {
             } else {
                 afunc = this.aFunc[i-1].name;
             }
-            console.log("    " + afunc + " " + str + Matrix.toArray(this.Layers[i]).length);
+            console.log("    " + str + Matrix.toArray(this.Layers[i]).length + "  ("+afunc+")");
         }
         console.log(" ");
         console.log("  Other Values: ");
