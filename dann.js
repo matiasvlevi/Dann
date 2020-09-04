@@ -130,7 +130,9 @@ class DANNeuralNetwork {
         return ans;
     }
     log() {
-
+        console.log("Dann NeuralNetwork:")
+        console.log(" ");
+        console.log("  Layers:")
         for (let i = 0; i < this.Layers.length;i++) {
             let str = "Hidden Layer: ";
             if (i == 0) {
@@ -138,7 +140,7 @@ class DANNeuralNetwork {
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer: ";
             }
-            console.log(str + Matrix.toArray(this.Layers[i]).length);
+            console.log("    " + str + Matrix.toArray(this.Layers[i]).length);
         }
 
     }
