@@ -1,3 +1,7 @@
+//Dann.js Neural Network Engine v1.17
+// Matias Vazquez-Levi
+// https://github.com/matiasvlevi
+
 class DANNeuralNetwork {
     constructor(i,o) {
 
@@ -20,20 +24,15 @@ class DANNeuralNetwork {
         this.loss = 0;
         this.lr = 0.001;
 
-
-
-
     }
-//Functions
-    feedFoward(inputs) {
+    feedForward(inputs) {
 
         this.Layers[0] = Matrix.fromArray(inputs);
-        //console.log(this.Layers[0])
+
         for(let i = 0; i < this.weights.length;i++) {
             this.Layers[i+1] = Matrix.multiply(this.weights[i],this.Layers[i]);
             this.Layers[i+1].add(this.biases[i]);
             this.Layers[i+1].map(this.aFunc[i]);
-            //console.log(this.Layers[i+1])
         }
         for (let i = 0; i < this.o; i++) {
             this.outs[i] = round((Matrix.toArray(this.Layers[this.Layers.length-1])[i])*1000)/1000;
@@ -47,7 +46,7 @@ class DANNeuralNetwork {
 
         let appLr = this.lr;
 
-        this.outs = this.feedFoward(inputs);
+        this.outs = this.feedForward(inputs);
 
         this.errors[this.errors.length-1] = Matrix.subtract(targets, this.Layers[this.Layers.length-1]);
 
@@ -55,11 +54,9 @@ class DANNeuralNetwork {
         this.gradients[this.gradients.length-1].mult(this.errors[this.errors.length-1]);
         this.gradients[this.gradients.length-1].mult(appLr);
 
-        //
-
         for (let i = this.weights.length-1; i > 0;i--) {
             let h_t = Matrix.transpose(this.Layers[i]);
-            //console.log(this.gradients);
+
             let weights_deltas = Matrix.multiply(this.gradients[i],h_t);
 
             this.weights[i].add(weights_deltas);
@@ -73,13 +70,11 @@ class DANNeuralNetwork {
             this.gradients[i-1].mult(appLr);
         }
 
-
         let i_t = Matrix.transpose(this.Layers[0]);
         let weights_deltas = Matrix.multiply(this.gradients[0], i_t);
 
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);
-
 
         this.loss = this.calcMeanLossError(this.outs,t);
 
@@ -90,7 +85,7 @@ class DANNeuralNetwork {
     }
     makeWeights() {
 
-        //this functions should be called after the initialisation of the hidden layers.
+        //this function should be called after the initialisation of the hidden layers.
         for (let i = 0; i < this.Layers.length-1;i++) {
 
 
@@ -108,10 +103,7 @@ class DANNeuralNetwork {
             this.aFunc[i] = sigmoid;
             this.aFunc_d[i] = sigmoid_d;
 
-
         }
-
-        //console.log(this.weights);
     }
     addHiddenLayer(size) {
         let layer = new Matrix(size,1);
@@ -124,9 +116,7 @@ class DANNeuralNetwork {
 
             sum += pow(arr[i] - target[i],2);
         }
-
         ans = sum/this.o;
-
         return ans;
     }
     log() {
@@ -153,7 +143,6 @@ class DANNeuralNetwork {
         console.log("    Latest loss: " + this.loss);
     }
 }
-
 class Matrix {
     constructor(rows,cols) {
 
@@ -213,7 +202,6 @@ class Matrix {
 
         let ans = new Matrix(a.rows, a.cols);
 
-
         if (a.rows !== b.rows || a.cols !== b.cols) {
             console.log('Columns and Rows of A must match Columns and Rows of B.');
             return;
@@ -224,7 +212,6 @@ class Matrix {
                 }
             }
         }
-
 
         return ans;
     }
@@ -275,14 +262,12 @@ class Matrix {
             return ans;
         }
 
-
-
     }
     add(n) {
 
         if (n instanceof Matrix) {
             if (this.rows !== n.rows || this.cols !== n.cols) {
-    //            console.log('Columns and Rows of A must match Columns and Rows of B.');
+
                 return;
             } else {
                 for (let i = 0; i < this.rows; i++) {
@@ -315,7 +300,7 @@ class Matrix {
 
         if (n instanceof Matrix) {
             if (this.rows !== n.rows || this.cols !== n.cols) {
-                console.log('Columns and Rows of A must match Columns and Rows of B.');
+
                 return;
             } else {
                 for (let i = 0; i < this.rows; i++) {
@@ -363,7 +348,6 @@ class Graph {
         this.pos = createVector(x,y);
         this.w = w;
         this.h = h;
-
         this.s = 1;
         this.min = 0;
         this.max = 1;
@@ -388,13 +372,12 @@ class Graph {
             }
             endShape();
         }
-
         noStroke();
     }
 
 }
-//Activations:
 
+//Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
 }
