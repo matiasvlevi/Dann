@@ -444,3 +444,19 @@ function reLU_d(x) {
     }
 
 }
+//Architecture Templates
+function cnn(i,h,o,nn) {
+    nn = DANNeuralNetwork(i,o);
+    nn.addHiddenLayer(h);
+    nn.makeWeights();
+    nn.lr = 0.01;
+    return nn;
+}
+function dnn(i,h,h2,o,nn) {
+    nn = DANNeuralNetwork(i,o);
+    nn.addHiddenLayer(h);
+    nn.addHiddenLayer(h2);
+    nn.makeWeights();
+    nn.lr = 0.01;
+    return nn;
+}
