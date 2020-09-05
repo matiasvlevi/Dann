@@ -1,7 +1,10 @@
 //Dann.js Neural Network Engine v1.17
-// Matias Vazquez-Levi
+// Free to use library
+//
+// By: Matias Vazquez-Levi
 // https://github.com/matiasvlevi
 
+// Dann:
 class DANNeuralNetwork {
     constructor(i,o) {
 
@@ -84,7 +87,6 @@ class DANNeuralNetwork {
         this.aFunc_d[layer] = function_d;
     }
     makeWeights() {
-
         //this function should be called after the initialisation of the hidden layers.
         for (let i = 0; i < this.Layers.length-1;i++) {
 
@@ -143,6 +145,8 @@ class DANNeuralNetwork {
         console.log("    Latest loss: " + this.loss);
     }
 }
+
+// Matrix Math:
 class Matrix {
     constructor(rows,cols) {
 
@@ -201,9 +205,7 @@ class Matrix {
         let b = m2;
 
         let ans = new Matrix(a.rows, a.cols);
-
         if (a.rows !== b.rows || a.cols !== b.cols) {
-            console.log('Columns and Rows of A must match Columns and Rows of B.');
             return;
         } else {
             for (let i = 0; i < ans.rows; i++) {
@@ -212,7 +214,6 @@ class Matrix {
                 }
             }
         }
-
         return ans;
     }
     static subtract(m1,m2) {
@@ -221,7 +222,6 @@ class Matrix {
         let b = m2;
 
         let ans = new Matrix(a.rows, a.cols);
-
         if (a instanceof Matrix && b instanceof Matrix) {
 
                 for (let i = 0; i < ans.rows; i++) {
@@ -231,9 +231,7 @@ class Matrix {
                         ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
                     }
                 }
-
         }
-
         return ans;
     }
     static multiply(m1,m2) {
@@ -247,7 +245,6 @@ class Matrix {
                 console.log("not compatible");
                 return undefined;
             } else {
-
                 for (let i = 0; i < ans.rows; i++) {
                     for (let j = 0; j < ans.cols; j++) {
                         let sum = 0;
@@ -256,18 +253,14 @@ class Matrix {
                         }
                         ans.matrix[i][j] = sum;
                     }
-
                 }
             }
             return ans;
         }
-
     }
     add(n) {
-
         if (n instanceof Matrix) {
             if (this.rows !== n.rows || this.cols !== n.cols) {
-
                 return;
             } else {
                 for (let i = 0; i < this.rows; i++) {
@@ -284,7 +277,6 @@ class Matrix {
                 }
             }
         }
-
     }
     sub(n) {
 
@@ -293,8 +285,6 @@ class Matrix {
                 this.matrix[i][j] -= n;
             }
         }
-
-
     }
     mult(n) {
 
@@ -343,6 +333,8 @@ class Matrix {
         }
     }
 }
+
+// Graph (graph any values over time):
 class Graph {
     constructor(x,y,w,h) {
         this.pos = createVector(x,y);
@@ -444,7 +436,8 @@ function reLU_d(x) {
     }
 
 }
-//Architecture Templates
+
+//Architecture Templates:
 function cnn(i,h,o,nn) {
     nn = DANNeuralNetwork(i,o);
     nn.addHiddenLayer(h);
