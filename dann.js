@@ -1,11 +1,11 @@
-// Dann.js Neural Network Engine v1.17
+// Dann.js Neural Network Engine v1.18
 // Free to use library
 //
 // By: Matias Vazquez-Levi
 // https://github.com/matiasvlevi
 
 // Dann:
-class DANNeuralNetwork {
+class Dann {
     constructor(i,o) {
 
         this.i = i;
@@ -143,6 +143,7 @@ class DANNeuralNetwork {
         console.log("  Other Values: ");
         console.log("    Learning rate: " + this.lr);
         console.log("    Latest loss: " + this.loss);
+
     }
 }
 
