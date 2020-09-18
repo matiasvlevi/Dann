@@ -82,14 +82,17 @@ class Dann {
         this.loss = this.calcMeanLossError(this.outs,t);
 
     }
-    activation(layer,function_,function_d) {
-        this.aFunc[layer] = function_;
-        this.aFunc_d[layer] = function_d;
+    activation(layer,act) {
+
+        let nor = (act.name);
+        let der = (act.name + "_d");
+        this.aFunc[layer] = window[nor];
+        this.aFunc_d[layer] = window[der];
     }
-    setActivations(function_,function_d) {
+    setActivations(act) {
         for (let i = 0; i < this.Layers.length-1; i++) {
-            this.aFunc[i] = function_;
-            this.aFunc_d[i] = function_d;
+            this.aFunc[i] = window[act.name];
+            this.aFunc_d[i] = window[act.name +"_d"];
         }
     }
     makeWeights() {
@@ -107,19 +110,24 @@ class Dann {
 
             this.errors[i] = new Matrix(this.Layers[i+1].rows,1);
             this.gradients[i] = new Matrix(this.Layers[i+1].rows,1);
+            if (this.aFunc[i] == undefined) {
+                this.aFunc[i] = window["sigmoid"];
+                this.aFunc_d[i] = window["sigmoid_d"];
+            }
 
-            this.aFunc[i] = sigmoid;
-            this.aFunc_d[i] = sigmoid_d;
 
         }
     }
     addHiddenLayer(size, act) {
         let layer = new Matrix(size,1);
+        let index = this.Layers.length-2;
         this.Layers.splice(this.Layers.length-1,0,layer);
         if (act !== undefined) {
-            console.log(act)
-            this.aFunc[this.Layers.length-1] = JSON.parse(act + "()");
-            this.aFunc_d[this.Layers.length-1] = JSON.parse(act + "_d()");
+            console.log(act.name)
+            let nor = (act.name);
+            let der = (act.name + "_d");
+            this.aFunc[index] = window[nor];
+            this.aFunc_d[index] = window[der];
         }
     }
     calcMeanLossError(arr,target) {
