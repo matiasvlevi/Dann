@@ -86,6 +86,12 @@ class Dann {
         this.aFunc[layer] = function_;
         this.aFunc_d[layer] = function_d;
     }
+    setActivations(function_,function_d) {
+        for (let i = 0; i < this.Layers.length-1; i++) {
+            this.aFunc[i] = function_;
+            this.aFunc_d[i] = function_d;
+        }
+    }
     makeWeights() {
         //this function should be called after the initialisation of the hidden layers.
         for (let i = 0; i < this.Layers.length-1;i++) {
@@ -146,7 +152,6 @@ class Dann {
 
     }
 }
-
 // Matrix Math:
 class Matrix {
     constructor(rows,cols) {
