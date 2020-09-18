@@ -1,4 +1,4 @@
-// Dann.js Neural Network Engine v1.18
+// Dann.js Neural Network Engine 
 // Free to use library
 //
 // By: Matias Vazquez-Levi
