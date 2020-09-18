@@ -117,6 +117,7 @@ class Dann {
         let layer = new Matrix(size,1);
         this.Layers.splice(this.Layers.length-1,0,layer);
         if (act !== undefined) {
+            console.log(act)
             this.aFunc[this.Layers.length-1] = JSON.parse(act + "()");
             this.aFunc_d[this.Layers.length-1] = JSON.parse(act + "_d()");
         }
