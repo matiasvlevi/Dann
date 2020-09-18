@@ -436,7 +436,42 @@ function reLU_d(x) {
     }
 
 }
+function cosh(x) {
+    return (exp(x)+exp(-x)/2);
+}
+function sech(x) {
+    return 1/cosh(x);
+}
+function tanH(x) {
 
+    let top = exp(x) - exp(-x);
+    let down = exp(x)+ exp(-x);
+
+    return (top/down);
+}
+function sigmoidal_1(x) {
+    let u = 2;
+    if (x <= 0) {
+        return (tanH(x)/(1+exp(-x/u)))+x/10;
+    } else if (x > 0) {
+        return (tanH(x)/(1+exp(-x/u)));
+    }
+
+}
+function sigmoidal_1_d(x) {
+    let u = 2;
+
+    if (x <= 0) {
+        let right = (pow(sech(x),2)*(1+exp(-x/2)));
+        let top = right + 1/2*exp(-x/2)*tanH(x);
+        let down = pow(1+exp(-x/2),2);
+        return (top/down)+1/10;
+    } else if (x > 0) {
+        let top = pow(sech(x),2)*(1+exp(-x/2))-(-1/2*exp(-x/2))*tanH(x);
+        let down = pow((1+exp(-x/2)),2);
+        return top/down;
+    }
+}
 //Architecture Templates:
 function cnn(i,h,o,nn) {
     nn = DANNeuralNetwork(i,o);
