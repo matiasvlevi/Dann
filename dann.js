@@ -364,6 +364,7 @@ class Graph {
         this.max = 1;
         this.lines = [];
         this.color = [];
+        this.dragged = false;
     }
     addValue(x,color) {
         this.color.push(color)
@@ -372,9 +373,9 @@ class Graph {
     update() {
         noFill();
         rect(this.pos.x,this.pos.y,this.w,this.h);
-        if (mouseIsPressed&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
-          this.pos.x = mouseX;
-          this.pos.y = mouseY;
+        if (this.dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
+          this.pos.x = mouseX-(this.w/2);
+          this.pos.y = mouseY-(this.h/2);
         }
         for (let a = 0; a < this.lines.length; a++) {
             stroke(this.color[a]);
