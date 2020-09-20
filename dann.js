@@ -123,7 +123,7 @@ class Dann {
         let index = this.Layers.length-2;
         this.Layers.splice(this.Layers.length-1,0,layer);
         if (act !== undefined) {
-          
+
             let nor = (act.name);
             let der = (act.name + "_d");
             this.aFunc[index] = window[nor];
@@ -372,6 +372,10 @@ class Graph {
     update() {
         noFill();
         rect(this.pos.x,this.pos.y,this.w,this.h);
+        if (mouseIsPressed&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
+          this.pos.x = mouseX;
+          this.pos.y = mouseY;
+        }
         for (let a = 0; a < this.lines.length; a++) {
             stroke(this.color[a]);
             beginShape();
@@ -469,6 +473,7 @@ function tanH(x) {
 
     return (top/down);
 }
+
 function sigmoidal_1(x) {
     let u = 2;
     if (x <= 0) {
