@@ -371,7 +371,7 @@ class Graph {
     }
     update() {
         noFill();
-        rect(this.pos.x,this.pos,y,this.w,this.h)
+        rect(this.pos.x,this.pos.y,this.w,this.h)
         for (let a = 0; a < this.lines.length; a++) {
             stroke(this.color[a]);
             beginShape();
