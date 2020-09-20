@@ -123,7 +123,7 @@ class Dann {
         let index = this.Layers.length-2;
         this.Layers.splice(this.Layers.length-1,0,layer);
         if (act !== undefined) {
-            console.log(act.name)
+
             let nor = (act.name);
             let der = (act.name + "_d");
             this.aFunc[index] = window[nor];
@@ -352,7 +352,89 @@ class Matrix {
         }
     }
 }
+//Plot any Dann neural Network:
+class NetPlot {
+  constructor(x,y,w,h,nn) {
+    this.pos = createVector(x,y);
+    this.w = w;
+    this.h = h;
+    this.nn = nn;
+    this.spacingY = h/(this.nn.i-1);
+    this.layerSpacing = w/(this.nn.Layers.length-1);
+    console.log(this.layerSpacing)
+    this.bufferY = this.spacingY/2;
+  }
+  renderWeights() {
+    stroke(100);
+    for (let i = 0; i < this.nn.Layers.length; i++) {
 
+      let layer = Matrix.toArray(this.nn.Layers[i]);
+
+      this.spacingY = (this.h/(layer.length));
+      this.bufferY = this.spacingY/2
+
+      if (i !== this.nn.Layers.length-1) {
+
+        let nextLayer = Matrix.toArray(this.nn.Layers[i+1]);
+        let sY = (this.h/(nextLayer.length));
+        let bY = sY/2;
+
+        for (let j = 0; j < nextLayer.length; j++) {
+
+          let x = this.pos.x+((i+1)*this.layerSpacing);
+          let y = this.pos.y+bY+((j)*sY);
+          let x2 = 0;
+          let y2 = 0
+
+          for (let k = 0; k < layer.length; k++) {
+
+            let weights = (this.nn.weights[i]).matrix;
+            x2 = this.pos.x+((i)*this.layerSpacing);
+            y2 = this.pos.y+this.bufferY+((k)*this.spacingY);
+            stroke(weightToColor(weights[j][k]));
+            strokeWeight(map(int(weights[j][k]*1000)/1000,0,1,1,2));
+            line(x,y,x2,y2);
+
+          }
+
+        }
+      }
+
+
+    }
+  }
+  renderLayers() {
+    fill(255);
+    stroke(0);
+    strokeWeight(1)
+    for (let i = 0; i < this.nn.Layers.length; i++) {
+
+      let layer = Matrix.toArray(this.nn.Layers[i]);
+      this.spacingY = (this.h/(layer.length));
+      this.bufferY = this.spacingY/2;
+      for (let j = 0; j < layer.length; j++) {
+
+        let x = this.pos.x+((i)*this.layerSpacing);
+        let y = this.pos.y+this.bufferY+((j)*this.spacingY);
+
+        ellipse(x,y,8,8);
+
+      }
+    }
+  }
+  render() {
+    noFill();
+    stroke(0);
+    rect(this.pos.x,this.pos.y,this.w,this.h);
+    if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
+        this.pos.x = mouseX-(this.w/2);
+        this.pos.y = mouseY-(this.h/2);
+    }
+    this.renderWeights();
+    this.renderLayers();
+
+  }
+}
 // Graph (graph any values over time):
 class Graph {
     constructor(x,y,w,h) {
@@ -364,6 +446,7 @@ class Graph {
         this.max = 1;
         this.lines = [];
         this.color = [];
+        this.dragged = false;
     }
     addValue(x,color) {
         this.color.push(color)
@@ -371,6 +454,11 @@ class Graph {
     }
     update() {
         noFill();
+        rect(this.pos.x,this.pos.y,this.w,this.h);
+        if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
+          this.pos.x = mouseX-(this.w/2);
+          this.pos.y = mouseY-(this.h/2);
+        }
         for (let a = 0; a < this.lines.length; a++) {
             stroke(this.color[a]);
             beginShape();
@@ -379,7 +467,7 @@ class Graph {
             }
 
             for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
-                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.w,this.h)+this.pos.y));
+                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h)));
             }
             endShape();
         }
@@ -468,6 +556,7 @@ function tanH(x) {
 
     return (top/down);
 }
+
 function sigmoidal_1(x) {
     let u = 2;
     if (x <= 0) {
