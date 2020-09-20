@@ -371,7 +371,7 @@ class Graph {
     }
     update() {
         noFill();
-        rect(this.pos.x,this.pos.y,this.w,this.h)
+        rect(this.pos.x,this.pos.y,this.w,this.h);
         for (let a = 0; a < this.lines.length; a++) {
             stroke(this.color[a]);
             beginShape();
@@ -380,7 +380,7 @@ class Graph {
             }
 
             for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
-                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.w,this.h)+this.pos.y));
+                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h)+this.pos.y));
             }
             endShape();
         }
