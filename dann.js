@@ -1,4 +1,4 @@
-// Dann.js Neural Network Engine 
+// Dann.js Neural Network Engine
 // Free to use library
 //
 // By: Matias Vazquez-Levi
@@ -417,7 +417,7 @@ function tanH(x) {
     let top = exp(x) - exp(-x);
     let down = exp(x)+ exp(-x);
 
-    return 0.5*(top/down)+0.5;
+    return (top/down);
 }
 function tanH_d(x) {
 
