@@ -123,7 +123,7 @@ class Dann {
         let index = this.Layers.length-2;
         this.Layers.splice(this.Layers.length-1,0,layer);
         if (act !== undefined) {
-            console.log(act.name)
+          
             let nor = (act.name);
             let der = (act.name + "_d");
             this.aFunc[index] = window[nor];
