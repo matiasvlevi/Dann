@@ -380,7 +380,7 @@ class Graph {
             }
 
             for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
-                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h)+this.pos.y));
+                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h)));
             }
             endShape();
         }
