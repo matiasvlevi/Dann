@@ -445,8 +445,8 @@ class Graph {
         this.w = w;
         this.h = h;
         this.s = 1;
-        this.min = 0;
-        this.max = 1;
+        this.min = 1;
+        this.max = 0;
         this.lines = [];
         this.color = [];
         this.dragged = false;
