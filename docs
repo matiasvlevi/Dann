@@ -1,0 +1,38 @@
+
+Dann.js documentation.
+(incomplete)
+
+Dann(inputs,outputs)
+
+  Dann.addHiddenLayer(neuronCount, activation_function)
+    creates the layers.
+
+  Dann.makeWeights()
+    creates the weights.
+    Should be called after the creation layers.
+
+  Dann.setActivations(function)
+    should be paired with a function_d derivative.
+
+  Dann.feedForward(inputs[])
+    feedForward the neural network.
+
+  Dann.backpropagate(inputs[],targets[])
+    backpropagates the neural network.
+
+  Dann.log()
+    console.logs info on the neural network.
+
+
+NetPlot(x,y,width,height,Dann)
+
+  NetPlot.render()
+    displays the Netplot.
+
+
+Graph(x,y,width,height)
+
+  Graph.addValue(array)
+    adds an array to the graph.
+  Graph.render()
+    renders the graph.
