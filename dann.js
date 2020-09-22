@@ -426,6 +426,9 @@ class NetPlot {
     noFill();
     stroke(0);
     rect(this.pos.x,this.pos.y,this.w,this.h);
+    if (draged == undefined) {
+      let dragged = false;
+    }
     if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
         this.pos.x = mouseX-(this.w/2);
         this.pos.y = mouseY-(this.h/2);
@@ -455,7 +458,7 @@ class Graph {
     update() {
         noFill();
         rect(this.pos.x,this.pos.y,this.w,this.h);
-        if (drag == undefined) {
+        if (draged == undefined) {
           let dragged = false;
         }
         if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
