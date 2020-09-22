@@ -426,7 +426,7 @@ class NetPlot {
     noFill();
     stroke(0);
     rect(this.pos.x,this.pos.y,this.w,this.h);
-    if (draged == undefined) {
+    if (dragged == undefined) {
       let dragged = false;
     }
     if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
