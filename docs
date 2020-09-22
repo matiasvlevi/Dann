@@ -15,10 +15,10 @@ Dann(inputs,outputs)
     should be paired with a function_d derivative.
 
   Dann.feedForward(inputs[])
-    feedForward the neural network.
+    feed forward the neural network.
 
   Dann.backpropagate(inputs[],targets[])
-    backpropagates the neural network.
+    backpropagate the neural network.
 
   Dann.log()
     console.logs info on the neural network.
