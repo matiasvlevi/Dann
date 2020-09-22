@@ -455,6 +455,9 @@ class Graph {
     update() {
         noFill();
         rect(this.pos.x,this.pos.y,this.w,this.h);
+        if (drag == undefined) {
+          let dragged = false;
+        }
         if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
           this.pos.x = mouseX-(this.w/2);
           this.pos.y = mouseY-(this.h/2);
