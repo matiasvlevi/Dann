@@ -5,6 +5,7 @@
 // https://github.com/matiasvlevi
 
 // Dann:
+
 class Dann {
     constructor(i,o) {
 
@@ -426,6 +427,9 @@ class NetPlot {
     noFill();
     stroke(0);
     rect(this.pos.x,this.pos.y,this.w,this.h);
+    if (dragged == undefined) {
+      let dragged = false;
+    }
     if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
         this.pos.x = mouseX-(this.w/2);
         this.pos.y = mouseY-(this.h/2);
@@ -442,8 +446,8 @@ class Graph {
         this.w = w;
         this.h = h;
         this.s = 1;
-        this.min = 0;
-        this.max = 1;
+        this.min = 1;
+        this.max = 0;
         this.lines = [];
         this.color = [];
         this.dragged = false;
@@ -455,6 +459,9 @@ class Graph {
     update() {
         noFill();
         rect(this.pos.x,this.pos.y,this.w,this.h);
+        if (dragged == undefined) {
+          let dragged = false;
+        }
         if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
           this.pos.x = mouseX-(this.w/2);
           this.pos.y = mouseY-(this.h/2);
