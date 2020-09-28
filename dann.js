@@ -26,6 +26,7 @@ class Dann {
 
         this.outs = [];
         this.loss = 0;
+        this.losses = [];
         this.lr = 0.001;
 
     }
@@ -81,6 +82,7 @@ class Dann {
         this.biases[0].add(this.gradients[0]);
 
         this.loss = this.calcMeanLossError(this.outs,t);
+        this.losses.push();
 
     }
     activation(layer,act) {
@@ -353,6 +355,7 @@ class Matrix {
         }
     }
 }
+let dragged = false;
 //Plot any Dann neural Network:
 class NetPlot {
   constructor(x,y,w,h,nn) {
@@ -362,7 +365,6 @@ class NetPlot {
     this.nn = nn;
     this.spacingY = h/(this.nn.i-1);
     this.layerSpacing = w/(this.nn.Layers.length-1);
-    console.log(this.layerSpacing)
     this.bufferY = this.spacingY/2;
   }
   renderWeights() {
@@ -393,7 +395,7 @@ class NetPlot {
             x2 = this.pos.x+((i)*this.layerSpacing);
             y2 = this.pos.y+this.bufferY+((k)*this.spacingY);
             stroke(weightToColor(weights[j][k]));
-            strokeWeight(map(int(weights[j][k]*1000)/1000,0,1,1,2));
+            strokeWeight(map(sqrt(int(weights[j][k]*1000)/1000),0,2,1,2));
             line(x,y,x2,y2);
 
           }
@@ -406,8 +408,8 @@ class NetPlot {
   }
   renderLayers() {
     fill(255);
-    stroke(0);
-    strokeWeight(1)
+    noStroke(0);
+
     for (let i = 0; i < this.nn.Layers.length; i++) {
 
       let layer = Matrix.toArray(this.nn.Layers[i]);
@@ -418,6 +420,9 @@ class NetPlot {
         let x = this.pos.x+((i)*this.layerSpacing);
         let y = this.pos.y+this.bufferY+((j)*this.spacingY);
 
+        let col = map(layer[j],0,0.001,0,255);
+
+        fill(col);
         ellipse(x,y,8,8);
 
       }
@@ -427,9 +432,7 @@ class NetPlot {
     noFill();
     stroke(0);
     rect(this.pos.x,this.pos.y,this.w,this.h);
-    if (dragged == undefined) {
-      let dragged = false;
-    }
+
     if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
         this.pos.x = mouseX-(this.w/2);
         this.pos.y = mouseY-(this.h/2);
@@ -456,12 +459,11 @@ class Graph {
         this.color.push(color)
         this.lines.push(x);
     }
-    update() {
+    render() {
         noFill();
+        stroke(0)
         rect(this.pos.x,this.pos.y,this.w,this.h);
-        if (dragged == undefined) {
-          let dragged = false;
-        }
+        strokeWeight(1);
         if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
           this.pos.x = mouseX-(this.w/2);
           this.pos.y = mouseY-(this.h/2);
@@ -586,6 +588,12 @@ function sigmoidal_1_d(x) {
         let down = pow((1+exp(-x/2)),2);
         return top/down;
     }
+}
+function weightToColor(w) {
+    let r = map(w,-1,1,0,255);
+    let b = map(w,-1,1,255,0);
+    let g = 255-r-b
+    return color(r,g,b)
 }
 //Architecture Templates:
 function cnn(i,h,o,nn) {
