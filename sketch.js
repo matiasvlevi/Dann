@@ -20,7 +20,7 @@ function setup() {
     nn.addHiddenLayer(16,leakyReLU);
     nn.makeWeights();
     nn.activation(2,sigmoid);
-    nn.lr = 0.001;
+    nn.lr = 0.0005;
 
     nn.log();
 
