@@ -23,6 +23,11 @@ Dann(inputs,outputs)
   Dann.log()
     console.logs info on the neural network.
 
+  Dann.save()
+    gives you a string of all the weight matrices, copy it!
+
+  Dann.load(stringedMatrix)
+    you can load weights by giving this function the previously acquired matrix string given by "Dann.save()".
 
 NetPlot(x,y,width,height,Dann)
 

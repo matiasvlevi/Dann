@@ -167,6 +167,46 @@ class Dann {
         console.log("    Latest loss: " + this.loss);
 
     }
+    save() {
+        let data = [];
+        for (let i = 0; i < this.weights.length;i++) {
+            data[i] =  JSON.stringify(this.weights[i].matrix);
+        }
+        let str = JSON.stringify(data);
+        console.log("'" + str + "'");
+    }
+    load(stringArray) {
+        let data = JSON.parse(stringArray);
+        let arch = [];
+        let parsed = [];
+        for (let i = 0; i < data.length;i++) {
+            parsed[i] = JSON.parse(data[i]);
+
+            if (i == 0) {
+                arch.push(parsed[i][0].length);
+                arch.push(parsed[i].length);
+            } else {
+                arch.push(parsed[i].length);
+            }
+
+        }
+        if (data.length+1 == this.Layers.length) {
+
+            for (let i = 0; i < this.Layers.length; i++) {
+                let layer = Matrix.toArray(this.Layers[i]);
+                if (layer.length !== arch[i]) {
+                    console.error("Error: Not the same architecture...");
+                    return;
+                }
+            }
+            for (let i = 0; i < data.length;i++) {
+                this.weights[i].set(parsed[i]);
+            }
+            console.log("Successfully transfered weight matrices!")
+            return 0;
+        }
+
+    }
 }
 // Matrix Math:
 class Matrix {
@@ -279,6 +319,9 @@ class Matrix {
             }
             return ans;
         }
+    }
+    set(matrix) {
+        this.matrix = matrix;
     }
     add(n) {
         if (n instanceof Matrix) {
@@ -452,18 +495,30 @@ class Graph {
         this.min = 1;
         this.max = 0;
         this.lines = [];
+        this.names = [];
         this.color = [];
         this.dragged = false;
+        this.grid = 4;
     }
-    addValue(x,color) {
+    addValue(x,color,name) {
         this.color.push(color)
         this.lines.push(x);
+        this.names.push(name);
     }
     render() {
         noFill();
-        stroke(0)
-        rect(this.pos.x,this.pos.y,this.w,this.h);
+
+
         strokeWeight(1);
+
+        stroke(0,80)
+
+        for (let i = 0; i < this.grid; i++) {
+            let y = (this.h/this.grid)*i;
+            line(this.pos.x,y,this.pos.x+this.w,y);
+        }
+        stroke(0,255);
+        rect(this.pos.x,this.pos.y,this.w,this.h);
         if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
           this.pos.x = mouseX-(this.w/2);
           this.pos.y = mouseY-(this.h/2);
@@ -479,6 +534,14 @@ class Graph {
                 vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h)));
             }
             endShape();
+            noStroke();
+            fill(this.color[a])
+            rect((this.pos.x+this.w)-((this.pos.x+this.w)/6),(a*20)+10,20,10);
+            //let textstr = Object.keys({this.lines[a]})[0];
+
+            //console.log(Object.keys(this.lines[a])[0]);
+            text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19);
+            noFill();
         }
         noStroke();
     }
@@ -565,7 +628,6 @@ function tanH(x) {
 
     return (top/down);
 }
-
 function sigmoidal_1(x) {
     let u = 2;
     if (x <= 0) {
