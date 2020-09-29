@@ -409,7 +409,9 @@ class NetPlot {
     this.spacingY = h/(this.nn.i-1);
     this.layerSpacing = w/(this.nn.Layers.length-1);
     this.bufferY = this.spacingY/2;
+
   }
+
   renderWeights() {
     stroke(100);
     for (let i = 0; i < this.nn.Layers.length; i++) {
@@ -463,7 +465,7 @@ class NetPlot {
         let x = this.pos.x+((i)*this.layerSpacing);
         let y = this.pos.y+this.bufferY+((j)*this.spacingY);
 
-        let col = map(layer[j],0,0.001,0,255);
+        let col = map(layer[j],0,1,0,255);
 
         fill(col);
         ellipse(x,y,8,8);
@@ -515,7 +517,7 @@ class Graph {
 
         for (let i = 0; i < this.grid; i++) {
             let y = (this.h/this.grid)*i;
-            line(this.pos.x,y,this.pos.x+this.w,y);
+            line(this.pos.x,y+this.pos.y,this.pos.x+this.w,y+this.pos.y);
         }
         stroke(0,255);
         rect(this.pos.x,this.pos.y,this.w,this.h);
@@ -536,16 +538,64 @@ class Graph {
             endShape();
             noStroke();
             fill(this.color[a])
-            rect((this.pos.x+this.w)-((this.pos.x+this.w)/6),(a*20)+10,20,10);
+            rect((this.pos.x+this.w)-((this.pos.x+this.w)/6),(a*20)+10+this.pos.y,20,10);
             //let textstr = Object.keys({this.lines[a]})[0];
 
             //console.log(Object.keys(this.lines[a])[0]);
-            text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19);
+            text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19+this.pos.y);
             noFill();
         }
         noStroke();
     }
 
+}
+//Graph the gradients
+class GradientGraph {
+    constructor(x,y,w,h,nn) {
+        this.pos = createVector(x,y);
+        this.w = w;
+        this.h = h;
+        this.nn = nn;
+        this.pixelSize = 10;
+    }
+    render() {
+
+
+        for (let m = 0; m < nn.weights.length;m++) {
+            let weights = nn.weights[m].matrix;
+            for (let i = 0; i < sqrt(weights.length);i++) {
+                for (let j = 0; j< sqrt(weights.length);j++) {
+
+                    let windex = 0;
+                    if (m !== 0) {
+                        windex = m-1;
+                    } else {
+                        windex = 0;
+                    }
+                    let bx = this.pos.x+((this.pixelSize*sqrt(weights[windex].length))*i)+(m*((this.pixelSize*sqrt(weights[windex].length)))*2)+(m*25);
+                    let by = this.pos.y+((this.pixelSize*sqrt(weights[windex].length))*j);
+
+
+                    for (let x = 0; x < sqrt(weights[windex].length);x++) {
+                        for (let y = 0; y< sqrt(weights[windex].length);y++) {
+                            let bx_ = (x*this.pixelSize)+bx;
+                            let by_ = (y*this.pixelSize)+by;
+                            fill(map(weights[(i*sqrt(weights.length))+j][(x*sqrt(weights[windex].length))+y],-1,1,0,255));
+                            noStroke()
+                            rect(bx_,by_,this.pixelSize,this.pixelSize)
+                        }
+                    }
+                    noFill();
+                    stroke(255,0,0,255)
+                    rect(bx,by,(this.pixelSize*sqrt(weights[windex].length)),(this.pixelSize*sqrt(weights[windex].length)))
+                }
+            }
+        }
+
+
+
+
+    }
 }
 
 //Activations:
