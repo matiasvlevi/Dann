@@ -16,6 +16,7 @@ function setup() {
 // NeuralNetwork Creation
     nn = new Dann(4,4);
     nn.addHiddenLayer(16,leakyReLU);
+    nn.addHiddenLayer(8,sigmoid);
     nn.addHiddenLayer(16,leakyReLU);
     nn.makeWeights();
     nn.activation(2,sigmoid);
