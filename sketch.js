@@ -19,7 +19,7 @@ function setup() {
     nn.addHiddenLayer(16,sigmoidal_1);
     nn.makeWeights();
     nn.activation(2,sigmoid);
-    nn.lr = 0.0005;
+    nn.lr = 0.0015;
 
     nn.log();
 
