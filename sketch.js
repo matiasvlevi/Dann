@@ -48,10 +48,10 @@ function draw() {
         let res = 0;
 
         for (let i = 0; i<testData.length;i++) {
-            let out = nn.feedForward(testData[i].inputs);
+            let out = nn.feedForward(testData[index].inputs);
             let sum = 0;
             for (let j = 0; j < out.length;j++) {
-                let record = testData[i].target[j] - out[j];
+                let record = testData[index].target[j] - out[j];
                 if (record < 0) {
                     record *= -1;
                 }
@@ -68,7 +68,7 @@ function draw() {
 
     if (count >= 10) {
         count = 0;
-        if (data.length-1 <= index) {
+        if (testData.length-1 <= index) {
             index = 0;
         } else {
             index++
