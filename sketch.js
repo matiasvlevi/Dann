@@ -66,7 +66,7 @@ function draw() {
     }
 
 
-    if (count >= 10) {
+    if (count >= 100) {
         count = 0;
         if (testData.length-1 <= index) {
             index = 0;
