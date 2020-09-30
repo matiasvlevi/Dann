@@ -45,16 +45,16 @@ function setup() {
     // nn.log();
 
 // Graphs
-    g = new Graph(0,25,800,200);
+    g = new Graph(0,10,800,200);
     g.addValue(losses,color(0,100,255),"loss");
     g.addValue(acc,color(255,100,0),"accuracies")
-    n = new NetPlot(250,235,550,400,nn);
-    h = new GradientGraph(20,650,100,100,nn);
+    n = new NetPlot(25,220,550,380,nn);
+    h = new GradientGraph(580,375,100,100,nn);
     h.initiateValues();
-    h.pixelSize = 10;
-    info = new InfoBox(20,235,210,400);
+    h.pixelSize = 5;
+    info = new InfoBox(586,220,220,400);
 
-    createCanvas(wnx,wny);
+    createCanvas(wnx+(wnx/2),wny);
 
 }
 

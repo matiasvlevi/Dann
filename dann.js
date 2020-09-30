@@ -557,7 +557,7 @@ class GradientGraph {
         this.h = h;
 
         this.nn = nn;
-        this.pixelSize = 10;
+        this.pixelSize = 5;
         this.positionsX = [];
         this.offsets = [];
         this.boxespos = [];
@@ -639,7 +639,7 @@ class InfoBox {
     render() {
         noFill();
         stroke(contourColor[0],contourColor[1],contourColor[2]);
-        rect(this.pos.x,this.pos.y,this.w,this.h);
+        //rect(this.pos.x,this.pos.y,this.w,this.h);
         noStroke();
         fill(fontColor[0],fontColor[1],fontColor[2]);
         text("Dann Neural Network:",this.pos.x+6,this.pos.y+12);
