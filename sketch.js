@@ -12,7 +12,7 @@ let play = true;
 // Values
 let losses = [];
 let acc = [];
-
+let epoch = 0;
 let archtype = [];
 let time = 150;
 
@@ -66,6 +66,7 @@ function draw() {
             nn.backpropagate(data[i].inputs,data[i].target);
             sum_+=nn.loss;
         }
+        epoch++;
         losses.push(sum_/data.length);
         let res = 0;
 
@@ -87,7 +88,7 @@ function draw() {
 
         nn.feedForward(testData[index].inputs);
 
-
+        text("epoch: "+epoch,10,20);
 
 
     }
