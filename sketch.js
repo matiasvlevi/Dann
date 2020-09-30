@@ -14,10 +14,8 @@ let losses = [];
 let acc = [];
 
 let archtype = [];
+let time = 150;
 
-function preload() {
-
-}
 function setup() {
 
     let ans = prompt("Dann Architechture:");
@@ -95,7 +93,7 @@ function draw() {
     }
 
 
-    if (count >= 50) {
+    if (count >= time) {
         count = 0;
         if (testData.length-1 <= index) {
             index = 0;
