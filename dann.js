@@ -616,7 +616,8 @@ class GradientGraph {
                         }
                     }
                     noFill();
-                    stroke(255,0,0,255)
+                    stroke(255,0,0,255);
+                    strokeWeight(1);
                     rect(bx,by,(this.pixelSize*innerLen),(this.pixelSize*innerLen))
 
                 }
