@@ -151,10 +151,10 @@ class Dann {
             let str = "Hidden Layer: ";
             let afunc = "";
             if (i == 0) {
-                str = " Input Layer: ";
+                str = "Input Layer:   ";
                 afunc = "       ";
             } else if (i == this.Layers.length-1) {
-                str = "Output Layer: ";
+                str = "Output Layer:  ";
                 afunc = "  ("+this.aFunc[i-1].name+")";
             } else {
                 afunc = "  ("+this.aFunc[i-1].name+")";
@@ -413,7 +413,7 @@ class NetPlot {
   }
 
   renderWeights() {
-    stroke(100);
+    stroke(contourColor);
     for (let i = 0; i < this.nn.Layers.length; i++) {
 
       let layer = Matrix.toArray(this.nn.Layers[i]);
@@ -453,7 +453,7 @@ class NetPlot {
   }
   renderLayers() {
     fill(255);
-    noStroke(0);
+    noStroke();
 
     for (let i = 0; i < this.nn.Layers.length; i++) {
 
@@ -475,7 +475,7 @@ class NetPlot {
   }
   render() {
     noFill();
-    stroke(0);
+    stroke(contourColor[0],contourColor[1],contourColor[2]);
     rect(this.pos.x,this.pos.y,this.w,this.h);
 
     if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
@@ -513,13 +513,13 @@ class Graph {
 
         strokeWeight(1);
 
-        stroke(0,80)
+        stroke(contourColor[0],contourColor[1],contourColor[2],80);
 
         for (let i = 0; i < this.grid; i++) {
             let y = (this.h/this.grid)*i;
             line(this.pos.x,y+this.pos.y,this.pos.x+this.w,y+this.pos.y);
         }
-        stroke(0,255);
+        stroke(contourColor[0],contourColor[1],contourColor[2])
         rect(this.pos.x,this.pos.y,this.w,this.h);
         if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
           this.pos.x = mouseX-(this.w/2);
@@ -555,16 +555,43 @@ class GradientGraph {
         this.pos = createVector(x,y);
         this.w = w;
         this.h = h;
+
         this.nn = nn;
         this.pixelSize = 10;
+        this.positionsX = [];
+        this.offsets = [];
+        this.boxespos = [];
+    }
+    initiateValues() {
+        for (let m = 0; m < nn.weights.length;m++) {
+            let weights = nn.weights[m].matrix;
+            let offset = 0;
+            if(m == 0) {
+                offset = 0;
+                this.positionsX[m] = offset;
+                this.offsets.push(offset);
+            } else {
+                let sum = 0;
+                for (let i = 0; i < m; i++) {
+                    sum+=this.positionsX[i];
+                }
+                offset = this.pixelSize*(sqrt(nn.weights[m-1].matrix[0].length))*sqrt(nn.weights[m-1].matrix.length);
+                this.positionsX[m] = offset;
+                offset += sum;
+                this.offsets.push(offset);
+            }
+
+        }
     }
     render() {
 
-
         for (let m = 0; m < nn.weights.length;m++) {
             let weights = nn.weights[m].matrix;
-            for (let i = 0; i < sqrt(weights.length);i++) {
-                for (let j = 0; j< sqrt(weights.length);j++) {
+
+            let len = sqrt(weights.length);
+
+            for (let i = 0; i < len;i++) {
+                for (let j = 0; j< len;j++) {
 
                     let windex = 0;
                     if (m !== 0) {
@@ -572,22 +599,26 @@ class GradientGraph {
                     } else {
                         windex = 0;
                     }
-                    let bx = this.pos.x+((this.pixelSize*sqrt(weights[windex].length))*i)+(m*((this.pixelSize*sqrt(weights[windex].length)))*2)+(m*25);
-                    let by = this.pos.y+((this.pixelSize*sqrt(weights[windex].length))*j);
+
+                    let innerLen = sqrt(weights[windex].length);
+
+                    let bx = this.pos.x+((this.pixelSize*innerLen)*i)+this.offsets[m]+(m*10);
+                    let by = this.pos.y+((this.pixelSize*innerLen)*j);
 
 
-                    for (let x = 0; x < sqrt(weights[windex].length);x++) {
-                        for (let y = 0; y< sqrt(weights[windex].length);y++) {
+                    for (let x = 0; x < innerLen;x++) {
+                        for (let y = 0; y< innerLen;y++) {
                             let bx_ = (x*this.pixelSize)+bx;
                             let by_ = (y*this.pixelSize)+by;
-                            fill(map(weights[(i*sqrt(weights.length))+j][(x*sqrt(weights[windex].length))+y],-1,1,0,255));
+                            fill(map(weights[(i*len)+j][(x*innerLen)+y],-1,1,0,255));
                             noStroke()
                             rect(bx_,by_,this.pixelSize,this.pixelSize)
                         }
                     }
                     noFill();
                     stroke(255,0,0,255)
-                    rect(bx,by,(this.pixelSize*sqrt(weights[windex].length)),(this.pixelSize*sqrt(weights[windex].length)))
+                    rect(bx,by,(this.pixelSize*innerLen),(this.pixelSize*innerLen))
+
                 }
             }
         }
@@ -598,6 +629,47 @@ class GradientGraph {
     }
 }
 
+class InfoBox {
+    constructor(x,y,w,h,nn) {
+        this.pos = createVector(x,y);
+        this.w = w;
+        this.h = h;
+        this.nn = nn;
+    }
+    render() {
+        noFill();
+        stroke(contourColor[0],contourColor[1],contourColor[2]);
+        rect(this.pos.x,this.pos.y,this.w,this.h);
+        noStroke();
+        fill(fontColor[0],fontColor[1],fontColor[2]);
+        text("Dann Neural Network:",this.pos.x+6,this.pos.y+12);
+        let layertext = 30;
+        text("Layers:",this.pos.x+12,this.pos.y+layertext);
+        for (let i = 0; i < nn.Layers.length;i++) {
+            let str = "Hidden Layer: ";
+            let afunc = "";
+            if (i == 0) {
+                str = "Input Layer:      ";
+                afunc = "       ";
+            } else if (i == nn.Layers.length-1) {
+                str = "Output Layer:   ";
+                afunc = "  ("+nn.aFunc[i-1].name+")";
+            } else {
+                afunc = "  ("+nn.aFunc[i-1].name+")";
+            }
+            text("    " + str + Matrix.toArray(nn.Layers[i]).length + afunc,this.pos.x,this.pos.y+layertext+18+(i*14));
+        }
+
+
+
+    }
+}
+function weightToColor(w) {
+    let r = map(w,-1,1,0,255);
+    let b = map(w,-1,1,255,0);
+    let g = 255-r-b
+    return color(r,g,b)
+}
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
@@ -701,12 +773,7 @@ function sigmoidal_1_d(x) {
         return top/down;
     }
 }
-function weightToColor(w) {
-    let r = map(w,-1,1,0,255);
-    let b = map(w,-1,1,255,0);
-    let g = 255-r-b
-    return color(r,g,b)
-}
+
 //Architecture Templates:
 function cnn(i,h,o,nn) {
     nn = DANNeuralNetwork(i,o);

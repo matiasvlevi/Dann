@@ -3,6 +3,7 @@ let nn;
 let g;
 let n;
 let h;
+let info;
 // Window
 let wnx = window.innerWidth;
 let wny = window.innerHeight;
@@ -11,27 +12,50 @@ let play = true;
 // Values
 let losses = [];
 let acc = [];
+
+let archtype = [];
+
+function preload() {
+
+}
 function setup() {
 
-// NeuralNetwork Creation
-    nn = new Dann(4,4);
-    nn.addHiddenLayer(16,tanH);
-    nn.addHiddenLayer(16,leakyReLU);
+    let ans = prompt("Dann Architechture:");
+    let ans2 = prompt("Learning Rate:");
+
+    let lr = JSON.parse(ans2);
+    let archtype = JSON.parse("["+ans+"]");
+    nn = new Dann(archtype[0],archtype[archtype.length-1]);
+    for (let i = 1; i < archtype.length-1; i++) {
+        nn.addHiddenLayer(archtype[i],leakyReLU);
+    }
     nn.makeWeights();
-    nn.activation(2,sigmoid);
-    nn.lr = 0.0015;
+    nn.activation(archtype.length-2,sigmoid);
+    nn.lr = lr;
 
     nn.log();
+// NeuralNetwork Creation
+    // nn = new Dann(4,4);
+    //
+    // nn.addHiddenLayer(16,leakyReLU);
+    // nn.makeWeights();
+    // nn.activation(2,sigmoid);
+    // nn.lr = 0.01;
+    //
+    // nn.log();
 
 // Graphs
     g = new Graph(0,25,800,200);
     g.addValue(losses,color(0,100,255),"loss");
     g.addValue(acc,color(255,100,0),"accuracies")
-    n = new NetPlot(400,225,400,400,nn);
-    h = new GradientGraph(100,225,100,100,nn)
+    n = new NetPlot(250,235,550,400,nn);
+    h = new GradientGraph(20,650,100,100,nn);
+    h.initiateValues();
     h.pixelSize = 10;
+    info = new InfoBox(20,235,210,400);
 
     createCanvas(wnx,wny);
+
 }
 
 let index = 0;
@@ -48,10 +72,10 @@ function draw() {
         let res = 0;
 
         for (let i = 0; i<testData.length;i++) {
-            let out = nn.feedForward(testData[index].inputs);
+            let out = nn.feedForward(testData[i].inputs);
             let sum = 0;
             for (let j = 0; j < out.length;j++) {
-                let record = testData[index].target[j] - out[j];
+                let record = testData[i].target[j] - out[j];
                 if (record < 0) {
                     record *= -1;
                 }
@@ -63,10 +87,15 @@ function draw() {
         let accuracy = 1 - (res/(testData.length));
         acc.push(accuracy);
 
+        nn.feedForward(testData[index].inputs);
+
+
+
+
     }
 
 
-    if (count >= 100) {
+    if (count >= 50) {
         count = 0;
         if (testData.length-1 <= index) {
             index = 0;
@@ -80,7 +109,7 @@ function draw() {
     g.render();
     n.render();
     h.render();
-
+    info.render();
 
 
 }
