@@ -143,6 +143,7 @@ class Dann {
         ans = sum/this.o;
         return ans;
     }
+
     log() {
         console.log("Dann NeuralNetwork:")
         console.log(" ");
