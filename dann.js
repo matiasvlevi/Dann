@@ -299,6 +299,17 @@ class Matrix {
     }
     static multiply(m1,m2) {
 
+      let a = m1;
+      let b = m2;
+
+        let ans = new Matrix(a.rows, b.cols);
+          if (m1 instanceof Matrix && m2 instanceof Matrix) {
+            ans.matrix = matrixObjMult(m1,m2)
+            return ans;
+          }
+    }
+    static multiply_old(m1,m2) {
+
         let a = m1;
         let b = m2;
 
