@@ -70,6 +70,3 @@ let testData = [
 
 
 ]
-
-let fontColor = [255,255,255];
-let contourColor = [0,0,0];

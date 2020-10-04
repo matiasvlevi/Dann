@@ -412,6 +412,8 @@ class Matrix {
 }
 let dragged = false;
 //Plot any Dann neural Network:
+
+
 class NetPlot {
   constructor(x,y,w,h,nn) {
     this.pos = createVector(x,y);
@@ -561,6 +563,7 @@ class Graph {
     }
 
 }
+
 //Graph the gradients
 class GradientGraph {
     constructor(x,y,w,h,nn) {
@@ -678,7 +681,8 @@ class InfoBox {
     }
 }
 
-
+let fontColor = [255,255,255];
+let contourColor = [0,0,0];
 const gpu = new GPU({ mode: 'gpu' });
 
 function matmultf(a,b) {
