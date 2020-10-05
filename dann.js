@@ -299,17 +299,6 @@ class Matrix {
     }
     static multiply(m1,m2) {
 
-      let a = m1;
-      let b = m2;
-
-        let ans = new Matrix(a.rows, b.cols);
-          if (m1 instanceof Matrix && m2 instanceof Matrix) {
-            ans.matrix = matrixObjMult(m1,m2)
-            return ans;
-          }
-    }
-    static multiply_old(m1,m2) {
-
         let a = m1;
         let b = m2;
 
@@ -683,46 +672,7 @@ class InfoBox {
 
 let fontColor = [255,255,255];
 let contourColor = [0,0,0];
-const gpu = new GPU({ mode: 'gpu' });
 
-function matmultf(a,b) {
-    let sum = 0;
-    for (var i = 0; i < 2; i++) {
-        sum += a[this.thread.y][i] * b[i][this.thread.x];
-    }
-    return sum;
-}
-let matMult;
-function matrixObjMult(a,b) {
-  if (b.rows == a.cols) {
-    let formattedArr = [];
-    let typedarr = kernelMatrixMult(a.matrix,b.matrix,a.rows,b.cols);
-    for (let i=0;i<typedarr.length;i++){
-      formattedArr[i] = Array.from(typedarr[i]);
-    }
-      return formattedArr;
-  } else {
-    console.log("not compatible")
-    return;
-  }
-
-}
-function kernelMatrixMult(a,b,outputRows,outputCols) {
-  let logs = false;
-  initKernel(outputCols,outputRows);
-  let ans = matMult(a,b);
-  if (logs) {
-    console.log(a);
-    console.log(b);
-    console.log("Awnser Size: "+[outputCols,outputRows])
-  }
-  return ans;
-}
-function initKernel(r,c) {
-  matMult = gpu.createKernel(matmultf, {
-    output: [r,c],
-  });
-}
 function weightToColor(w) {
     let r = map(w,-1,1,0,255);
     let b = map(w,-1,1,255,0);
