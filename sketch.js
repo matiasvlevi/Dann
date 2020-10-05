@@ -18,29 +18,32 @@ let time = 150;
 
 function setup() {
 
-    let ans = prompt("Dann Architechture:");
-    let ans2 = prompt("Learning Rate:");
-
-    let lr = JSON.parse(ans2);
-    let archtype = JSON.parse("["+ans+"]");
-    nn = new Dann(archtype[0],archtype[archtype.length-1]);
-    for (let i = 1; i < archtype.length-1; i++) {
-        nn.addHiddenLayer(archtype[i],leakyReLU);
-    }
-    nn.makeWeights();
-    nn.activation(archtype.length-2,sigmoid);
-    nn.lr = lr;
-
-    nn.log();
-// NeuralNetwork Creation
-    // nn = new Dann(4,4);
+    // let ans = prompt("Dann Architechture:");
+    // let ans2 = prompt("Learning Rate:");
     //
-    // nn.addHiddenLayer(16,leakyReLU);
+    // let lr = JSON.parse(ans2);
+    // let archtype = JSON.parse("["+ans+"]");
+    //
+    // nn = new Dann(archtype[0],archtype[archtype.length-1]);
+    // for (let i = 1; i < archtype.length-1; i++) {
+    //     nn.addHiddenLayer(archtype[i],leakyReLU);
+    // }
     // nn.makeWeights();
-    // nn.activation(2,sigmoid);
-    // nn.lr = 0.01;
+    // nn.activation(archtype.length-2,sigmoid);
+    // nn.lr = lr;
     //
     // nn.log();
+
+
+//NeuralNetwork Creation
+    nn = new Dann(4,4);
+
+    nn.addHiddenLayer(16,leakyReLU);
+    nn.makeWeights();
+    nn.activation(2,sigmoid);
+    nn.lr = 0.01;
+
+    nn.log();
 
 // Graphs
     g = new Graph(0,10,800,200);
