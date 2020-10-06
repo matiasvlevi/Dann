@@ -31,10 +31,11 @@ class Dann {
 
     }
     static mapArray(arr,x1,y1,x2,y2) {
+      let newArr = [];
       for (let i = 0; i < arr.length;i++) {
-        arr[i] = map(arr[i],x1,y1,x2,y2);
+        newArr[i] = map(arr[i],x1,y1,x2,y2);
       }
-      return arr;
+      return newArr;
     }
     feedForward(inputs) {
 
