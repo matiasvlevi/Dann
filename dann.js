@@ -30,6 +30,12 @@ class Dann {
         this.lr = 0.001;
 
     }
+    static mapArray(arr,x1,y1,x2,y2) {
+      for (let i = 0; i < arr.length;i++) {
+        arr[i] = map(arr[i],x1,y1,x2,y2);
+      }
+      return arr;
+    }
     feedForward(inputs) {
 
         this.Layers[0] = Matrix.fromArray(inputs);
