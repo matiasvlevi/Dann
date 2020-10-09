@@ -79,7 +79,7 @@ class Dann {
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);
 
-        this.loss = this.calcMeanLossError(this.outs,t);
+        this.loss = this.calcMeanLossError(this.outs,g);
         this.losses.push();
 
     }
