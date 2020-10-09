@@ -54,7 +54,7 @@ class Dann {
 
     }
     backpropagate_gradients(inputs, g) {
-
+        let appLr = this.lr;
         this.gradients[this.gradients.length-1] = Matrix.fromArray(g);
 
         for (let i = this.weights.length-1; i > 0;i--) {
