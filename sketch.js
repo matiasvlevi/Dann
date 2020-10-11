@@ -39,8 +39,13 @@ function setup() {
     nn = new Dann(4,4);
 
     nn.addHiddenLayer(16,leakyReLU);
+    nn.addHiddenLayer(32,tanH);
+    nn.addHiddenLayer(32,leakyReLU);
+    nn.addHiddenLayer(16,tanH);
     nn.makeWeights();
-    nn.activation(2,sigmoid);
+    nn.activation(3,sigmoid);
+
+
     nn.lr = 0.01;
 
     nn.log();
