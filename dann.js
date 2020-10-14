@@ -581,10 +581,13 @@ class Graph {
             fill(this.color[a])
             rect((this.pos.x+this.w)-((this.pos.x+this.w)/6),(a*20)+10+this.pos.y,20,10);
             //let textstr = Object.keys({this.lines[a]})[0];
-            line(i/int(this.s))+this.pos.x,this.pos.y-10,i/int(this.s))+this.pos.x,this.pos.y)
+
             //console.log(Object.keys(this.lines[a])[0]);
             text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19+this.pos.y);
             noFill();
+        }
+        for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
+            line((this.step*i)/int(this.s)+this.pos.x,this.pos.y-10,(this.step*i)/int(this.s)+this.pos.x,this.pos.y)
         }
         noStroke();
     }
