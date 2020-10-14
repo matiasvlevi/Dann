@@ -541,6 +541,7 @@ class Graph {
         this.color = [];
         this.dragged = false;
         this.grid = 4;
+        this.step = 0;
     }
     addValue(x,color,name) {
         this.color.push(color)
@@ -580,7 +581,7 @@ class Graph {
             fill(this.color[a])
             rect((this.pos.x+this.w)-((this.pos.x+this.w)/6),(a*20)+10+this.pos.y,20,10);
             //let textstr = Object.keys({this.lines[a]})[0];
-
+            line(i/int(this.s))+this.pos.x,this.pos.y-10,i/int(this.s))+this.pos.x,this.pos.y)
             //console.log(Object.keys(this.lines[a])[0]);
             text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19+this.pos.y);
             noFill();
