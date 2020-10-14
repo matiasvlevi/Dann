@@ -587,7 +587,7 @@ class Graph {
             noFill();
         }
         for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
-            line((this.step*i)/int(this.s)+this.pos.x,this.pos.y-10,(this.step*i)/int(this.s)+this.pos.x,this.pos.y)
+            line((this.step*i)/int(this.s)+this.pos.x,(this.pos.y+this.h)-100,(this.step*i)/int(this.s)+this.pos.x,(this.pos.y+this.h))
         }
         noStroke();
     }
