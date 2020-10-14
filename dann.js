@@ -30,6 +30,13 @@ class Dann {
         this.lr = 0.001;
 
     }
+    static mapArray(arr,x1,y1,x2,y2) {
+      let newArr = [];
+      for (let i = 0; i < arr.length;i++) {
+        newArr[i] = map(arr[i],x1,y1,x2,y2);
+      }
+      return newArr;
+    }
     feedForward(inputs) {
 
         this.Layers[0] = Matrix.fromArray(inputs);
@@ -44,6 +51,36 @@ class Dann {
 
        }
         return this.outs;
+
+    }
+    backpropagate_gradients(inputs, g) {
+        let appLr = this.lr;
+        this.gradients[this.gradients.length-1] = Matrix.fromArray(g);
+
+        for (let i = this.weights.length-1; i > 0;i--) {
+            let h_t = Matrix.transpose(this.Layers[i]);
+
+            let weights_deltas = Matrix.multiply(this.gradients[i],h_t);
+
+            this.weights[i].add(weights_deltas);
+            this.biases[i].add(this.gradients[i]);
+
+            let weights_t = Matrix.transpose(this.weights[i]);
+            this.errors[i-1] = Matrix.multiply(weights_t,this.errors[i]);
+
+            this.gradients[i-1] = Matrix.map(this.Layers[i], this.aFunc_d[i-1]);
+            this.gradients[i-1].mult(this.errors[i-1]);
+            this.gradients[i-1].mult(appLr);
+        }
+
+        let i_t = Matrix.transpose(this.Layers[0]);
+        let weights_deltas = Matrix.multiply(this.gradients[0], i_t);
+
+        this.weights[0].add(weights_deltas);
+        this.biases[0].add(this.gradients[0]);
+
+        this.loss = this.calcMeanLossError(this.outs,g);
+        this.losses.push();
 
     }
     backpropagate(inputs, t) {
