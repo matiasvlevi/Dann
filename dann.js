@@ -586,6 +586,7 @@ class Graph {
             text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19+this.pos.y);
             noFill();
         }
+        stroke(contourColor[0],contourColor[1],contourColor[2])
         for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
             line((this.step*i)/int(this.s)+this.pos.x,(this.pos.y+this.h)-100,(this.step*i)/int(this.s)+this.pos.x,(this.pos.y+this.h))
         }
