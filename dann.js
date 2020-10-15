@@ -578,8 +578,10 @@ class Graph {
                 let y = map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h);
                 vertex(x, y);
                 if (i == 600+ebuff) {
-                    line(x,this.pos.y+this.h,x,this.pos.y+this.h+5);
+                    stroke(contourColor[0],contourColor[1],contourColor[2])
+                    line(x,this.pos.y+this.h,x,this.pos.y+this.h-15);
                     ebuff+=600;
+                    noStroke();
                 }
             }
             endShape();
@@ -592,7 +594,7 @@ class Graph {
             text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19+this.pos.y);
             noFill();
         }
-        stroke(contourColor[0],contourColor[1],contourColor[2])
+
         // for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
         //     line((this.step*i)/int(this.s*2)+this.pos.x,(this.pos.y+this.h)-5,(this.step*i)/int(this.s*2)+this.pos.x,(this.pos.y+this.h))
         // }
