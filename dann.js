@@ -592,7 +592,7 @@ class Graph {
         }
         stroke(contourColor[0],contourColor[1],contourColor[2])
         for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
-            line((this.step*i)/int(pow(this.s,2))+this.pos.x,(this.pos.y+this.h)-5,(this.step*i)/int(pow(this.s,2))+this.pos.x,(this.pos.y+this.h))
+            line((pow(this.s,2)*i)+this.pos.x,(this.pos.y+this.h)-5,(pow(this.s,2)*i)+this.pos.x,(this.pos.y+this.h))
         }
         noStroke();
     }
