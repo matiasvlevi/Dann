@@ -542,6 +542,7 @@ class Graph {
         this.dragged = false;
         this.grid = 4;
         this.step = 0;
+
     }
     addValue(x,color,name) {
         this.color.push(color)
@@ -572,17 +573,12 @@ class Graph {
             if (this.lines[a].length/int(this.s) >= this.w*int(this.s)) {
                 this.s*=2;
             }
-            let ebuff = 0;
+
             for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
                 let x = (i/int(this.s))+this.pos.x;
                 let y = map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h);
                 vertex(x, y);
-                if (i == 600+ebuff) {
-                    stroke(contourColor[0],contourColor[1],contourColor[2])
-                    line(x,this.pos.y+this.h,x,this.pos.y+this.h-15);
-                    ebuff+=600;
-                    noStroke();
-                }
+
             }
             endShape();
             noStroke();
@@ -595,9 +591,9 @@ class Graph {
             noFill();
         }
 
-        // for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
-        //     line((this.step*i)/int(this.s*2)+this.pos.x,(this.pos.y+this.h)-5,(this.step*i)/int(this.s*2)+this.pos.x,(this.pos.y+this.h))
-        // }
+        for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
+            line((this.step*i)/int(pow(this.s,2))+this.pos.x,(this.pos.y+this.h)-5,(this.step*i)/int(pow(this.s,2))+this.pos.x,(this.pos.y+this.h))
+        }
         noStroke();
     }
 
