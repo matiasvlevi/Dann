@@ -572,9 +572,15 @@ class Graph {
             if (this.lines[a].length/int(this.s) >= this.w*int(this.s)) {
                 this.s*=2;
             }
-
+            let ebuff = 0;
             for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
-                vertex((i/int(this.s))+this.pos.x, (map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h)));
+                let x = (i/int(this.s))+this.pos.x;
+                let y = map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h);
+                vertex(x, y);
+                if (i == 600+ebuff) {
+                    line(x,this.pos.y+this.h,x,this.pos.y+this.h+5);
+                    ebuff+=600;
+                }
             }
             endShape();
             noStroke();
