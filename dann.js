@@ -587,9 +587,9 @@ class Graph {
             noFill();
         }
         stroke(contourColor[0],contourColor[1],contourColor[2])
-        // for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
-        //     line((this.step*i)/int(this.s)+this.pos.x,(this.pos.y+this.h)-5,(this.step*i)/int(this.s)+this.pos.x,(this.pos.y+this.h))
-        // }
+        for (let i = 0; i < (this.w/this.step)*(this.s); i++) {
+            line((this.step*i)/int(this.s*2)+this.pos.x,(this.pos.y+this.h)-5,(this.step*i)/int(this.s*2)+this.pos.x,(this.pos.y+this.h))
+        }
         noStroke();
     }
 
