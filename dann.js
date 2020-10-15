@@ -602,7 +602,7 @@ class Graph {
             let x = ((this.step/(pow(this.s,2)))*(i*div))+this.pos.x;
             let y = this.pos.y+this.h;
             line(x,y,x,y-15);
-            textMode(CENTER);
+            rectMode(CENTER);
             text(x,y+8,div);
         }
         noStroke();
