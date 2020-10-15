@@ -591,10 +591,9 @@ class Graph {
             noFill();
         }
         stroke(contourColor[0],contourColor[1],contourColor[2])
+        let div = 1;
         if (this.s >= 8) {
-            let div = 10;
-        } else {
-            let div = 1;
+            div = 10;
         }
         let length = int(this.w/(this.step/(pow(this.s,2)))/div);
         for (let i = 0; i < length; i++) {
