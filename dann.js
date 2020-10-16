@@ -238,11 +238,15 @@ class Dann {
              // console.log( content );
 
               xdata =  JSON.parse(content);
+
               let data = JSON.parse(xdata.weights);
               let arch = xdata.arch;
 
               let parsed = [];
+              for (let i = 0; i < data.length;i++) {
+                  parsed[i] = JSON.parse(data[i]);
 
+              }
               if (data.length+1 == this.Layers.length) {
 
                   for (let i = 0; i < this.Layers.length; i++) {
