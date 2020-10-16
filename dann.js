@@ -856,3 +856,17 @@ function dnn(i,h,h2,o,nn) {
     nn.lr = 0.01;
     return nn;
 }
+function downloadSTR(xdata) {
+
+
+    let data = "text/json;charset=utf-8," + encodeURIComponent(xdata);
+
+    let a = document.createElement('a');
+    a.href = 'data:' + data;
+    a.download = 'D:/matias/desktop/trainedNN/data.json';
+
+    a.innerHTML = 'download JSON';
+
+    var container = document.getElementById('container');
+    container.appendChild(a);
+}
