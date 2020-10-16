@@ -209,16 +209,16 @@ class Dann {
         console.log("    Latest loss: " + this.loss);
 
     }
-    save() {
+    save(name) {
         let data = [];
         for (let i = 0; i < this.weights.length;i++) {
             data[i] =  JSON.stringify(this.weights[i].matrix);
         }
         let str = JSON.stringify(data);
         console.log("'" + str + "'");
-        downloadSTR({weights: str, arch: this.arch},"NN_weights");
+        downloadSTR({weights: str, arch: this.arch},name);
     }
-    load(stringArray) {
+    load() {
         let xdata = {};
 
         let input = document.createElement('input');
@@ -245,8 +245,8 @@ class Dann {
               let parsed = [];
               for (let i = 0; i < data.length;i++) {
                   parsed[i] = JSON.parse(data[i]);
-
               }
+              console.log(parsed)
               if (data.length+1 == this.Layers.length) {
 
                   for (let i = 0; i < this.Layers.length; i++) {
