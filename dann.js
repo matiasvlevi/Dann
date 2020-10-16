@@ -238,7 +238,26 @@ class Dann {
              // console.log( content );
 
               xdata =  JSON.parse(content);
+              let data = JSON.parse(xdata.weights);
+              let arch = xdata.arch;
 
+              let parsed = [];
+
+              if (data.length+1 == this.Layers.length) {
+
+                  for (let i = 0; i < this.Layers.length; i++) {
+                      let layer = Matrix.toArray(this.Layers[i]);
+                      if (layer.length !== arch[i]) {
+                          console.error("Error: Not the same architecture...");
+                          return;
+                      }
+                  }
+                  for (let i = 0; i < data.length;i++) {
+                      this.weights[i].set(parsed[i]);
+                  }
+                  console.log("Successfully transfered weight matrices!")
+                  return 0;
+              }
               input.remove();
            }
 
@@ -247,26 +266,7 @@ class Dann {
         let container = document.getElementById('container');
         container.appendChild(input);
 
-        let data = JSON.parse(xdata.weights);
-        let arch = xdata.arch;
 
-        let parsed = [];
-
-        if (data.length+1 == this.Layers.length) {
-
-            for (let i = 0; i < this.Layers.length; i++) {
-                let layer = Matrix.toArray(this.Layers[i]);
-                if (layer.length !== arch[i]) {
-                    console.error("Error: Not the same architecture...");
-                    return;
-                }
-            }
-            for (let i = 0; i < data.length;i++) {
-                this.weights[i].set(parsed[i]);
-            }
-            console.log("Successfully transfered weight matrices!")
-            return 0;
-        }
 
     }
 }
