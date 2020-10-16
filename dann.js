@@ -28,6 +28,7 @@ class Dann {
         this.loss = 0;
         this.losses = [];
         this.lr = 0.001;
+        this.arch = [];
 
     }
     static mapArray(arr,x1,y1,x2,y2) {
@@ -157,6 +158,9 @@ class Dann {
 
 
         }
+        for (let i = 0; i<this.Layers.length;i++) {
+            this.arch[i] = this.Layers[i].rows;
+        }
     }
     addHiddenLayer(size, act) {
         let layer = new Matrix(size,1);
@@ -212,27 +216,18 @@ class Dann {
         }
         let str = JSON.stringify(data);
         console.log("'" + str + "'");
+        downloadSTR({weights: str, arch: this.arch},"NN_weights");
     }
     load(stringArray) {
         let data = JSON.parse(stringArray);
-        let arch = [];
+
         let parsed = [];
-        for (let i = 0; i < data.length;i++) {
-            parsed[i] = JSON.parse(data[i]);
 
-            if (i == 0) {
-                arch.push(parsed[i][0].length);
-                arch.push(parsed[i].length);
-            } else {
-                arch.push(parsed[i].length);
-            }
-
-        }
         if (data.length+1 == this.Layers.length) {
 
             for (let i = 0; i < this.Layers.length; i++) {
                 let layer = Matrix.toArray(this.Layers[i]);
-                if (layer.length !== arch[i]) {
+                if (layer.length !== this.arch[i]) {
                     console.error("Error: Not the same architecture...");
                     return;
                 }
@@ -862,7 +857,7 @@ function downloadSTR(obj, exportName) {
 
     let a = document.createElement('a');
     a.href = 'data:' + data;
-    a.download = 'data.json';
+    a.download = exportName + '.json';
     a.innerHTML = 'download JSON';
 
     let container = document.getElementById('container');
