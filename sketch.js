@@ -8,7 +8,7 @@ let info;
 let wnx = window.innerWidth;
 let wny = window.innerHeight;
 
-let play = true;
+let play = false;
 // Values
 let losses = [];
 let acc = [];
@@ -18,46 +18,37 @@ let time = 150;
 
 function setup() {
 
-    // let ans = prompt("Dann Architechture:");
-    // let ans2 = prompt("Learning Rate:");
-    //
-    // let lr = JSON.parse(ans2);
-    // let archtype = JSON.parse("["+ans+"]");
-    //
-    // nn = new Dann(archtype[0],archtype[archtype.length-1]);
-    // for (let i = 1; i < archtype.length-1; i++) {
-    //     nn.addHiddenLayer(archtype[i],leakyReLU);
-    // }
-    // nn.makeWeights();
-    // nn.activation(archtype.length-2,sigmoid);
-    // nn.lr = lr;
-    //
-    // nn.log();
 
 
 //NeuralNetwork Creation
     nn = new Dann(4,4);
 
-    nn.addHiddenLayer(16,leakyReLU);
+    nn.addHiddenLayer(8,leakyReLU);
+    nn.addHiddenLayer(12,leakyReLU);
+    nn.addHiddenLayer(12,leakyReLU);
+    nn.addHiddenLayer(12,leakyReLU);
+    nn.addHiddenLayer(8,leakyReLU);
 
     nn.makeWeights();
-    nn.activation(3,sigmoid);
+    //nn.activation(3,sigmoid);
 
 
-    nn.lr = 0.01;
+    nn.lr = 0.0001;
 
     nn.log();
 
 // Graphs
-    g = new Graph(0,10,800,200);
-    g.addValue(losses,color(0,100,255),"loss");
-    g.addValue(acc,color(255,100,0),"accuracies")
-    n = new NetPlot(25,220,550,380,nn);
-    h = new GradientGraph(600,375,100,100,nn);
-    h.initiateValues();
-    h.pixelSize = 5;
-    info = new InfoBox(586,220,220,400);
-
+    // g = new Graph(0,10,800,200);
+    // g.addValue(losses,color(0,100,255),"loss");
+    // g.addValue(acc,color(255,100,0),"accuracies")
+    n = new NetPlot(200,220,1500,400,nn);
+    n.size = 16;
+    n.frame = false;
+    // h = new GradientGraph(600,375,100,100,nn);
+    // h.initiateValues();
+    // h.pixelSize = 5;
+    // info = new InfoBox(586,220,220,400);
+    //
     createCanvas(wnx+(wnx/2),wny);
 
 }
@@ -111,10 +102,10 @@ function draw() {
         count++;
     }
 
-    g.render();
+    // g.render();
     n.render();
-    h.render();
-    info.render();
+    // h.render();
+    // info.render();
 
 
 }

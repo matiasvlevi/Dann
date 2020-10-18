@@ -120,7 +120,7 @@ class Dann {
         this.biases[0].add(this.gradients[0]);
 
         this.loss = this.calcMeanLossError(this.outs,t);
-        this.losses.push();
+        this.losses.push(this.loss);
 
     }
     activation(layer,act) {
@@ -421,7 +421,7 @@ class Matrix {
 
         if (n instanceof Matrix) {
             if (this.rows !== n.rows || this.cols !== n.cols) {
-
+                console.log("rows of A must match rows of B")
                 return;
             } else {
                 for (let i = 0; i < this.rows; i++) {
@@ -536,7 +536,7 @@ class NetPlot {
         let col = map(layer[j],0,1,0,255);
 
         fill(col);
-        ellipse(x,y,8,8);
+        ellipse(x,y,this.size,this.size);
 
       }
     }
@@ -544,7 +544,10 @@ class NetPlot {
   render() {
     noFill();
     stroke(contourColor[0],contourColor[1],contourColor[2]);
-    rect(this.pos.x,this.pos.y,this.w,this.h);
+    if (this.frame == true) {
+      rect(this.pos.x,this.pos.y,this.w,this.h);
+    }
+
 
     if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
         this.pos.x = mouseX-(this.w/2);
