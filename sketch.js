@@ -15,7 +15,8 @@ let acc = [];
 let epoch = 0;
 let archtype = [];
 let time = 150;
-
+let index = 0;
+let count = 0;
 function setup() {
 
 
@@ -53,8 +54,7 @@ function setup() {
 
 }
 
-let index = 0;
-let count = 0;
+
 function draw() {
     background(41);
     if (play == true) {
