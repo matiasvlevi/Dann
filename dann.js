@@ -571,7 +571,7 @@ class NetPlot {
   }
 }
 function colorGradientFunc(x) {
-  return 1 / (1+ exp(-5*x))
+  return 1 / (1+ exp(-2*x))
 }
 function colorGradientFunc2(x) {
   return 1 / (1+ exp(-10*(x-0.5)))
@@ -819,7 +819,7 @@ function leakyReLU(x) {
     if (x >= 0) {
         return 1*x;
     } else {
-        return 0.01*x;
+        return 0.1*x;
     }
 
 }
@@ -827,10 +827,17 @@ function leakyReLU_d(x) {
     if (x >= 0) {
         return 1;
     } else {
-        return 0.01;
+        return 0.1;
     }
 
 }
+function linear(x) {
+  return x;
+}
+function linear_d(x) {
+  return 1;
+}
+
 function reLU(x) {
     if (x >= 0) {
         return 1*x;

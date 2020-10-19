@@ -24,15 +24,14 @@ function setup() {
 //NeuralNetwork Creation
     nn = new Dann(4,4);
 
-    nn.addHiddenLayer(8,leakyReLU);
-    nn.addHiddenLayer(12,leakyReLU);
-    nn.addHiddenLayer(8,leakyReLU);
+
+    nn.addHiddenLayer(16,leakyReLU);
 
     nn.makeWeights();
     //nn.activation(3,sigmoid);
 
 
-    nn.lr = 0.001;
+    nn.lr = 0.01;
 
     nn.log();
 
@@ -42,7 +41,7 @@ function setup() {
     g.addValue(acc,color(255,100,0),"accuracies")
     g.step = data.length;
     n = new NetPlot(25,220,400,200,nn);
-    n.size = 12;
+    n.size = 6;
     n.frame = false;
     // h = new GradientGraph(600,375,100,100,nn);
     // h.initiateValues();
