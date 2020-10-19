@@ -26,24 +26,23 @@ function setup() {
 
     nn.addHiddenLayer(8,leakyReLU);
     nn.addHiddenLayer(12,leakyReLU);
-    nn.addHiddenLayer(12,leakyReLU);
-    nn.addHiddenLayer(12,leakyReLU);
     nn.addHiddenLayer(8,leakyReLU);
 
     nn.makeWeights();
     //nn.activation(3,sigmoid);
 
 
-    nn.lr = 0.0001;
+    nn.lr = 0.001;
 
     nn.log();
 
 // Graphs
-    // g = new Graph(0,10,800,200);
-    // g.addValue(losses,color(0,100,255),"loss");
-    // g.addValue(acc,color(255,100,0),"accuracies")
-    n = new NetPlot(200,220,1500,400,nn);
-    n.size = 16;
+    g = new Graph(0,10,800,200);
+    g.addValue(losses,color(0,100,255),"loss");
+    g.addValue(acc,color(255,100,0),"accuracies")
+    g.step = data.length;
+    n = new NetPlot(25,220,400,200,nn);
+    n.size = 12;
     n.frame = false;
     // h = new GradientGraph(600,375,100,100,nn);
     // h.initiateValues();
@@ -56,15 +55,14 @@ function setup() {
 
 
 function draw() {
-    background(41);
+    background(25);
     if (play == true) {
-        let sum_ =0;
         for (let i = 0; i<data.length;i++) {
             nn.backpropagate(data[i].inputs,data[i].target);
-            sum_+=nn.loss;
+            losses.push(nn.loss);
         }
         epoch++;
-        losses.push(sum_/data.length);
+
         let res = 0;
 
         for (let i = 0; i<testData.length;i++) {
@@ -81,7 +79,10 @@ function draw() {
 
         }
         let accuracy = 1 - (res/(testData.length));
-        acc.push(accuracy);
+        for (let i =0; i < data.length; i++) {
+            acc.push(accuracy);
+        }
+
 
         nn.feedForward(testData[index].inputs);
 
@@ -102,7 +103,7 @@ function draw() {
         count++;
     }
 
-    // g.render();
+    g.render();
     n.render();
     // h.render();
     // info.render();

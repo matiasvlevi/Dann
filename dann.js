@@ -477,6 +477,9 @@ class NetPlot {
     this.spacingY = h/(this.nn.i-1);
     this.layerSpacing = w/(this.nn.Layers.length-1);
     this.bufferY = this.spacingY/2;
+    this.size = 8;
+    this.frame = false;
+    this.wColors = [[255, 60, 0],[0,195,255]];
 
   }
 
@@ -507,7 +510,7 @@ class NetPlot {
             let weights = (this.nn.weights[i]).matrix;
             x2 = this.pos.x+((i)*this.layerSpacing);
             y2 = this.pos.y+this.bufferY+((k)*this.spacingY);
-            stroke(weightToColor(weights[j][k]));
+            stroke(this.mapColor(colorGradientFunc(weights[j][k])));
             strokeWeight(map(sqrt(int(weights[j][k]*1000)/1000),0,2,1,2));
             line(x,y,x2,y2);
 
@@ -533,13 +536,22 @@ class NetPlot {
         let x = this.pos.x+((i)*this.layerSpacing);
         let y = this.pos.y+this.bufferY+((j)*this.spacingY);
 
-        let col = map(layer[j],0,1,0,255);
-
+        //let col = map(layer[j],0,1,0,255);
+        let col = this.mapColor(colorGradientFunc2(layer[j]))
         fill(col);
         ellipse(x,y,this.size,this.size);
 
       }
     }
+  }
+
+  mapColor(x) {
+    let color1 = this.wColors[0]
+    let color2 = this.wColors[1]
+    let r = map(x,0,1,color2[0],color1[0])
+    let g = map(x,0,1,color2[1],color1[1])
+    let b = map(x,0,1,color2[2],color1[2])
+    return color(r,g,b)
   }
   render() {
     noFill();
@@ -557,6 +569,12 @@ class NetPlot {
     this.renderLayers();
 
   }
+}
+function colorGradientFunc(x) {
+  return 1 / (1+ exp(-5*x))
+}
+function colorGradientFunc2(x) {
+  return 1 / (1+ exp(-10*(x-0.5)))
 }
 // Graph (graph any values over time):
 class Graph {
@@ -632,7 +650,7 @@ class Graph {
             }
             let x = ((this.step/(pow(this.s,2)))*(i*div))+this.pos.x;
             let y = this.pos.y+this.h;
-            line(x,y,x,y-15);
+            line(x,y,x,y-5);
             //text(x,y+8,div);
 
         }
@@ -761,12 +779,7 @@ class InfoBox {
 let fontColor = [255,255,255];
 let contourColor = [0,0,0];
 
-function weightToColor(w) {
-    let r = map(w,-1,1,0,255);
-    let b = map(w,-1,1,255,0);
-    let g = 255-r-b
-    return color(r,g,b)
-}
+
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
