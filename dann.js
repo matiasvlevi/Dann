@@ -211,7 +211,7 @@ class Dann {
         downloadSTR({weights: str, arch: this.arch},name);
     }
     load() {
-      _loadJSON(this,function(this,text) {
+      _loadJSON(this,function(neuralnet,text) {
 
         let xdata =  JSON.parse(text);
         console.log(xdata)
@@ -223,17 +223,17 @@ class Dann {
             parsed[i] = JSON.parse(data[i]);
         }
 
-        if (data.length+1 == this.Layers.length) {
+        if (data.length+1 == neuralnet.Layers.length) {
 
-            for (let i = 0; i < this.Layers.length; i++) {
-                let layer = Matrix.toArray(this.Layers[i]);
+            for (let i = 0; i < neuralnet.Layers.length; i++) {
+                let layer = Matrix.toArray(neuralnet.Layers[i]);
                 if (layer.length !== arch[i]) {
                     console.error("Error: Not the same architecture...");
                     return;
                 }
             }
             for (let i = 0; i < data.length;i++) {
-                this.weights[i].set(parsed[i]);
+                neuralnet.weights[i].set(parsed[i]);
             }
             console.log("Successfully transfered weight matrices!")
             return 0;
