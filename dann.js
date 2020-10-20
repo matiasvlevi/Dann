@@ -269,7 +269,8 @@ class Dann {
 function mae(predictions,target) {
     let sum = 0;
     let ans = 0;
-    for (let i = 0; i < this.o; i++) {
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
         let y = target[i]
         let yHat = predictions[i];
         sum += abs(y - yHat);
@@ -280,9 +281,10 @@ function mae(predictions,target) {
 function crossEntryopy(predictions,target) {
     let sum = 0;
     let ans = 0;
-    for (let i = 0; i < this.o; i++) {
+    for (let i = 0; i < l; i++) {
       let y = target[i]
       let yHat = predictions[i];
+      let l = target.length;
       sum+= -(y*log(yHat)+(1-y)*log(1-yHat));
 
     }
@@ -292,19 +294,21 @@ function crossEntryopy(predictions,target) {
 function cce(predictions,target) {
     let sum = 0;
     let ans = 0;
-    for (let i = 0; i < this.o; i++) {
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
       let y = target[i]
       let yHat = predictions[i];
-      sum += y*log(softmax(predictions));
+      sum += y*log(softmax(predictions,i));
 
     }
-    ans = sum/this.o;
+    ans = -sum;
     return ans;
 }
 function lcl(predictions,target) {
     let sum = 0;
     let ans = 0;
-    for (let i = 0; i < this.o; i++) {
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
       let y = target[i]
       let yHat = predictions[i];
 
@@ -316,7 +320,8 @@ function lcl(predictions,target) {
 function mbe(predictions,target) {
     let sum = 0;
     let ans = 0;
-    for (let i = 0; i < this.o; i++) {
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
       let y = target[i]
       let yHat = predictions[i];
 
@@ -328,7 +333,8 @@ function mbe(predictions,target) {
 function mse(predictions,target) {
     let sum = 0;
     let ans = 0;
-    for (let i = 0; i < this.o; i++) {
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
       let y = target[i]
       let yHat = predictions[i];
 
@@ -336,6 +342,16 @@ function mse(predictions,target) {
     }
     ans = sum/this.o;
     return ans;
+}
+//softmax function:
+
+function softmax(xarr,i) {
+  let l = xarr.length;
+  let sum = 0;
+  for (let j = 0; j < l;j++) {
+    sum+=exp(xarr[j])
+  }
+  return exp(xarr[i])/sum;
 }
 // Matrix Math:
 class Matrix {
@@ -900,14 +916,7 @@ function linear(x) {
 function linear_d(x) {
   return 1;
 }
-function softmax(xarr) {
-  let sum = 0;
-  let l = xarr.length;
-  for (let i = 0; i < l;i++) {
-    sum+=exp(xarr[i]);
-  }
-  return exp(l)/sum;
-}
+
 function reLU(x) {
     if (x >= 0) {
         return 1*x;
