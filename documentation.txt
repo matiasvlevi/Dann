@@ -35,7 +35,7 @@ NetPlot(x,y,width,height,Dann)
     displays the Netplot.
 
 
-Graph(x,y,width,height)
+Graph(x,y,width,height);
 
   Graph.addValue(array)
     adds an array to the graph.
