@@ -51,7 +51,7 @@ class Dann {
             this.Layers[i+1] = Matrix.multiply(this.weights[i],this.Layers[i]);
             this.Layers[i+1].add(this.biases[i]);
             this.Layers[i+1].map(this.aFunc[i]);
-            
+
         }
         for (let i = 0; i < this.o; i++) {
             this.outs[i] = round((Matrix.toArray(this.Layers[this.Layers.length-1])[i])*1000)/1000;
@@ -160,6 +160,8 @@ class Dann {
             if (this.aFunc[i] == undefined) {
                 this.aFunc[i] = window["sigmoid"];
                 this.aFunc_d[i] = window["sigmoid_d"];
+                this.aFunc_s[i] = "sigmoid";
+                this.aFunc_d_s[i] = "sigmoid_d";
             }
 
 
