@@ -270,8 +270,9 @@ function mae(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
-
-        sum += abs(predictions[i] - target[i]);
+        let y = target[i]
+        let yHat = predictions[i];
+        sum += abs(y - yHat);
     }
     ans = sum/this.o;
     return ans;
@@ -280,23 +281,9 @@ function crossEntryopy(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
-      let y = targets[i]
+      let y = target[i]
       let yHat = predictions[i];
       sum+= -(y*log(yHat)+(1-y)*log(1-yHat));
-
-    }
-    ans = sum/this.o;
-    return ans;
-}
-function cce(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    for (let i = 0; i < this.o; i++) {
-        if (predictions[i] == 1) {
-          sum += -log(predictions[i]);
-        } else {
-          sum += -log(1 - predictions[i]);
-        }
 
     }
     ans = sum/this.o;
@@ -307,8 +294,10 @@ function logCoshLoss(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
 
-        sum += log(cosh(predictions[i] - target[i]));
+        sum += log(cosh(yHat - y));
     }
     ans = sum/this.o;
     return ans;
@@ -317,8 +306,10 @@ function mbe(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
 
-        sum += (predictions[i] - target[i]);
+        sum += (y - yHat);
     }
     ans = sum/this.o;
     return ans;
@@ -327,8 +318,10 @@ function mse(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
 
-        sum += pow(predictions[i] - target[i],2);
+        sum += pow(y - yHat,2);
     }
     ans = sum/this.o;
     return ans;
