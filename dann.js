@@ -30,7 +30,7 @@ class Dann {
         this.lr = 0.001;
         this.arch = [];
 
-        this.lossfunc = meanSqLoss;
+        this.lossfunc = mse;
 
     }
     static mapArray(arr,x1,y1,x2,y2) {
