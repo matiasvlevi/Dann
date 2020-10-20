@@ -342,7 +342,7 @@ function cce(predictions, target) {
     let t = target[i]
     sum+= t*log(softmax(predictions,i))
   }
-  return 1-abs(-sum - 1.7239896081165023);
+  return -sum;
 }
 function softmax(xarr,i) {
   let l = xarr.length;
