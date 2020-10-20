@@ -216,7 +216,7 @@ class Dann {
 
         let xdata =  JSON.parse(text);
 
-        let data = JSON.parse(xdata.nn);
+        let data = xdata.nn;
         console.log(xdata)
         // let arch = xdata.arch;
 
