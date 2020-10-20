@@ -210,8 +210,8 @@ class Dann {
         console.log("'" + str + "'");
         downloadSTR({weights: str, arch: this.arch},name);
     }
-    load(location) {
-      loadJSON(function(text) {
+    load() {
+      _loadJSON(function(text) {
 
         let xdata =  JSON.parse(text);
 
@@ -245,7 +245,7 @@ class Dann {
 
     }
 }
-function loadJSON(callback) {
+function _loadJSON(callback) {
 
    var xobj = new XMLHttpRequest();
        xobj.overrideMimeType("application/json");
