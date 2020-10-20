@@ -176,6 +176,17 @@ class Dann {
             this.aFunc_d[index] = window[der];
         }
     }
+    readTextFile(file, callback) {
+        let rawFile = new XMLHttpRequest();
+        rawFile.overrideMimeType("application/json");
+        rawFile.open("GET", file, true);
+        rawFile.onreadystatechange = function() {
+            if (rawFile.readyState === 4 && rawFile.status == "200") {
+                callback(rawFile.responseText,this);
+            }
+        }
+        rawFile.send(null);
+    }
     log() {
         console.log("Dann NeuralNetwork:")
         console.log(" ");
@@ -210,7 +221,7 @@ class Dann {
         downloadSTR({weights: str, arch: this.arch},name);
     }
     load(location) {
-      readTextFile(location, function(text){
+      this.readTextFile(location, function(text,this){
 
         let xdata =  JSON.parse(text);
 
@@ -973,17 +984,7 @@ function dnn(i,h,h2,o,nn) {
     nn.lr = 0.01;
     return nn;
 }
-function readTextFile(file, callback) {
-    let rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
-        }
-    }
-    rawFile.send(null);
-}
+
 function downloadSTR(obj, exportName) {
   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
   var downloadAnchorNode = document.createElement('a');
