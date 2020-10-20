@@ -30,6 +30,8 @@ class Dann {
         this.lr = 0.001;
         this.arch = [];
 
+        this.optimizerFunc = this.calcMeanLoss;
+
     }
     static mapArray(arr,x1,y1,x2,y2) {
       let newArr = [];
@@ -80,7 +82,7 @@ class Dann {
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);
 
-        this.loss = this.calcMeanLossError(this.outs,g);
+        this.loss = this.optimizerFunc(this.outs,g);
         this.losses.push();
 
     }
@@ -119,7 +121,7 @@ class Dann {
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);
 
-        this.loss = this.calcMeanLossError(this.outs,t);
+        this.loss = this.optimizerFunc(this.outs,t);
         this.losses.push(this.loss);
 
     }
@@ -174,7 +176,7 @@ class Dann {
             this.aFunc_d[index] = window[der];
         }
     }
-    calcMeanLossError(arr,target) {
+    calcMeanLoss(arr,target) {
         let sum = 0;
         let ans = 0;
         for (let i = 0; i < this.o; i++) {
