@@ -235,8 +235,14 @@ class Dann {
         neuralnet.o = newNN.o;
         neuralnet.outputs = newNN.outputs;
 
-        neuralnet.aFunc = window[newNN.aFunc_s];
-        neuralnet.aFunc_d = window[newNN.aFunc_d_s];
+        neuralnet.aFunc = [];
+        neuralnet.aFunc_d = [];
+
+        for (let i = 0; i < newNN.aFunc.length;i++) {
+          neuralnet.aFunc.push(window[newNN.aFunc_s[i]]);
+          neuralnet.aFunc_d.push(window[newNN.aFunc_d_s[i]]);
+        }
+
 
         neuralnet.aFunc_s = newNN.aFunc_s;
         neuralnet.aFunc_d_s = newNN.aFunc_d_s;
