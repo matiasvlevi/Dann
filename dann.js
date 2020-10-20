@@ -34,6 +34,7 @@ class Dann {
         this.arch = [];
 
         this.lossfunc = mse;
+        this.lossfunc_s = this.lossfunc.name;
 
     }
     static mapArray(arr,x1,y1,x2,y2) {
@@ -228,31 +229,32 @@ class Dann {
         let newNN = xdata.savedNN;
         console.log(newNN)
 
-        this.i = newNN.i;
-        this.inputs = newNN.inputs;
+        neuralnet.i = newNN.i;
+        neuralnet.inputs = newNN.inputs;
 
-        this.o = newNN.o;
-        this.outputs = newNN.outputs;
+        neuralnet.o = newNN.o;
+        neuralnet.outputs = newNN.outputs;
 
-        this.aFunc = window[newNN.aFunc_s];
-        this.aFunc_d = window[newNN.aFunc_d_s];
+        neuralnet.aFunc = window[newNN.aFunc_s];
+        neuralnet.aFunc_d = window[newNN.aFunc_d_s];
 
-        this.aFunc_s = newNN.aFunc_s;
-        this.aFunc_d_s = newNN.aFunc_d_s;
+        neuralnet.aFunc_s = newNN.aFunc_s;
+        neuralnet.aFunc_d_s = newNN.aFunc_d_s;
 
-        this.Layers = newNN.Layers;
-        this.weights = newNN.weights;
-        this.biases = newNN.biases;
-        this.errors = newNN.errors;
-        this.gradients = newNN.gradients;
+        neuralnet.Layers = newNN.Layers;
+        neuralnet.weights = newNN.weights;
+        neuralnet.biases = newNN.biases;
+        neuralnet.errors = newNN.errors;
+        neuralnet.gradients = newNN.gradients;
 
-        this.outs = newNN.outs;
-        this.loss = newNN.loss;
-        this.losses = newNN.losses;
-        this.lr = newNN.lr;
-        this.arch = newNN.arch;
+        neuralnet.outs = newNN.outs;
+        neuralnet.loss = newNN.loss;
+        neuralnet.losses = newNN.losses;
+        neuralnet.lr = newNN.lr;
+        neuralnet.arch = newNN.arch;
 
-        this.lossfunc = JSON.parse(newNN.lossfunc_s);
+        neuralnet.lossfunc = window[newNN.lossfunc_s];
+        neuralnet.lossfunc_s = newNN.lossfunc_s;
 
         // let arch = xdata.arch;
 
