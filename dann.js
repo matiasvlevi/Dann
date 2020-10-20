@@ -289,7 +289,18 @@ function crossEntryopy(predictions,target) {
     ans = sum/this.o;
     return ans;
 }
+function cce(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+      sum += y*log(softmax(predictions));
 
+    }
+    ans = sum/this.o;
+    return ans;
+}
 function lcl(predictions,target) {
     let sum = 0;
     let ans = 0;
@@ -889,7 +900,14 @@ function linear(x) {
 function linear_d(x) {
   return 1;
 }
-
+function softmax(xarr) {
+  let sum = 0;
+  let l = xarr.length;
+  for (let i = 0; i < l;i++) {
+    sum+=exp(xarr[i]);
+  }
+  return exp(l)/sum;
+}
 function reLU(x) {
     if (x >= 0) {
         return 1*x;
