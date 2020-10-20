@@ -218,6 +218,7 @@ class Dann {
 
         let data = xdata.savedNN;
         console.log(xdata)
+        return data
         // let arch = xdata.arch;
 
         // let parsed = [];
