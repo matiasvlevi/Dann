@@ -51,6 +51,7 @@ class Dann {
             this.Layers[i+1] = Matrix.multiply(this.weights[i],this.Layers[i]);
             this.Layers[i+1].add(this.biases[i]);
             this.Layers[i+1].map(this.aFunc[i]);
+            
         }
         for (let i = 0; i < this.o; i++) {
             this.outs[i] = round((Matrix.toArray(this.Layers[this.Layers.length-1])[i])*1000)/1000;
