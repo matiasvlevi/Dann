@@ -208,7 +208,7 @@ class Dann {
         }
         let str = JSON.stringify(data);
         console.log("'" + str + "'");
-        downloadSTR({nn: this},name);
+        downloadSTR({savedNN: this},name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     load(name) {
@@ -216,7 +216,7 @@ class Dann {
 
         let xdata =  JSON.parse(text);
 
-        let data = xdata.nn;
+        let data = xdata.savedNN;
         console.log(xdata)
         // let arch = xdata.arch;
 
