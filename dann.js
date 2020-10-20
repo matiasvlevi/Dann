@@ -18,6 +18,9 @@ class Dann {
         this.aFunc = [];
         this.aFunc_d = [];
 
+        this.aFunc_s = [];
+        this.aFunc_d_s = [];
+
         this.Layers = [this.inputs,this.outputs];
         this.weights = [];
         this.biases = [];
@@ -174,6 +177,8 @@ class Dann {
             let der = (act.name + "_d");
             this.aFunc[index] = window[nor];
             this.aFunc_d[index] = window[der];
+            this.aFunc_s[index] = nor;
+            this.aFunc_d_s[index] = der;
         }
     }
 
@@ -212,13 +217,40 @@ class Dann {
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     load(name) {
+
       _loadJSON(name,this,function(neuralnet,text) {
 
         let xdata =  JSON.parse(text);
 
-        let data = xdata.savedNN;
-        console.log(xdata)
-        return data
+        let newNN = xdata.savedNN;
+        console.log(newNN)
+
+        this.i = newNN.i;
+        this.inputs = newNN.inputs;
+
+        this.o = newNN.o;
+        this.outputs = newNN.outputs;
+
+        this.aFunc = window[newNN.aFunc_s];
+        this.aFunc_d = window[newNN.aFunc_d_s];
+
+        this.aFunc_s = newNN.aFunc_s;
+        this.aFunc_d_s = newNN.aFunc_d_s;
+
+        this.Layers = newNN.Layers;
+        this.weights = newNN.weights;
+        this.biases = newNN.biases;
+        this.errors = newNN.errors;
+        this.gradients = newNN.gradients;
+
+        this.outs = newNN.outs;
+        this.loss = newNN.loss;
+        this.losses = newNN.losses;
+        this.lr = newNN.lr;
+        this.arch = newNN.arch;
+
+        this.lossfunc = JSON.parse(newNN.lossfunc_s);
+
         // let arch = xdata.arch;
 
         // let parsed = [];
