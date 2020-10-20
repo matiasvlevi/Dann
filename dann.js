@@ -266,7 +266,31 @@ class Dann {
     }
 }
 // loss functions:
-function logLoss(arr,target) {
+function meanAbsLoss(arr,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+
+        sum += abs(arr[i] - target[i]);
+    }
+    ans = sum/this.o;
+    return ans;
+}
+function crossEntryopy(arr,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+        if (arr[i] == 1) {
+          sum += -log(arr[i]);
+        } else {
+          sum += -log(1 - arr[i]);
+        }
+
+    }
+    ans = sum/this.o;
+    return ans;
+}
+function logCoshLoss(arr,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
