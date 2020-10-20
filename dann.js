@@ -176,13 +176,13 @@ class Dann {
             this.aFunc_d[index] = window[der];
         }
     }
-    readTextFile(file, callback) {
+    readTextFile(file,neunet, callback) {
         let rawFile = new XMLHttpRequest();
         rawFile.overrideMimeType("application/json");
         rawFile.open("GET", file, true);
         rawFile.onreadystatechange = function() {
             if (rawFile.readyState === 4 && rawFile.status == "200") {
-                callback(rawFile.responseText,this);
+                callback(rawFile.responseText,neunet);
             }
         }
         rawFile.send(null);
