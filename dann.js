@@ -291,19 +291,7 @@ function crossEntryopy(predictions,target) {
     ans = sum/this.o;
     return ans;
 }
-function cce(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-      sum += y*log(softmax(predictions,i));
 
-    }
-    ans = -sum;
-    return ans;
-}
 function lcl(predictions,target) {
     let sum = 0;
     let ans = 0;
@@ -345,13 +333,33 @@ function mse(predictions,target) {
 }
 //softmax function:
 
+function cce(predictions, target) {
+
+  let c = target.length;
+
+  let sum = 0;
+  for (let i = 0; i < c; i++) {
+    let t = target[i]
+    sum+= t*log(softmax(predictions,i))
+  }
+  return -sum;
+}
 function softmax(xarr,i) {
   let l = xarr.length;
   let sum = 0;
   for (let j = 0; j < l;j++) {
     sum+=exp(xarr[j])
   }
-  return exp(xarr[i])/sum;
+  if (arguments.length<2){
+    let arr = [];
+    for (let j = 0; j < l;j++) {
+      arr[j] = exp(xarr[j])/sum;
+    }
+    return arr
+  } else {
+    return exp(xarr[i])/sum;
+  }
+
 }
 // Matrix Math:
 class Matrix {
