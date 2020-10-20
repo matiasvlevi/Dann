@@ -210,56 +210,35 @@ class Dann {
         downloadSTR({weights: str, arch: this.arch},name);
     }
     load() {
-        let xdata = {};
+      readTextFile("/Users/Documents/workspace/test.json", function(text){
+    
+        let xdata =  JSON.parse(text);
 
-        let input = document.createElement('input');
-        input.type = 'file';
-        input.onchange = e => {
+        let data = JSON.parse(xdata.weights);
+        let arch = xdata.arch;
 
-           // getting a hold of the file reference
-           let file = e.target.files[0];
-
-           // setting up the reader
-           let reader = new FileReader();
-           reader.readAsText(file,'UTF-8');
-
-           // here we tell the reader what to do when it's done reading...
-           reader.onload = readerEvent => {
-              let content = readerEvent.target.result; // this is the content!
-             // console.log( content );
-
-              xdata =  JSON.parse(content);
-
-              let data = JSON.parse(xdata.weights);
-              let arch = xdata.arch;
-
-              let parsed = [];
-              for (let i = 0; i < data.length;i++) {
-                  parsed[i] = JSON.parse(data[i]);
-              }
-              console.log(parsed)
-              if (data.length+1 == this.Layers.length) {
-
-                  for (let i = 0; i < this.Layers.length; i++) {
-                      let layer = Matrix.toArray(this.Layers[i]);
-                      if (layer.length !== arch[i]) {
-                          console.error("Error: Not the same architecture...");
-                          return;
-                      }
-                  }
-                  for (let i = 0; i < data.length;i++) {
-                      this.weights[i].set(parsed[i]);
-                  }
-                  console.log("Successfully transfered weight matrices!")
-                  return 0;
-              }
-              input.remove();
-           }
-
+        let parsed = [];
+        for (let i = 0; i < data.length;i++) {
+            parsed[i] = JSON.parse(data[i]);
         }
+        console.log(parsed)
+        if (data.length+1 == this.Layers.length) {
 
-        let container = document.getElementById('container');
-        container.appendChild(input);
+            for (let i = 0; i < this.Layers.length; i++) {
+                let layer = Matrix.toArray(this.Layers[i]);
+                if (layer.length !== arch[i]) {
+                    console.error("Error: Not the same architecture...");
+                    return;
+                }
+            }
+            for (let i = 0; i < data.length;i++) {
+                this.weights[i].set(parsed[i]);
+            }
+            console.log("Successfully transfered weight matrices!")
+            return 0;
+        }
+      });
+
 
 
 
@@ -993,6 +972,17 @@ function dnn(i,h,h2,o,nn) {
     nn.makeWeights();
     nn.lr = 0.01;
     return nn;
+}
+function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
 }
 function downloadSTR(obj, exportName) {
   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
