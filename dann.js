@@ -290,7 +290,7 @@ function crossEntryopy(predictions,target) {
     return ans;
 }
 
-function logCoshLoss(predictions,target) {
+function lcl(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
@@ -907,7 +907,7 @@ function reLU_d(x) {
 
 }
 function cosh(x) {
-    return (exp(x)+exp(-x)/2);
+    return ((exp(x)+exp(-x))/2);
 }
 function sech(x) {
     return 1/cosh(x);
