@@ -266,46 +266,69 @@ class Dann {
     }
 }
 // loss functions:
-function meanAbsLoss(arr,target) {
+function mae(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
 
-        sum += abs(arr[i] - target[i]);
+        sum += abs(predictions[i] - target[i]);
     }
     ans = sum/this.o;
     return ans;
 }
-function crossEntryopy(arr,target) {
+function crossEntryopy(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
-        if (arr[i] == 1) {
-          sum += -log(arr[i]);
+      let y = targets[i]
+      let yHat = predictions[i];
+      sum+= -(y*log(yHat)+(1-y)*log(1-yHat));
+
+    }
+    ans = sum/this.o;
+    return ans;
+}
+function cce(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+        if (predictions[i] == 1) {
+          sum += -log(predictions[i]);
         } else {
-          sum += -log(1 - arr[i]);
+          sum += -log(1 - predictions[i]);
         }
 
     }
     ans = sum/this.o;
     return ans;
 }
-function logCoshLoss(arr,target) {
+
+function logCoshLoss(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
 
-        sum += log(cosh(arr[i] - target[i]));
+        sum += log(cosh(predictions[i] - target[i]));
     }
     ans = sum/this.o;
     return ans;
 }
-function meanSqLoss(arr,target) {
+function mbe(predictions,target) {
     let sum = 0;
     let ans = 0;
     for (let i = 0; i < this.o; i++) {
 
-        sum += pow(arr[i] - target[i],2);
+        sum += (predictions[i] - target[i]);
+    }
+    ans = sum/this.o;
+    return ans;
+}
+function mse(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+
+        sum += pow(predictions[i] - target[i],2);
     }
     ans = sum/this.o;
     return ans;
