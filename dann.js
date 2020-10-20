@@ -995,11 +995,13 @@ function dnn(i,h,h2,o,nn) {
     return nn;
 }
 function downloadSTR(obj, exportName) {
-  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  var dlAnchorElem = document.getElementById('downloadAnchorElem');
-  dlAnchorElem.setAttribute("href",     dataStr     );
-  dlAnchorElem.setAttribute("download", "scene.json");
-  dlAnchorElem.click();
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
     // let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
     //
     // let a = document.createElement('a');
