@@ -211,10 +211,10 @@ class Dann {
         downloadSTR({weights: str, arch: this.arch},name);
     }
     load() {
-      _loadJSON(function(text) {
+      _loadJSON(this,function(this,text) {
 
         let xdata =  JSON.parse(text);
-
+        console.log(xdata)
         let data = JSON.parse(xdata.weights);
         let arch = xdata.arch;
 
@@ -222,7 +222,7 @@ class Dann {
         for (let i = 0; i < data.length;i++) {
             parsed[i] = JSON.parse(data[i]);
         }
-        console.log(parsed)
+
         if (data.length+1 == this.Layers.length) {
 
             for (let i = 0; i < this.Layers.length; i++) {
@@ -245,7 +245,7 @@ class Dann {
 
     }
 }
-function _loadJSON(callback) {
+function _loadJSON(neu,callback) {
 
    var xobj = new XMLHttpRequest();
        xobj.overrideMimeType("application/json");
@@ -253,7 +253,7 @@ function _loadJSON(callback) {
    xobj.onreadystatechange = function () {
          if (xobj.readyState == 4 && xobj.status == "200") {
            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-           callback(xobj.responseText);
+           callback(neu,xobj.responseText);
          }
    };
    xobj.send(null);
