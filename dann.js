@@ -995,7 +995,7 @@ function dnn(i,h,h2,o,nn) {
     return nn;
 }
 function downloadSTR(obj, exportName) {
-  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
   var downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute("href",     dataStr);
   downloadAnchorNode.setAttribute("download", exportName + ".json");
