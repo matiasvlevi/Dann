@@ -995,17 +995,21 @@ function dnn(i,h,h2,o,nn) {
     return nn;
 }
 function downloadSTR(obj, exportName) {
-
-    let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-
-    let a = document.createElement('a');
-    a.href = 'data:' + data;
-    a.download = exportName + '.json';
-    a.innerHTML = 'download JSON';
-
-    let container = document.getElementById('container');
-    container.appendChild(a);
-
-    a.click();
-    a.remove();
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  var dlAnchorElem = document.getElementById('downloadAnchorElem');
+  dlAnchorElem.setAttribute("href",     dataStr     );
+  dlAnchorElem.setAttribute("download", "scene.json");
+  dlAnchorElem.click();
+    // let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+    //
+    // let a = document.createElement('a');
+    // a.href = 'data:' + data;
+    // a.download = exportName + '.json';
+    // a.innerHTML = 'download JSON';
+    //
+    // let container = document.getElementById('container');
+    // container.appendChild(a);
+    //
+    // a.click();
+    // a.remove();
 }
