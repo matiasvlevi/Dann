@@ -30,7 +30,7 @@ class Dann {
         this.lr = 0.001;
         this.arch = [];
 
-        this.optimizerFunc = meanSqLoss;
+        this.lossfunc = meanSqLoss;
 
     }
     static mapArray(arr,x1,y1,x2,y2) {
@@ -82,7 +82,7 @@ class Dann {
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);
 
-        this.loss = this.optimizerFunc(this.outs,g);
+        this.loss = this.lossfunc(this.outs,g);
         this.losses.push();
 
     }
@@ -121,7 +121,7 @@ class Dann {
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);
 
-        this.loss = this.optimizerFunc(this.outs,t);
+        this.loss = this.lossfunc(this.outs,t);
         this.losses.push(this.loss);
 
     }
