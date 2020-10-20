@@ -5,14 +5,17 @@ Dann.js documentation.
 Dann(inputs,outputs)
 
   Dann.addHiddenLayer(neuronCount, activation_function)
-    creates the layers.
+    adds one layer.
 
   Dann.makeWeights()
     creates the weights.
     Should be called after the creation layers.
+    
+  Dann.activation(layer_index,activation_function)
+    set the activation of a specific layer.
 
-  Dann.setActivations(function)
-    should be paired with a function_d derivative.
+  Dann.setActivations(activation_function)
+    set all the activation in the NeuralNetwork
 
   Dann.feedForward(inputs[])
     feed forward the neural network.
