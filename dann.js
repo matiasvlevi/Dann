@@ -974,7 +974,7 @@ function dnn(i,h,h2,o,nn) {
     return nn;
 }
 function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
+    let rawFile = new XMLHttpRequest();
     rawFile.overrideMimeType("application/json");
     rawFile.open("GET", file, true);
     rawFile.onreadystatechange = function() {
