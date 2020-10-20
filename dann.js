@@ -208,7 +208,8 @@ class Dann {
         }
         let str = JSON.stringify(data);
         console.log("'" + str + "'");
-        downloadSTR({weights: str, arch: this.arch},name);
+        downloadSTR({nn: this},name);
+        //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     load() {
       _loadJSON(this,function(neuralnet,text) {
