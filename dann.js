@@ -197,7 +197,7 @@ class Dann {
         console.log(" ");
         console.log("  Other Values: ");
         console.log("    Learning rate: " + this.lr);
-        console.log("    Latest loss: " + this.loss);
+        console.log("    Loss Function: " + this.lossfunc.name);
 
     }
     save(name) {
