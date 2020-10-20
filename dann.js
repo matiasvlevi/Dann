@@ -240,7 +240,7 @@ class Dann {
       //       console.log("Successfully transfered weight matrices!")
       //       return 0;
       //   }
-      // });
+      });
 
 
 
