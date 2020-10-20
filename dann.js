@@ -209,9 +209,9 @@ class Dann {
         console.log("'" + str + "'");
         downloadSTR({weights: str, arch: this.arch},name);
     }
-    load() {
-      readTextFile("/Users/Documents/workspace/test.json", function(text){
-    
+    load(location) {
+      readTextFile(location, function(text){
+
         let xdata =  JSON.parse(text);
 
         let data = JSON.parse(xdata.weights);
