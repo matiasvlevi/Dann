@@ -176,17 +176,7 @@ class Dann {
             this.aFunc_d[index] = window[der];
         }
     }
-    readTextFile(file,neunet, callback) {
-        let rawFile = new XMLHttpRequest();
-        rawFile.overrideMimeType("application/json");
-        rawFile.open("GET", file, true);
-        rawFile.onreadystatechange = function() {
-            if (rawFile.readyState === 4 && rawFile.status == "200") {
-                callback(rawFile.responseText,neunet);
-            }
-        }
-        rawFile.send(null);
-    }
+
     log() {
         console.log("Dann NeuralNetwork:")
         console.log(" ");
@@ -221,7 +211,7 @@ class Dann {
         downloadSTR({weights: str, arch: this.arch},name);
     }
     load(location) {
-      this.readTextFile(location, function(text,this){
+      loadJSON(function(text) {
 
         let xdata =  JSON.parse(text);
 
@@ -254,6 +244,19 @@ class Dann {
 
 
     }
+}
+function loadJSON(callback) {
+
+   var xobj = new XMLHttpRequest();
+       xobj.overrideMimeType("application/json");
+   xobj.open('GET', 'test.json', true); // Replace 'my_data' with the path to your file
+   xobj.onreadystatechange = function () {
+         if (xobj.readyState == 4 && xobj.status == "200") {
+           // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+           callback(xobj.responseText);
+         }
+   };
+   xobj.send(null);
 }
 // loss functions:
 function mae(predictions,target) {
