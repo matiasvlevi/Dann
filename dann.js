@@ -30,7 +30,7 @@ class Dann {
         this.lr = 0.001;
         this.arch = [];
 
-        this.optimizerFunc = this.calcMeanLoss;
+        this.optimizerFunc = meanSqLoss;
 
     }
     static mapArray(arr,x1,y1,x2,y2) {
@@ -176,17 +176,6 @@ class Dann {
             this.aFunc_d[index] = window[der];
         }
     }
-    calcMeanLoss(arr,target) {
-        let sum = 0;
-        let ans = 0;
-        for (let i = 0; i < this.o; i++) {
-
-            sum += pow(arr[i] - target[i],2);
-        }
-        ans = sum/this.o;
-        return ans;
-    }
-
     log() {
         console.log("Dann NeuralNetwork:")
         console.log(" ");
@@ -275,6 +264,27 @@ class Dann {
 
 
     }
+}
+// loss functions:
+function logLoss(arr,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+
+        sum += log(cosh(arr[i] - target[i]));
+    }
+    ans = sum/this.o;
+    return ans;
+}
+function meanSqLoss(arr,target) {
+    let sum = 0;
+    let ans = 0;
+    for (let i = 0; i < this.o; i++) {
+
+        sum += pow(arr[i] - target[i],2);
+    }
+    ans = sum/this.o;
+    return ans;
 }
 // Matrix Math:
 class Matrix {
