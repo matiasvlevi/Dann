@@ -211,46 +211,47 @@ class Dann {
         downloadSTR({nn: this},name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
-    load() {
-      _loadJSON(this,function(neuralnet,text) {
+    load(name) {
+      _loadJSON(name,this,function(neuralnet,text) {
 
         let xdata =  JSON.parse(text);
+
+        let data = JSON.parse(xdata.nn);
         console.log(xdata)
-        let data = JSON.parse(xdata.weights);
-        let arch = xdata.arch;
+        // let arch = xdata.arch;
 
-        let parsed = [];
-        for (let i = 0; i < data.length;i++) {
-            parsed[i] = JSON.parse(data[i]);
-        }
+        // let parsed = [];
+        // for (let i = 0; i < data.length;i++) {
+        //     parsed[i] = JSON.parse(data[i]);
+        // }
 
-        if (data.length+1 == neuralnet.Layers.length) {
-
-            for (let i = 0; i < neuralnet.Layers.length; i++) {
-                let layer = Matrix.toArray(neuralnet.Layers[i]);
-                if (layer.length !== arch[i]) {
-                    console.error("Error: Not the same architecture...");
-                    return;
-                }
-            }
-            for (let i = 0; i < data.length;i++) {
-                neuralnet.weights[i].set(parsed[i]);
-            }
-            console.log("Successfully transfered weight matrices!")
-            return 0;
-        }
-      });
+      //   if (data.length+1 == neuralnet.Layers.length) {
+      //
+      //       for (let i = 0; i < neuralnet.Layers.length; i++) {
+      //           let layer = Matrix.toArray(neuralnet.Layers[i]);
+      //           if (layer.length !== arch[i]) {
+      //               console.error("Error: Not the same architecture...");
+      //               return;
+      //           }
+      //       }
+      //       for (let i = 0; i < data.length;i++) {
+      //           neuralnet.weights[i].set(parsed[i]);
+      //       }
+      //       console.log("Successfully transfered weight matrices!")
+      //       return 0;
+      //   }
+      // });
 
 
 
 
     }
 }
-function _loadJSON(neu,callback) {
+function _loadJSON(name,neu,callback) {
 
    var xobj = new XMLHttpRequest();
        xobj.overrideMimeType("application/json");
-   xobj.open('GET', 'test.json', true); // Replace 'my_data' with the path to your file
+   xobj.open('GET', name+'.json', true); // Replace 'my_data' with the path to your file
    xobj.onreadystatechange = function () {
          if (xobj.readyState == 4 && xobj.status == "200") {
            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
