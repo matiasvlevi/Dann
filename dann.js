@@ -241,7 +241,7 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        downloadSTR({wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr},name);
+        downloadSTR({wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s},name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     load(name) {
@@ -278,7 +278,7 @@ class Dann {
           neuralnet.gradients[i].set(JSON.parse(sgradients[i]));
         }
 
-        neuralnet.aFunc_s = newNN.aFunc_s;
+        neuralnet.aFunc_s = newNN.afunc;
         neuralnet.aFunc = [];
         neuralnet.aFunc_d = [];
         neuralnet.aFunc_d_s = [];
@@ -289,13 +289,13 @@ class Dann {
           neuralnet.aFunc_d_s.push((fstr+"_d"))
         }
 
-        neuralnet.lossfunc = window[newNN.lossfunc_s];
-        neuralnet.lossfunc_s = newNN.lossfunc_s;
+        neuralnet.lossfunc = window[newNN.lf];
+        neuralnet.lossfunc_s = newNN.lf;
 
-        neuralnet.outs = newNN.outs;
-        neuralnet.loss = newNN.loss;
-        neuralnet.losses = newNN.losses;
-        neuralnet.lr = newNN.lr;
+        neuralnet.outs = Matrix.toArray(neuralnet.Layers[neuralnet.Layer.length-1]);
+        neuralnet.loss = 0;
+        neuralnet.losses = [];
+        neuralnet.lr = newNN.lrate;
         neuralnet.arch = newNN.arch;
 
       });
