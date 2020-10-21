@@ -298,6 +298,7 @@ class Dann {
         neuralnet.lr = newNN.lr;
         neuralnet.arch = newNN.arch;
 
+      });
     }
 }
 function _loadJSON(name,neu,callback) {
