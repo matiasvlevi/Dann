@@ -292,7 +292,7 @@ class Dann {
         neuralnet.lossfunc = window[newNN.lf];
         neuralnet.lossfunc_s = newNN.lf;
 
-        neuralnet.outs = Matrix.toArray(neuralnet.Layers[neuralnet.Layer.length-1]);
+        neuralnet.outs = Matrix.toArray(neuralnet.Layers[neuralnet.Layers.length-1]);
         neuralnet.loss = 0;
         neuralnet.losses = [];
         neuralnet.lr = newNN.lrate;
