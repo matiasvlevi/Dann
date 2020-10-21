@@ -211,13 +211,37 @@ class Dann {
 
     }
     save(name) {
-        let data = [];
+        //weights
+        let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
-            data[i] =  JSON.stringify(this.weights[i].matrix);
+            wdata[i] =  JSON.stringify(this.weights[i].matrix);
         }
-        let str = JSON.stringify(data);
-        console.log("'" + str + "'");
-        downloadSTR({savedNN: this},name);
+        let w_str = JSON.stringify(wdata);
+        //layers
+        let ldata = [];
+        for (let i = 0; i < this.Layers.length;i++) {
+            ldata[i] =  JSON.stringify(this.Layers[i].matrix);
+        }
+        let l_str = JSON.stringify(ldata);
+        //biases
+        let bdata = [];
+        for (let i = 0; i < this.biases.length;i++) {
+            bdata[i] =  JSON.stringify(this.biases[i].matrix);
+        }
+        let b_str = JSON.stringify(bdata);
+        //errors
+        let edata = [];
+        for (let i = 0; i < this.errors.length;i++) {
+            edata[i] =  JSON.stringify(this.errors[i].matrix);
+        }
+        let e_str = JSON.stringify(edata);
+        //gradients
+        let gdata = [];
+        for (let i = 0; i < this.gradients.length;i++) {
+            gdata[i] =  JSON.stringify(this.gradients[i].matrix);
+        }
+        let g_str = JSON.stringify(gdata);
+        downloadSTR({wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr},name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     load(name) {
@@ -226,68 +250,53 @@ class Dann {
 
         let xdata =  JSON.parse(text);
 
-        let newNN = xdata.savedNN;
+        let newNN = xdata;
         console.log(newNN)
 
-        neuralnet.i = newNN.i;
-        neuralnet.inputs = newNN.inputs;
+      //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
+        neuralnet.i = newNN.arch[0];
+        neuralnet.o = newNN.arch[newNN.arch.length-1];
 
-        neuralnet.o = newNN.o;
-        neuralnet.outputs = newNN.outputs;
-
-        neuralnet.aFunc = [];
-        neuralnet.aFunc_d = [];
-
-        for (let i = 0; i < newNN.aFunc.length;i++) {
-          neuralnet.aFunc.push(window[newNN.aFunc_s[i]]);
-          neuralnet.aFunc_d.push(window[newNN.aFunc_d_s[i]]);
+        let slayers = JSON.parse(newNN.lstr);
+        for (let i = 0; i < slayers.length; i++) {
+          neuralnet.Layers[i].set(JSON.parse(slayers[i]));
+        }
+        let sweights = JSON.parse(newNN.wstr);
+        for (let i = 0; i < sweights.length; i++) {
+          neuralnet.weights[i].set(JSON.parse(sweights[i]));
+        }
+        let sbiases = JSON.parse(newNN.bstr);
+        for (let i = 0; i < sbiases.length; i++) {
+          neuralnet.biases[i].set(JSON.parse(sbiases[i]));
+        }
+        let serrors = JSON.parse(newNN.estr);
+        for (let i = 0; i < serrors.length; i++) {
+          neuralnet.errors[i].set(JSON.parse(serrors[i]));
+        }
+        let sgradients = JSON.parse(newNN.gstr);
+        for (let i = 0; i < sgradients.length; i++) {
+          neuralnet.gradients[i].set(JSON.parse(sgradients[i]));
         }
 
-
         neuralnet.aFunc_s = newNN.aFunc_s;
-        neuralnet.aFunc_d_s = newNN.aFunc_d_s;
+        neuralnet.aFunc = [];
+        neuralnet.aFunc_d = [];
+        neuralnet.aFunc_d_s = [];
+        for (let i = 0; i < newNN.afunc.length;i++) {
+          let fstr = newNN.afunc[i];
+          neuralnet.aFunc.push(window[fstr]);
+          neuralnet.aFunc_d.push(window[(fstr+"_d")]);
+          neuralnet.aFunc_d_s.push((fstr+"_d"))
+        }
 
-        neuralnet.Layers = newNN.Layers;
-        neuralnet.weights = newNN.weights;
-        neuralnet.biases = newNN.biases;
-        neuralnet.errors = newNN.errors;
-        neuralnet.gradients = newNN.gradients;
+        neuralnet.lossfunc = window[newNN.lossfunc_s];
+        neuralnet.lossfunc_s = newNN.lossfunc_s;
 
         neuralnet.outs = newNN.outs;
         neuralnet.loss = newNN.loss;
         neuralnet.losses = newNN.losses;
         neuralnet.lr = newNN.lr;
         neuralnet.arch = newNN.arch;
-
-        neuralnet.lossfunc = window[newNN.lossfunc_s];
-        neuralnet.lossfunc_s = newNN.lossfunc_s;
-
-        // let arch = xdata.arch;
-
-        // let parsed = [];
-        // for (let i = 0; i < data.length;i++) {
-        //     parsed[i] = JSON.parse(data[i]);
-        // }
-
-      //   if (data.length+1 == neuralnet.Layers.length) {
-      //
-      //       for (let i = 0; i < neuralnet.Layers.length; i++) {
-      //           let layer = Matrix.toArray(neuralnet.Layers[i]);
-      //           if (layer.length !== arch[i]) {
-      //               console.error("Error: Not the same architecture...");
-      //               return;
-      //           }
-      //       }
-      //       for (let i = 0; i < data.length;i++) {
-      //           neuralnet.weights[i].set(parsed[i]);
-      //       }
-      //       console.log("Successfully transfered weight matrices!")
-      //       return 0;
-      //   }
-      });
-
-
-
 
     }
 }
