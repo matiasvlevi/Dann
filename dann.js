@@ -210,7 +210,7 @@ class Dann {
         console.log("    Loss Function: " + this.lossfunc.name);
 
     }
-    save(name) {
+    save() {
         //weights
         let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
@@ -241,10 +241,10 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        downloadSTR({wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s},name);
+        downloadSTR({wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s},"nn1");
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
-    load(name) {
+    load() {
 
       _loadJSON(name,this,function(neuralnet,text) {
 
@@ -305,7 +305,7 @@ function _loadJSON(name,neu,callback) {
 
    var xobj = new XMLHttpRequest();
        xobj.overrideMimeType("application/json");
-   xobj.open('GET', name+'.json', true); // Replace 'my_data' with the path to your file
+   xobj.open('GET', "nn1"+'.json', true); // Replace 'my_data' with the path to your file
    xobj.onreadystatechange = function () {
          if (xobj.readyState == 4 && xobj.status == "200") {
            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
