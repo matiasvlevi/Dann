@@ -4,8 +4,127 @@
 // By: Matias Vazquez-Levi
 // https://github.com/matiasvlevi
 
-// Dann:
+//Activations:
+function sigmoid(x) {
+    return 1/(1+exp(-x));
+}
+function sigmoid_d(x) {
+    let x1 = sigmoid(x);
+    return x1 * (1 - x1);
+}
+function leakySigmoid(x) {
+    return 1/(1+exp(-x))+(x/100);
+}
+function leakySigmoid_d(x) {
+    let x1 = leakySigmoid(x);
+    return x1 * (1 - x1);
+}
+function siLU(x) {
 
+    return x/(1+exp(-x));
+}
+function siLU_d(x) {
+    let top = (1 + exp(-x))+(x*exp(-x));
+    let down = pow(1 + exp(-x), 2);
+    return top/down;
+}
+function tanH(x) {
+
+    let top = exp(x) - exp(-x);
+    let down = exp(x)+ exp(-x);
+
+    return (top/down);
+}
+function tanH_d(x) {
+
+    return 1 - pow(tanH(x),2);
+}
+function leakyReLU(x) {
+    if (x >= 0) {
+        return 1*x;
+    } else {
+        return 0.1*x;
+    }
+
+}
+function leakyReLU_d(x) {
+    if (x >= 0) {
+        return 1;
+    } else {
+        return 0.1;
+    }
+
+}
+function linear(x) {
+  return x;
+}
+function linear_d(x) {
+  return 1;
+}
+function reLU(x) {
+    if (x >= 0) {
+        return 1*x;
+    } else {
+        return 0;
+    }
+
+}
+function reLU_d(x) {
+    if (x >= 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+
+}
+function cosh(x) {
+    return ((exp(x)+exp(-x))/2);
+}
+function sech(x) {
+    return 1/cosh(x);
+}
+function tanH(x) {
+
+    let top = exp(x) - exp(-x);
+    let down = exp(x)+ exp(-x);
+
+    return (top/down);
+}
+
+
+function downloadSTR(obj, exportName) {
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+
+}
+let activations = {
+    leakySigmoid: leakySigmoid,
+    leakySigmoid_d: leakySigmoid_d,
+    sigmoid: sigmoid,
+    sigmoid_d: sigmoid_d,
+    tanH: tanH,
+    tanH_d: tanH_d,
+    siLU: siLU,
+    siLU_d: siLU_d,
+    reLU: reLU,
+    reLU_d: reLU_d,
+    leakyReLU: leakyReLU,
+    leakyReLU_d: leakyReLU_d
+}
+let lossfuncs = {
+    mae: mae,
+    crossEntryopy: crossEntryopy,
+    lcl: lcl,
+    mbe: mbe,
+    mse: mse,
+    softmax: softmax,
+    cce: cce
+}
 class Dann {
     constructor(i,o) {
 
@@ -130,6 +249,11 @@ class Dann {
         this.losses.push(this.loss);
 
     }
+    setLossFunction(str) {
+    this.lossfunc_s = str
+    this.lossfunc = lossfuncs[this.lossfunc_s];
+
+}
     outputActivation(act) {
 
         let nor = (act.name);
@@ -335,7 +459,6 @@ function crossEntryopy(predictions,target) {
     ans = sum/this.o;
     return ans;
 }
-
 function lcl(predictions,target) {
     let sum = 0;
     let ans = 0;
@@ -376,18 +499,6 @@ function mse(predictions,target) {
     return ans;
 }
 //softmax function:
-
-function cce(predictions, target) {
-
-  let c = target.length;
-
-  let sum = 0;
-  for (let i = 0; i < c; i++) {
-    let t = target[i]
-    sum+= t*log(softmax(predictions,i))
-  }
-  return abs(-sum - 1.4611501717344748 - 0.0818903006748597);
-}
 function softmax(xarr,i) {
   let l = xarr.length;
   let sum = 0;
@@ -404,6 +515,17 @@ function softmax(xarr,i) {
     return exp(xarr[i])/sum;
   }
 
+}
+function cce(predictions, target) {
+
+  let c = target.length;
+
+  let sum = 0;
+  for (let i = 0; i < c; i++) {
+    let t = target[i]
+    sum+= t*log(softmax(predictions,i))
+  }
+  return abs(-sum - 1.4611501717344748 - 0.0818903006748597);
 }
 // Matrix Math:
 class Matrix {
@@ -596,9 +718,9 @@ class Matrix {
     }
 }
 let dragged = false;
+let fontColor = [255,255,255];
+let contourColor = [0,0,0];
 //Plot any Dann neural Network:
-
-
 class NetPlot {
   constructor(x,y,w,h,nn) {
     this.pos = createVector(x,y);
@@ -789,7 +911,6 @@ class Graph {
     }
 
 }
-
 //Graph the gradients
 class GradientGraph {
     constructor(x,y,w,h,nn) {
@@ -870,7 +991,6 @@ class GradientGraph {
 
     }
 }
-
 class InfoBox {
     constructor(x,y,w,h,nn) {
         this.pos = createVector(x,y);
@@ -905,158 +1025,4 @@ class InfoBox {
 
 
     }
-}
-
-let fontColor = [255,255,255];
-let contourColor = [0,0,0];
-
-
-//Activations:
-function sigmoid(x) {
-    return 1/(1+exp(-x));
-}
-function sigmoid_d(x) {
-    let x1 = sigmoid(x);
-    return x1 * (1 - x1);
-}
-function leakySigmoid(x) {
-    return 1/(1+exp(-x))+(x/100);
-}
-function leakySigmoid_d(x) {
-    let x1 = leakySigmoid(x);
-    return x1 * (1 - x1);
-}
-function siLU(x) {
-
-    return x/(1+exp(-x));
-}
-function siLU_d(x) {
-    let top = (1 + exp(-x))+(x*exp(-x));
-    let down = pow(1 + exp(-x), 2);
-    return top/down;
-}
-function tanH(x) {
-
-    let top = exp(x) - exp(-x);
-    let down = exp(x)+ exp(-x);
-
-    return (top/down);
-}
-function tanH_d(x) {
-
-    return 1 - pow(tanH(x),2);
-}
-function leakyReLU(x) {
-    if (x >= 0) {
-        return 1*x;
-    } else {
-        return 0.1*x;
-    }
-
-}
-function leakyReLU_d(x) {
-    if (x >= 0) {
-        return 1;
-    } else {
-        return 0.1;
-    }
-
-}
-function linear(x) {
-  return x;
-}
-function linear_d(x) {
-  return 1;
-}
-
-function reLU(x) {
-    if (x >= 0) {
-        return 1*x;
-    } else {
-        return 0;
-    }
-
-}
-function reLU_d(x) {
-    if (x >= 0) {
-        return 1;
-    } else {
-        return 0;
-    }
-
-}
-function cosh(x) {
-    return ((exp(x)+exp(-x))/2);
-}
-function sech(x) {
-    return 1/cosh(x);
-}
-function tanH(x) {
-
-    let top = exp(x) - exp(-x);
-    let down = exp(x)+ exp(-x);
-
-    return (top/down);
-}
-function sigmoidal_1(x) {
-    let u = 2;
-    if (x <= 0) {
-        return (tanH(x)/(1+exp(-x/u)))+x/10;
-    } else if (x > 0) {
-        return (tanH(x)/(1+exp(-x/u)));
-    }
-
-}
-function sigmoidal_1_d(x) {
-    let u = 2;
-
-    if (x <= 0) {
-        let right = (pow(sech(x),2)*(1+exp(-x/2)));
-        let top = right + 1/2*exp(-x/2)*tanH(x);
-        let down = pow(1+exp(-x/2),2);
-        return (top/down)+1/10;
-    } else if (x > 0) {
-        let top = pow(sech(x),2)*(1+exp(-x/2))-(-1/2*exp(-x/2))*tanH(x);
-        let down = pow((1+exp(-x/2)),2);
-        return top/down;
-    }
-}
-
-//Architecture Templates:
-function cnn(i,h,o,nn) {
-    nn = DANNeuralNetwork(i,o);
-    nn.addHiddenLayer(h);
-    nn.makeWeights();
-    nn.lr = 0.01;
-    return nn;
-}
-function dnn(i,h,h2,o,nn) {
-    nn = DANNeuralNetwork(i,o);
-    nn.addHiddenLayer(h);
-    nn.addHiddenLayer(h2);
-    nn.makeWeights();
-    nn.lr = 0.01;
-    return nn;
-}
-
-function downloadSTR(obj, exportName) {
-  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  var downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href",     dataStr);
-  downloadAnchorNode.setAttribute("download", exportName + ".json");
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-    // let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-    //
-    // let a = document.createElement('a');
-    // a.href = 'data:' + data;
-    // a.download = exportName + '.json';
-    // a.innerHTML = 'download JSON';
-    //
-    // let container = document.getElementById('container');
-    // container.appendChild(a);
-    //
-    // a.click();
-    // a.remove();
 }
