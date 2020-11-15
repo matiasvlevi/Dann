@@ -256,8 +256,8 @@ class Dann {
 }
     outputActivation(act) {
 
-        let nor = (act.name);
-        let der = (act.name + "_d");
+        let nor = (act);
+        let der = (act + "_d");
         this.aFunc[this.Layers.length-1] = window[nor];
         this.aFunc_d[this.Layers.length-1] = window[der];
     }
@@ -296,8 +296,8 @@ class Dann {
         this.Layers.splice(this.Layers.length-1,0,layer);
         if (act !== undefined) {
 
-            let nor = (act.name);
-            let der = (act.name + "_d");
+            let nor = (act);
+            let der = (act + "_d");
             this.aFunc[index] = window[nor];
             this.aFunc_d[index] = window[der];
             this.aFunc_s[index] = nor;
