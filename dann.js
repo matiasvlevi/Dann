@@ -1,9 +1,3 @@
-// Dann.js Neural Network Engine
-// Free to use library
-//
-// By: Matias Vazquez-Levi
-// https://github.com/matiasvlevi
-
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
