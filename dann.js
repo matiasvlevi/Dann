@@ -130,19 +130,14 @@ class Dann {
         this.losses.push(this.loss);
 
     }
-    activation(layer,act) {
+    outputActivation(act) {
 
         let nor = (act.name);
         let der = (act.name + "_d");
-        this.aFunc[layer] = window[nor];
-        this.aFunc_d[layer] = window[der];
+        this.aFunc[this.Layers.length-1] = window[nor];
+        this.aFunc_d[this.Layers.length-1] = window[der];
     }
-    setActivations(act) {
-        for (let i = 0; i < this.Layers.length-1; i++) {
-            this.aFunc[i] = window[act.name];
-            this.aFunc_d[i] = window[act.name +"_d"];
-        }
-    }
+
     makeWeights() {
         //this function should be called after the initialisation of the hidden layers.
         for (let i = 0; i < this.Layers.length-1;i++) {
