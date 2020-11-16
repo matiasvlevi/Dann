@@ -1,5 +1,7 @@
 # Dann
-by: Matias Vazquez-Levi
+Author: Matias Vazquez-Levi
 
-For documentation:
+Dannjs is a simple Deep Neural Network library. Perfect for simple data mining tasks.
+
+Documentation:
 https://dannjs.org
