@@ -435,22 +435,23 @@ function mae(predictions,target) {
     for (let i = 0; i < l; i++) {
         let y = target[i]
         let yHat = predictions[i];
-        sum += abs(y - yHat);
+        sum += abs(y - yHat)/2;
     }
-    ans = sum/this.o;
+    ans = sum/l;
     return ans;
 }
 function crossEntryopy(predictions,target) {
     let sum = 0;
     let ans = 0;
+    let l = target.length;
     for (let i = 0; i < l; i++) {
       let y = target[i]
       let yHat = predictions[i];
-      let l = target.length;
+
       sum+= -(y*log(yHat)+(1-y)*log(1-yHat));
 
     }
-    ans = sum/this.o;
+    ans = sum/l;
     return ans;
 }
 function lcl(predictions,target) {
@@ -463,7 +464,7 @@ function lcl(predictions,target) {
 
         sum += log(cosh(yHat - y));
     }
-    ans = sum/this.o;
+    ans = sum/l;
     return ans;
 }
 function mbe(predictions,target) {
