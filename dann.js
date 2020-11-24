@@ -87,8 +87,8 @@ function tanH(x) {
 
 
 function downloadSTR(obj, exportName) {
-  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  var downloadAnchorNode = document.createElement('a');
+  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  let downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute("href",     dataStr);
   downloadAnchorNode.setAttribute("download", exportName + ".json");
   document.body.appendChild(downloadAnchorNode); // required for firefox
@@ -323,7 +323,7 @@ class Dann {
         console.log("    Loss Function: " + this.lossfunc.name);
 
     }
-    save() {
+    save(name) {
         //weights
         let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
@@ -354,77 +354,111 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        downloadSTR({wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s},"nn1");
+        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s};
+        downloadSTR(dataOBJ,name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     load() {
 
-      _loadJSON(name,this,function(neuralnet,text) {
+        upload(this)
+    }
+}
+function clickedUpload(nn) {
+    let element = document.getElementById('upload');
+    let file = element.files[0];
 
-        let xdata =  JSON.parse(text);
+    let reader = new FileReader();
+
+    reader.readAsText(file);
+
+    reader.onload = function() {
+        console.log();
+
+
+        let xdata =  JSON.parse(reader.result);
 
         let newNN = xdata;
-        console.log(newNN)
 
-      //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
-        neuralnet.i = newNN.arch[0];
-        neuralnet.o = newNN.arch[newNN.arch.length-1];
+        //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
+        nn.i = newNN.arch[0];
+        nn.inputs = new Matrix(this.i, 1);
+        nn.o = newNN.arch[newNN.arch.length-1];
+        nn.outputs = new Matrix(this.o,1);
 
         let slayers = JSON.parse(newNN.lstr);
         for (let i = 0; i < slayers.length; i++) {
-          neuralnet.Layers[i].set(JSON.parse(slayers[i]));
+            nn.Layers[i].set(JSON.parse(slayers[i]));
         }
         let sweights = JSON.parse(newNN.wstr);
         for (let i = 0; i < sweights.length; i++) {
-          neuralnet.weights[i].set(JSON.parse(sweights[i]));
+            nn.weights[i].set(JSON.parse(sweights[i]));
         }
         let sbiases = JSON.parse(newNN.bstr);
         for (let i = 0; i < sbiases.length; i++) {
-          neuralnet.biases[i].set(JSON.parse(sbiases[i]));
+            nn.biases[i].set(JSON.parse(sbiases[i]));
         }
         let serrors = JSON.parse(newNN.estr);
         for (let i = 0; i < serrors.length; i++) {
-          neuralnet.errors[i].set(JSON.parse(serrors[i]));
+            nn.errors[i].set(JSON.parse(serrors[i]));
         }
         let sgradients = JSON.parse(newNN.gstr);
         for (let i = 0; i < sgradients.length; i++) {
-          neuralnet.gradients[i].set(JSON.parse(sgradients[i]));
+            nn.gradients[i].set(JSON.parse(sgradients[i]));
         }
 
-        neuralnet.aFunc_s = newNN.afunc;
-        neuralnet.aFunc = [];
-        neuralnet.aFunc_d = [];
-        neuralnet.aFunc_d_s = [];
+        nn.aFunc_s = newNN.afunc;
+        nn.aFunc = [];
+        nn.aFunc_d = [];
+        nn.aFunc_d_s = [];
         for (let i = 0; i < newNN.afunc.length;i++) {
-          let fstr = newNN.afunc[i];
-          neuralnet.aFunc.push(window[fstr]);
-          neuralnet.aFunc_d.push(window[(fstr+"_d")]);
-          neuralnet.aFunc_d_s.push((fstr+"_d"))
+            let fstr = newNN.afunc[i];
+            nn.aFunc.push(window[fstr]);
+            nn.aFunc_d.push(window[(fstr+"_d")]);
+            nn.aFunc_d_s.push((fstr+"_d"))
         }
 
-        neuralnet.lossfunc = window[newNN.lf];
-        neuralnet.lossfunc_s = newNN.lf;
+        nn.lossfunc = window[newNN.lf];
+        nn.lossfunc_s = newNN.lf;
 
-        neuralnet.outs = Matrix.toArray(neuralnet.Layers[neuralnet.Layers.length-1]);
-        neuralnet.loss = 0;
-        neuralnet.losses = [];
-        neuralnet.lr = newNN.lrate;
-        neuralnet.arch = newNN.arch;
+        nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
+        nn.loss = 0;
+        nn.losses = [];
+        nn.lr = newNN.lrate;
+        nn.arch = newNN.arch;
 
-      });
-    }
+        nn.log();
+        console.log("");
+        console.log("Succesfully loaded the Dann Model");
+    };
+
+    reader.onerror = function() {
+      console.log(reader.error);
+    };
+
+    element.remove();
+
+}
+function upload(nn) {
+    let downloadAnchorNode = document.createElement('input');
+    downloadAnchorNode.setAttribute("type", "file");
+    downloadAnchorNode.setAttribute("id", "upload");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload(nn)");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+
+    // downloadAnchorNode.click();
+    // downloadAnchorNode.remove();
 }
 function _loadJSON(name,neu,callback) {
-
-   var xobj = new XMLHttpRequest();
-       xobj.overrideMimeType("application/json");
-   xobj.open('GET', "nn1"+'.json', true); // Replace 'my_data' with the path to your file
-   xobj.onreadystatechange = function () {
-         if (xobj.readyState == 4 && xobj.status == "200") {
-           // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-           callback(neu,xobj.responseText);
-         }
-   };
+    let path = "./savedDanns/";
+    let xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET',name +'.json', true); // Replace 'my_data' with the path to your file
+    xobj.onreadystatechange = function () {
+        if (xobj.readyState == 4 && xobj.status == "200") {
+        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+            callback(neu,xobj.responseText);
+        }
+    };
    xobj.send(null);
 }
 // loss functions:
