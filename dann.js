@@ -77,13 +77,7 @@ function cosh(x) {
 function sech(x) {
     return 1/cosh(x);
 }
-function tanH(x) {
 
-    let top = exp(x) - exp(-x);
-    let down = exp(x)+ exp(-x);
-
-    return (top/down);
-}
 
 
 function downloadSTR(obj, exportName) {
