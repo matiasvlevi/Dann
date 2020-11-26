@@ -489,7 +489,7 @@ function clickedUpload(nn) {
     element.remove();
 
 }
-function
+
 function upload(nn) {
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
