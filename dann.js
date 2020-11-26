@@ -352,6 +352,63 @@ class Dann {
         downloadSTR(dataOBJ,name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
+    loadFromJSON(objstr) {
+
+        let xdata =  JSON.parse(objstr);
+
+        let newNN = xdata;
+
+        //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
+        nn.i = newNN.arch[0];
+        nn.inputs = new Matrix(this.i, 1);
+        nn.o = newNN.arch[newNN.arch.length-1];
+        nn.outputs = new Matrix(this.o,1);
+
+        let slayers = JSON.parse(newNN.lstr);
+        for (let i = 0; i < slayers.length; i++) {
+            nn.Layers[i].set(JSON.parse(slayers[i]));
+        }
+        let sweights = JSON.parse(newNN.wstr);
+        for (let i = 0; i < sweights.length; i++) {
+            nn.weights[i].set(JSON.parse(sweights[i]));
+        }
+        let sbiases = JSON.parse(newNN.bstr);
+        for (let i = 0; i < sbiases.length; i++) {
+            nn.biases[i].set(JSON.parse(sbiases[i]));
+        }
+        let serrors = JSON.parse(newNN.estr);
+        for (let i = 0; i < serrors.length; i++) {
+            nn.errors[i].set(JSON.parse(serrors[i]));
+        }
+        let sgradients = JSON.parse(newNN.gstr);
+        for (let i = 0; i < sgradients.length; i++) {
+            nn.gradients[i].set(JSON.parse(sgradients[i]));
+        }
+
+        nn.aFunc_s = newNN.afunc;
+        nn.aFunc = [];
+        nn.aFunc_d = [];
+        nn.aFunc_d_s = [];
+        for (let i = 0; i < newNN.afunc.length;i++) {
+            let fstr = newNN.afunc[i];
+            nn.aFunc.push(window[fstr]);
+            nn.aFunc_d.push(window[(fstr+"_d")]);
+            nn.aFunc_d_s.push((fstr+"_d"))
+        }
+
+        nn.lossfunc = window[newNN.lf];
+        nn.lossfunc_s = newNN.lf;
+
+        nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
+        nn.loss = 0;
+        nn.losses = [];
+        nn.lr = newNN.lrate;
+        nn.arch = newNN.arch;
+
+        nn.log();
+        console.log("");
+        console.log("Succesfully loaded the Dann Model");
+    }
     load() {
 
         upload(this)
@@ -432,29 +489,16 @@ function clickedUpload(nn) {
     element.remove();
 
 }
+function
 function upload(nn) {
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
     downloadAnchorNode.setAttribute("id", "upload");
     downloadAnchorNode.setAttribute("onChange", "clickedUpload(nn)");
-    document.body.appendChild(downloadAnchorNode); // required for firefox
+    document.body.appendChild(downloadAnchorNode);
 
-    // downloadAnchorNode.click();
-    // downloadAnchorNode.remove();
 }
-function _loadJSON(name,neu,callback) {
-    let path = "./savedDanns/";
-    let xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    xobj.open('GET',name +'.json', true); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function () {
-        if (xobj.readyState == 4 && xobj.status == "200") {
-        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            callback(neu,xobj.responseText);
-        }
-    };
-   xobj.send(null);
-}
+
 // loss functions:
 function mae(predictions,target) {
     let sum = 0;
