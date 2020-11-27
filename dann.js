@@ -352,6 +352,11 @@ class Dann {
         downloadSTR(dataOBJ,name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
+    makeWeights(randomFactor) {
+        for (let i = 0; i < this.Layers.length;i++) {
+            this.Layers[i].addPrecent(randomFactor);
+        }
+    }
     loadFromJSON(objstr) {
 
         let xdata =  JSON.parse(objstr);
@@ -704,6 +709,13 @@ class Matrix {
                 }
             }
             return ans;
+        }
+    }
+    addPrecent(percent) {
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                this.matrix[i][j] += this.matrix[i][j]*percent;
+            }
         }
     }
     set(matrix) {
