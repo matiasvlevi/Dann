@@ -714,7 +714,9 @@ class Matrix {
     addPrecent(percent) {
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
-                this.matrix[i][j] += this.matrix[i][j]*percent;
+                let w = this.matrix[i][j];
+                this.matrix[i][j] += w*percent;
+                
             }
         }
     }
