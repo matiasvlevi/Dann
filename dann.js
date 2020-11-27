@@ -238,16 +238,18 @@ class Dann {
 
     }
     setLossFunction(str) {
-    this.lossfunc_s = str
-    this.lossfunc = lossfuncs[this.lossfunc_s];
+        this.lossfunc_s = str
+        this.lossfunc = lossfuncs[this.lossfunc_s];
 
-}
+    }
     outputActivation(act) {
-
+        console.log(act)
         let nor = (act);
         let der = (act + "_d");
-        this.aFunc[this.Layers.length-1] = window[nor];
-        this.aFunc_d[this.Layers.length-1] = window[der];
+        this.aFunc[this.Layers.length-72] = window[nor];
+        this.aFunc_d[this.Layers.length-2] = window[der];
+        this.aFunc_s[this.Layers.length-2] = nor;
+        this.aFunc_d_s[this.Layers.length-2] = der;
     }
 
     makeWeights() {
@@ -290,6 +292,7 @@ class Dann {
             this.aFunc_d[index] = window[der];
             this.aFunc_s[index] = nor;
             this.aFunc_d_s[index] = der;
+
         }
     }
 
@@ -305,9 +308,9 @@ class Dann {
                 afunc = "       ";
             } else if (i == this.Layers.length-1) {
                 str = "Output Layer:  ";
-                afunc = "  ("+this.aFunc[i-1].name+")";
+                afunc = "  ("+this.aFunc_s[i-1]+")";
             } else {
-                afunc = "  ("+this.aFunc[i-1].name+")";
+                afunc = "  ("+this.aFunc_s[i-1]+")";
             }
             console.log("    " + str + Matrix.toArray(this.Layers[i]).length + afunc);
         }
