@@ -352,7 +352,7 @@ class Dann {
         downloadSTR(dataOBJ,name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
-    makeWeights(randomFactor) {
+    mutateWeights(randomFactor) {
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].addPrecent(randomFactor);
         }
