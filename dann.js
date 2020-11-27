@@ -352,7 +352,12 @@ class Dann {
         downloadSTR(dataOBJ,name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
-    mutateWeights(randomFactor) {
+    mutateRandom(randomFactor) {
+        for (let i = 0; i < this.Layers.length;i++) {
+            this.Layers[i].addRandom(randomFactor);
+        }
+    }
+    mutateAdd(randomFactor) {
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].addPrecent(randomFactor);
         }
@@ -711,12 +716,21 @@ class Matrix {
             return ans;
         }
     }
-    addPrecent(percent) {
+    addRandom(magnitude) {
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
                 let w = this.matrix[i][j];
-                this.matrix[i][j] += w*percent;
-                
+                this.matrix[i][j] += w*random(-magnitude,magnitude);
+
+            }
+        }
+    }
+    addPrecent(magnitude) {
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                let w = this.matrix[i][j];
+                this.matrix[i][j] += w*magnitude;
+
             }
         }
     }
@@ -1067,41 +1081,6 @@ class GradientGraph {
             }
         }
 
-
-
-
-    }
-}
-class InfoBox {
-    constructor(x,y,w,h,nn) {
-        this.pos = createVector(x,y);
-        this.w = w;
-        this.h = h;
-        this.nn = nn;
-    }
-    render() {
-        noFill();
-        stroke(contourColor[0],contourColor[1],contourColor[2]);
-        //rect(this.pos.x,this.pos.y,this.w,this.h);
-        noStroke();
-        fill(fontColor[0],fontColor[1],fontColor[2]);
-        text("Dann Neural Network:",this.pos.x+6,this.pos.y+12);
-        let layertext = 30;
-        text("Layers:",this.pos.x+12,this.pos.y+layertext);
-        for (let i = 0; i < nn.Layers.length;i++) {
-            let str = "Hidden Layer: ";
-            let afunc = "";
-            if (i == 0) {
-                str = "Input Layer:      ";
-                afunc = "       ";
-            } else if (i == nn.Layers.length-1) {
-                str = "Output Layer:   ";
-                afunc = "  ("+nn.aFunc[i-1].name+")";
-            } else {
-                afunc = "  ("+nn.aFunc[i-1].name+")";
-            }
-            text("    " + str + Matrix.toArray(nn.Layers[i]).length + afunc,this.pos.x,this.pos.y+layertext+18+(i*14));
-        }
 
 
 
