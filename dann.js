@@ -731,7 +731,7 @@ class Matrix {
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
                 let w = this.matrix[i][j];
-                let ran = ranodm(0,1);
+                let ran = random(0,1);
                 if (ran < prob) {
                     this.matrix[i][j] += w*random(-magnitude,magnitude);
                 }
