@@ -251,7 +251,7 @@ class Dann {
 
     }
     outputActivation(act) {
-        console.log(act)
+        
         let nor = (act);
         let der = (act + "_d");
         this.aFunc[this.Layers.length-2] = window[nor];
