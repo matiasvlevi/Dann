@@ -140,6 +140,9 @@ class Dann {
         this.lr = 0.001;
         this.arch = [];
 
+        this.epoch = 0;
+        this.recordLoss = false;
+
         this.lossfunc = mse;
         this.lossfunc_s = this.lossfunc.name;
 
@@ -195,7 +198,10 @@ class Dann {
         this.biases[0].add(this.gradients[0]);
 
         this.loss = this.lossfunc(this.outs,g);
-        this.losses.push();
+        if (this.recordLoss == true) {
+            this.losses.push(this.loss);
+        }
+
 
     }
     backpropagate(inputs, t) {
@@ -234,7 +240,9 @@ class Dann {
         this.biases[0].add(this.gradients[0]);
 
         this.loss = this.lossfunc(this.outs,t);
-        this.losses.push(this.loss);
+        if (this.recordLoss == true) {
+            this.losses.push(this.loss);
+        }
 
     }
     setLossFunction(str) {
