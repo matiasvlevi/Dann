@@ -254,7 +254,7 @@ class Dann {
         console.log(act)
         let nor = (act);
         let der = (act + "_d");
-        this.aFunc[this.Layers.length-72] = window[nor];
+        this.aFunc[this.Layers.length-2] = window[nor];
         this.aFunc_d[this.Layers.length-2] = window[der];
         this.aFunc_s[this.Layers.length-2] = nor;
         this.aFunc_d_s[this.Layers.length-2] = der;
