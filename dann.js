@@ -251,7 +251,7 @@ class Dann {
 
     }
     outputActivation(act) {
-        
+
         let nor = (act);
         let der = (act + "_d");
         this.aFunc[this.Layers.length-2] = window[nor];
@@ -363,9 +363,9 @@ class Dann {
         downloadSTR(dataOBJ,name);
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
-    mutateRandom(randomFactor) {
+    mutateRandom(randomFactor,prob) {
         for (let i = 0; i < this.Layers.length;i++) {
-            this.Layers[i].addRandom(randomFactor);
+            this.Layers[i].addRandom(randomFactor,prob);
         }
     }
     mutateAdd(randomFactor) {
@@ -727,11 +727,14 @@ class Matrix {
             return ans;
         }
     }
-    addRandom(magnitude) {
+    addRandom(magnitude,prob) {
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
                 let w = this.matrix[i][j];
-                this.matrix[i][j] += w*random(-magnitude,magnitude);
+                let ran = ranodm(0,1);
+                if (ran < prob) {
+                    this.matrix[i][j] += w*random(-magnitude,magnitude);
+                }
 
             }
         }
