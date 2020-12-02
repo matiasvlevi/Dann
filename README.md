@@ -7,7 +7,7 @@ Email: matiasvlevi@gmail.com
 
 What it does:
 ------------
-Dannjs allows you to create any Deep Neural Network and train it with a dataset. 
+Dannjs allows you to create Deep Neural Networks, feed them, train them & save/load their weights. 
 
 How it works:
 ------------
