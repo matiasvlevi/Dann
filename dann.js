@@ -551,7 +551,7 @@ class Dann {
         console.log("Succesfully loaded the Dann Model");
     }
     load(name) {
-        if (isBrowser) {
+        if (!isBrowser) {
             let path = './savedDanns/'+name+'/dannData.json';
             if (fs.existsSync(path)) {
                 let text = fs.readFileSync(path, 'utf8');
