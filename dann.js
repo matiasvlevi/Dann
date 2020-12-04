@@ -1,3 +1,32 @@
+if (typeof window !== undefined) {
+    //broswer
+    console.log('browser')
+}
+let csv;
+if(typeof process === 'object') {
+
+    // nodejs
+    console.log('nodejs')
+    require('fs');
+    require('mathjs');
+    csv = require('fast-csv');
+    const { writeToPath } = require('@fast-csv/format');
+    function random(x1,x2) {
+        return Math.random(x2-x1)+x1;
+    }
+    function exp(x1) {
+        return Math.exp(x1);
+    }
+    function abs(x1) {
+        return Math.abs(x1);
+    }
+    function log(x1) {
+        return Math.log(x1);
+    }
+    function pow(x1,e) {
+        return Math.pow(x1,e);
+    }
+}
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
@@ -329,6 +358,14 @@ class Dann {
 
     }
     save(name) {
+        if (typeof window == undefined) {
+            let path = './savedDanns/'+name+'/dannData.json';
+            let overwritten = false;
+
+            if (fs.existsSync(path)) {
+                overwritten = true;
+            }
+        }
         //weights
         let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
@@ -360,7 +397,46 @@ class Dann {
         }
         let g_str = JSON.stringify(gdata);
         let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s};
-        downloadSTR(dataOBJ,name);
+        if (typeof window == undefined) {
+            if (!fs.existsSync('./savedDanns')){
+                fs.mkdirSync('./savedDanns');
+            }
+            if (!fs.existsSync('./savedDanns/'+name)){
+                fs.mkdirSync('./savedDanns/'+name);
+            }
+
+            let csvFile = [];
+            csvFile.push(['Dann','']);
+            csvFile.push(['Arch: ', this.arch]);
+            csvFile.push(['Lr: ', this.lr]);
+            csvFile.push(['','']);
+            csvFile.push(['Index','AvgLoss']);
+            for (let i = 0; i < this.losses.length; i++) {
+                csvFile.push([i+1,this.losses[i]]);
+            }
+
+            writeToPath('./savedDanns/'+name+'/losses.csv', csvFile)
+            .on('error', err => console.error(err))
+            .on('finish', () => console.log('saved loss report at '+'./savedDanns/'+name+'/losses.csv'));
+
+
+
+            fs.writeFileSync(path, JSON.stringify(dataOBJ));
+            if (overwritten == true) {
+                console.log('\x1b[32m',"");
+                this.log();
+                console.log("Succesfully overwritten the Dann Model at ./savedDanns/"+name+"/dannData.json ");
+                console.log("\x1b[0m","");
+            } else {
+                console.log('\x1b[32m',"");
+                this.log();
+                console.log("Succesfully saved the Dann Model at ./savedDanns/"+name+"/dannData.json ");
+                console.log("\x1b[0m","");
+            }
+        } else {
+            downloadSTR(dataOBJ,name);
+        }
+
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     mutateRandom(randomFactor,prob) {
@@ -430,9 +506,81 @@ class Dann {
         console.log("");
         console.log("Succesfully loaded the Dann Model");
     }
-    load() {
+    load(name) {
+        if (typeof window == undefined) {
+            let path = './savedDanns/'+name+'/dannData.json';
+            if (fs.existsSync(path)) {
+                let text = fs.readFileSync(path, 'utf8');
+                let xdata =  JSON.parse(text);
 
-        upload(this)
+                let newNN = xdata;
+                //console.log(newNN)
+
+                //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
+                this.i = newNN.arch[0];
+                this.inputs = new Matrix(this.i,1);
+                this.o = newNN.arch[newNN.arch.length-1];
+                this.outputs = new Matrix(this.o,1);
+
+                let slayers = JSON.parse(newNN.lstr);
+                for (let i = 0; i < slayers.length; i++) {
+
+                  this.Layers[i].set(JSON.parse(slayers[i]));
+
+                }
+                let sweights = JSON.parse(newNN.wstr);
+                for (let i = 0; i < sweights.length; i++) {
+                  this.weights[i].set(JSON.parse(sweights[i]));
+                }
+                let sbiases = JSON.parse(newNN.bstr);
+                for (let i = 0; i < sbiases.length; i++) {
+                  this.biases[i].set(JSON.parse(sbiases[i]));
+                }
+                let serrors = JSON.parse(newNN.estr);
+                for (let i = 0; i < serrors.length; i++) {
+                  this.errors[i].set(JSON.parse(serrors[i]));
+                }
+                let sgradients = JSON.parse(newNN.gstr);
+                for (let i = 0; i < sgradients.length; i++) {
+                  this.gradients[i].set(JSON.parse(sgradients[i]));
+                }
+
+                this.aFunc_s = newNN.afunc;
+                this.aFunc = [];
+                this.aFunc_d = [];
+                this.aFunc_d_s = [];
+                for (let i = 0; i < newNN.afunc.length;i++) {
+                  let fstr = newNN.afunc[i];
+                  this.aFunc.push(activations[fstr]);
+                  this.aFunc_d.push(activations[(fstr+"_d")]);
+                  this.aFunc_d_s.push((fstr+"_d"))
+                }
+
+                this.epoch = newNN.age;
+                this.recordLoss = newNN.recLoss;
+
+                this.lossfunc = lossfuncs[newNN.lf];
+                this.lossfunc_s = newNN.lf;
+
+                this.outs = Matrix.toArray(this.Layers[this.Layers.length-1]);
+                this.loss = 0;
+                this.losses = [];
+                this.lr = newNN.lrate;
+                this.arch = newNN.arch;
+
+
+                console.log('\x1b[32m',"");
+                        this.log();
+                console.log("Succesfully loaded the Dann Model");
+                console.log("\x1b[0m","");
+
+            } else {
+                console.error('ERROR: file not found');
+            }
+        } else {
+            upload(this);
+        }
+
     }
 }
 function clickedUpload(nn) {
@@ -510,7 +658,6 @@ function clickedUpload(nn) {
     element.remove();
 
 }
-
 function upload(nn) {
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
