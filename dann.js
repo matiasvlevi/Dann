@@ -1,21 +1,18 @@
 const isBrowser = typeof process !== 'object';
 if (isBrowser) {
     //broswer
-    console.log('browser');
-
 }
 let csv;
 let fs;
 let w;
 if(!isBrowser) {
-
     // nodejs
+
     fs = require('fs');
     require('mathjs');
-    console.log('nodejs')
-
     csv = require('fast-csv');
     w = require('@fast-csv/format');
+
     function random(x1,x2) {
         return Math.random(x2-x1)+x1;
     }
