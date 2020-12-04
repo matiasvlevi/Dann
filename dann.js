@@ -1,17 +1,21 @@
-if (typeof window !== undefined) {
+const isBrowser = typeof process !== 'object';
+if (isBrowser) {
     //broswer
     console.log('browser');
 
 }
 let csv;
-if(typeof process === 'object') {
+let fs;
+let w;
+if(!isBrowser) {
 
     // nodejs
-    console.log('nodejs')
-    require('fs');
+    fs = require('fs');
     require('mathjs');
+    console.log('nodejs')
+
     csv = require('fast-csv');
-    const { writeToPath } = require('@fast-csv/format');
+    w = require('@fast-csv/format');
     function random(x1,x2) {
         return Math.random(x2-x1)+x1;
     }
@@ -27,11 +31,21 @@ if(typeof process === 'object') {
     function pow(x1,e) {
         return Math.pow(x1,e);
     }
-    console.log('abs(-2)=',abs(-2));
-    console.log('random(-2,2)=',random(-2,2));
-    console.log('log(100)=',log(100));
-    console.log('pow(2,2)=',pow(2,2));
+    function sin(x1) {
+        return Math.sin(x1);
+    }
+    function cos(x1) {
+        return Math.cos(x1);
+    }
+    function tan(x1) {
+        return Math.tan(x1);
+    }
+    function round(x1) {
+        return Math.round(x1);
+    }
+
 }
+
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
@@ -285,15 +299,22 @@ class Dann {
 
     }
     outputActivation(act) {
-
         let nor = (act);
         let der = (act + "_d");
-        this.aFunc[this.Layers.length-2] = window[nor];
-        this.aFunc_d[this.Layers.length-2] = window[der];
+        let func;
+        let func_d;
+        if (isBrowser) {
+            func = window[nor];
+            func_d = window[der];
+        } else {
+            func = activations[nor];
+            func_d = activations[der];
+        }
+        this.aFunc[this.Layers.length-2] = func;
+        this.aFunc_d[this.Layers.length-2] = func_d;
         this.aFunc_s[this.Layers.length-2] = nor;
         this.aFunc_d_s[this.Layers.length-2] = der;
     }
-
     makeWeights() {
         //this function should be called after the initialisation of the hidden layers.
         for (let i = 0; i < this.Layers.length-1;i++) {
@@ -310,8 +331,14 @@ class Dann {
             this.errors[i] = new Matrix(this.Layers[i+1].rows,1);
             this.gradients[i] = new Matrix(this.Layers[i+1].rows,1);
             if (this.aFunc[i] == undefined) {
-                this.aFunc[i] = window["sigmoid"];
-                this.aFunc_d[i] = window["sigmoid_d"];
+                if (isBrowser) {
+                    this.aFunc[i] = window["sigmoid"];
+                    this.aFunc_d[i] = window["sigmoid_d"];
+                } else {
+                    this.aFunc[i] = activations["sigmoid"];
+                    this.aFunc_d[i] = activations["sigmoid_d"];
+                }
+
                 this.aFunc_s[i] = "sigmoid";
                 this.aFunc_d_s[i] = "sigmoid_d";
             }
@@ -330,8 +357,17 @@ class Dann {
 
             let nor = (act);
             let der = (act + "_d");
-            this.aFunc[index] = window[nor];
-            this.aFunc_d[index] = window[der];
+            let func;
+            let func_d;
+            if (isBrowser) {
+                func = window[nor];
+                func_d = window[der];
+            } else {
+                func = activations[nor];
+                func_d = activations[der];
+            }
+            this.aFunc[index] = func;
+            this.aFunc_d[index] = func_d;
             this.aFunc_s[index] = nor;
             this.aFunc_d_s[index] = der;
 
@@ -363,9 +399,10 @@ class Dann {
 
     }
     save(name) {
-        if (typeof window == undefined) {
-            let path = './savedDanns/'+name+'/dannData.json';
-            let overwritten = false;
+        let path;
+        let overwritten = false;
+        if (!isBrowser) {
+            path = './savedDanns/'+name+'/dannData.json';
 
             if (fs.existsSync(path)) {
                 overwritten = true;
@@ -402,7 +439,11 @@ class Dann {
         }
         let g_str = JSON.stringify(gdata);
         let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s};
-        if (typeof window == undefined) {
+
+        if (isBrowser) {
+
+            downloadSTR(dataOBJ,name);
+        } else {
             if (!fs.existsSync('./savedDanns')){
                 fs.mkdirSync('./savedDanns');
             }
@@ -420,7 +461,7 @@ class Dann {
                 csvFile.push([i+1,this.losses[i]]);
             }
 
-            writeToPath('./savedDanns/'+name+'/losses.csv', csvFile)
+            w.writeToPath('./savedDanns/'+name+'/losses.csv', csvFile)
             .on('error', err => console.error(err))
             .on('finish', () => console.log('saved loss report at '+'./savedDanns/'+name+'/losses.csv'));
 
@@ -438,8 +479,6 @@ class Dann {
                 console.log("Succesfully saved the Dann Model at ./savedDanns/"+name+"/dannData.json ");
                 console.log("\x1b[0m","");
             }
-        } else {
-            downloadSTR(dataOBJ,name);
         }
 
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
@@ -512,7 +551,7 @@ class Dann {
         console.log("Succesfully loaded the Dann Model");
     }
     load(name) {
-        if (typeof window == undefined) {
+        if (isBrowser) {
             let path = './savedDanns/'+name+'/dannData.json';
             if (fs.existsSync(path)) {
                 let text = fs.readFileSync(path, 'utf8');
@@ -1250,5 +1289,13 @@ class GradientGraph {
 
 
 
+    }
+}
+
+if (typeof process === 'object') {
+    module.exports = {
+        dann: Dann,
+        activations: activations,
+        lossfuncs: lossfuncs
     }
 }
