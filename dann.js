@@ -2,10 +2,6 @@ if (typeof window !== undefined) {
     //broswer
     console.log('browser');
 
-    console.log('abs(-2)=',abs(-2));
-    console.log('random(-2,2)=',random(-2,2));
-    console.log('log(100)=',log(100));
-    console.log('pow(2,2)=',pow(2,2));
 }
 let csv;
 if(typeof process === 'object') {
