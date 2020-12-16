@@ -1,0 +1,52 @@
+{
+  "_from": "dannjs",
+  "_id": "dannjs@2.1.0-b",
+  "_inBundle": false,
+  "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
+  "_location": "/dannjs",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "dannjs",
+    "name": "dannjs",
+    "escapedName": "dannjs",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/dannjs/-/dannjs-2.1.0-b.tgz",
+  "_shasum": "d05549ed771ad63c4ea0f72334d8f8038211bc4d",
+  "_spec": "dannjs",
+  "_where": "C:\\Users\\Agustin\\Desktop\\dann_package_tester",
+  "author": {
+    "name": "Matias Vazquez-Levi"
+  },
+  "bugs": {
+    "url": "https://github.com/matiasvlevi/Dann/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "fast-csv": "^4.3.5",
+    "fs": "0.0.1-security",
+    "mathjs": "^8.0.1"
+  },
+  "deprecated": false,
+  "description": "A simple neural network library.",
+  "homepage": "https://github.com/matiasvlevi/Dann#readme",
+  "license": "ISC",
+  "main": "dann.js",
+  "name": "dannjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matiasvlevi/Dann.git"
+  },
+  "scripts": {
+    "test": "danntest"
+  },
+  "version": "2.1.0-b"
+}
