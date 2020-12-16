@@ -28,9 +28,7 @@ https://github.com/matiasvlevi/Dannpy
 
 Note:
 ----------
-This is the client version of the library, thus, it is dependent on p5js. 
-The client version adds graphs to track how the model is doing. (Documentation is coming)
-If you want to have the backend version you can download it with npm. 
+To install the node package <br />
 `npm i dannjs`
 
 Dannjs is not at its final version, it is still in development.
