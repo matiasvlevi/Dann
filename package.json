@@ -48,5 +48,5 @@
   "scripts": {
     "test": "danntest"
   },
-  "version": "2.1.0-b"
+  "version": "2.1.0-c"
 }
