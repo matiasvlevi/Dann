@@ -19,7 +19,7 @@ How it works:
 
 For documentation:
 -------------------
-https://dannjs.org
+https://dannjs.org/#docs
 
 Python version:
 ------------------
