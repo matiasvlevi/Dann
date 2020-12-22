@@ -707,7 +707,7 @@ function mae(predictions,target) {
     ans = sum/n;
     return ans;
 }
-function crossEntropy(predictions,target) {
+function cel(predictions,target) {
     let sum = 0;
     let ans = 0;
     let n = target.length;
@@ -1303,7 +1303,7 @@ let activations = {
 }
 let lossfuncs = {
     mae: mae,
-    cel: crossEntropy,
+    cel: cel,
     lcl: lcl,
     mbe: mbe,
     mse: mse,
