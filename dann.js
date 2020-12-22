@@ -1303,7 +1303,7 @@ let activations = {
 }
 let lossfuncs = {
     mae: mae,
-    crossEntropy: crossEntropy,
+    cel: crossEntropy,
     lcl: lcl,
     mbe: mbe,
     mse: mse,
