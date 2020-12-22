@@ -40,7 +40,9 @@ if(!isBrowser) {
     function round(x1) {
         return Math.round(x1);
     }
-
+    function sqrt(x1) {
+        return Math.sqrt(x1);
+    }
 }
 
 //Activations:
@@ -151,10 +153,11 @@ let activations = {
 }
 let lossfuncs = {
     mae: mae,
-    crossEntryopy: crossEntryopy,
+    crossEntropy: crossEntropy,
     lcl: lcl,
     mbe: mbe,
     mse: mse,
+    rmse: rmse,
     softmax: softmax,
     cce: cce
 }
@@ -715,19 +718,19 @@ function upload(nn) {
 }
 
 // loss functions:
-function mae(predictions,target) {
+function MAE(predictions,target) {
     let sum = 0;
     let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
         let y = target[i]
         let yHat = predictions[i];
-        sum += abs(y - yHat)/2;
+        sum += abs(y - yHat);
     }
-    ans = sum/l;
+    ans = sum/n;
     return ans;
 }
-function crossEntryopy(predictions,target) {
+function crossEntropy(predictions,target) {
     let sum = 0;
     let ans = 0;
     let l = target.length;
@@ -735,10 +738,10 @@ function crossEntryopy(predictions,target) {
       let y = target[i]
       let yHat = predictions[i];
 
-      sum+= -(y*log(yHat)+(1-y)*log(1-yHat));
+      sum+= y*log(yHat)+(1-y)*log(1-yHat);
 
     }
-    ans = sum/l;
+    ans = -(1/n)*sum;
     return ans;
 }
 function lcl(predictions,target) {
@@ -767,17 +770,30 @@ function mbe(predictions,target) {
     ans = sum/this.o;
     return ans;
 }
-function mse(predictions,target) {
+function rmse(predictions,target) {
     let sum = 0;
     let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
       let y = target[i]
       let yHat = predictions[i];
 
         sum += pow(y - yHat,2);
     }
-    ans = sum/this.o;
+    ans = sqrt(sum/n);
+    return ans;
+}
+function mse(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += pow(y - yHat,2);
+    }
+    ans = sum/n;
     return ans;
 }
 //softmax function:
