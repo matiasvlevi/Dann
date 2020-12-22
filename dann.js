@@ -137,30 +137,7 @@ function downloadSTR(obj, exportName) {
   downloadAnchorNode.remove();
 
 }
-let activations = {
-    leakySigmoid: leakySigmoid,
-    leakySigmoid_d: leakySigmoid_d,
-    sigmoid: sigmoid,
-    sigmoid_d: sigmoid_d,
-    tanH: tanH,
-    tanH_d: tanH_d,
-    siLU: siLU,
-    siLU_d: siLU_d,
-    reLU: reLU,
-    reLU_d: reLU_d,
-    leakyReLU: leakyReLU,
-    leakyReLU_d: leakyReLU_d
-}
-let lossfuncs = {
-    mae: mae,
-    crossEntropy: crossEntropy,
-    lcl: lcl,
-    mbe: mbe,
-    mse: mse,
-    rmse: rmse,
-    softmax: softmax,
-    cce: cce
-}
+
 class Dann {
     constructor(i,o) {
 
@@ -1310,7 +1287,30 @@ class GradientGraph {
 
     }
 }
-
+let activations = {
+    leakySigmoid: leakySigmoid,
+    leakySigmoid_d: leakySigmoid_d,
+    sigmoid: sigmoid,
+    sigmoid_d: sigmoid_d,
+    tanH: tanH,
+    tanH_d: tanH_d,
+    siLU: siLU,
+    siLU_d: siLU_d,
+    reLU: reLU,
+    reLU_d: reLU_d,
+    leakyReLU: leakyReLU,
+    leakyReLU_d: leakyReLU_d
+}
+let lossfuncs = {
+    mae: mae,
+    crossEntropy: crossEntropy,
+    lcl: lcl,
+    mbe: mbe,
+    mse: mse,
+    rmse: rmse,
+    softmax: softmax,
+    cce: cce
+}
 if (typeof process === 'object') {
     module.exports = {
         dann: Dann,
