@@ -1307,9 +1307,9 @@ let lossfuncs = {
     lcl: lcl,
     mbe: mbe,
     mse: mse,
-    rmse: rmse,
-    softmax: softmax,
-    cce: cce
+    rmse: rmse
+    // softmax: softmax,
+    // cce: cce
 }
 if (typeof process === 'object') {
     module.exports = {
