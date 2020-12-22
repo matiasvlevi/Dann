@@ -695,7 +695,7 @@ function upload(nn) {
 }
 
 // loss functions:
-function MAE(predictions,target) {
+function mae(predictions,target) {
     let sum = 0;
     let ans = 0;
     let n = target.length;
