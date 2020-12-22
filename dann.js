@@ -481,8 +481,14 @@ class Dann {
         //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
     }
     mutateRandom(randomFactor,prob) {
+        let probability = 0;
+        if (prob == undefined) {
+            probability = 1;
+        } else {
+            probability = prob;
+        }
         for (let i = 0; i < this.Layers.length;i++) {
-            this.Layers[i].addRandom(randomFactor,prob);
+            this.Layers[i].addRandom(randomFactor,probability);
         }
     }
     mutateAdd(randomFactor) {
