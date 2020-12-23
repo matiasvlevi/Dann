@@ -774,6 +774,19 @@ function rmse(predictions,target) {
     ans = sqrt(sum/n);
     return ans;
 }
+function mce(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += pow(abs(y - yHat),3);
+    }
+    ans = sum/n;
+    return ans;
+}
 function mse(predictions,target) {
     let sum = 0;
     let ans = 0;
@@ -1320,6 +1333,7 @@ let lossfuncs = {
     bce: bce,
     lcl: lcl,
     mbe: mbe,
+    mce: mce,
     mse: mse,
     rmse: rmse
     // softmax: softmax,
