@@ -1,13 +1,9 @@
-const isBrowser = typeof process !== 'object';
-if (isBrowser) {
-    //broswer
-}
+const isBrowser = typeof process !== 'object'; //true if running in browser
 let csv;
 let fs;
 let w;
 if(!isBrowser) {
     // nodejs
-
     fs = require('fs');
     require('mathjs');
     csv = require('fast-csv');
@@ -42,55 +38,6 @@ if(!isBrowser) {
     }
     function sqrt(x1) {
         return Math.sqrt(x1);
-    }
-}
-
-class Layer {
-    constructor(type,size,act) {
-        this.type = type;
-        if (this.type == 'hidden' || this.type == 'output') {
-            this.size = size;
-            let der = act + '_d';
-            this.actname = act;
-            this.actname_d = der;
-            let func;
-            let func_d;
-            if (isBrowser) {
-                func = window[act];
-                func_d = window[der];
-            } else {
-                func = activations[act];
-                func_d = activations[der];
-            }
-            this.actfunc = func;
-            this.actfunc_d = func_d;
-            this.layer = new Matrix(this.size,1);
-        } else if (this.type == 'input') {
-            this.size = size;
-            this.layer = new Matrix(this.size,1);
-        } else {
-            console.log('You need to specify the type of the Layer');
-        }
-    }
-    setAct(act) {
-        let der = act + '_d';
-        this.actname = act;
-        this.actname_d = der;
-        let func;
-        let func_d;
-        if (isBrowser) {
-            func = window[act];
-            func_d = window[der];
-        } else {
-            func = activations[act];
-            func_d = activations[der];
-        }
-        this.actfunc = func;
-        this.actfunc_d = func_d;
-    }
-    log() {
-        console.log(this);
-
     }
 }
 //Activations:
@@ -172,18 +119,54 @@ function cosh(x) {
 function sech(x) {
     return 1/cosh(x);
 }
+//Object Classes
+class Layer {
+    constructor(type,size,act) {
+        this.type = type;
+        if (this.type == 'hidden' || this.type == 'output') {
+            this.size = size;
+            let der = act + '_d';
+            this.actname = act;
+            this.actname_d = der;
+            let func;
+            let func_d;
+            if (isBrowser) {
+                func = window[act];
+                func_d = window[der];
+            } else {
+                func = activations[act];
+                func_d = activations[der];
+            }
+            this.actfunc = func;
+            this.actfunc_d = func_d;
+            this.layer = new Matrix(this.size,1);
+        } else if (this.type == 'input') {
+            this.size = size;
+            this.layer = new Matrix(this.size,1);
+        } else {
+            console.log('You need to specify the type of the Layer');
+        }
+    }
+    setAct(act) {
+        let der = act + '_d';
+        this.actname = act;
+        this.actname_d = der;
+        let func;
+        let func_d;
+        if (isBrowser) {
+            func = window[act];
+            func_d = window[der];
+        } else {
+            func = activations[act];
+            func_d = activations[der];
+        }
+        this.actfunc = func;
+        this.actfunc_d = func_d;
+    }
+    log() {
+        console.log(this);
 
-
-
-function downloadSTR(obj, exportName) {
-  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  let downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href",     dataStr);
-  downloadAnchorNode.setAttribute("download", exportName + ".json");
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-
+    }
 }
 class Dann {
     constructor(i,o) {
@@ -245,10 +228,13 @@ class Dann {
             for (let i = 0; i < this.o; i++) {
                 this.outs[i] = 0;
             }
-            console.error('The array specified does not match the number of inputs the dannjs model has.');
+            console.error('Dann Error: The input array length does not match the number of inputs the dannjs model has.');
             return this.outs;
         }
-
+        if (this.weights.length === 0) {
+            //console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
+            this.makeWeights();
+        }
 
         for(let i = 0; i < this.weights.length;i++) {
             let pLayer = this.Layers[i];
@@ -270,8 +256,11 @@ class Dann {
 
     }
     backpropagate(inputs, t, options) {
+
         let showLog = false;
         let mode = 'cpu';
+        let recordLoss = false;
+
         if (options !== undefined) {
             if (options.log !== undefined) {
                 showLog = options.log;
@@ -286,12 +275,20 @@ class Dann {
             } else {
                 mode = 'cpu';
             }
+            if (options.saveLoss !== undefined) {
+                recordLoss = options.saveLoss;
+            } else {
+                recordLoss = true;
+            }
         }
 
-        let targets = Matrix.fromArray(t);
-        //let layerObj = ;
-
-
+        let targets = new Matrix(0,0);
+        if (t.length == this.o) {
+            targets = Matrix.fromArray(t);
+        } else {
+            console.error('Dann Error: The target array length does not match the number of inputs the dannjs model has.');
+            return null;
+        }
 
         this.outs = this.feedForward(inputs, {log:false,mode:mode});
 
@@ -323,9 +320,10 @@ class Dann {
         this.biases[0].add(this.gradients[0]);
 
         this.loss = this.lossfunc(this.outs,t);
-        if (this.recordLoss == true) {
+        if (recordLoss == true) {
             this.losses.push(this.loss);
         }
+
         if (showLog == true) {
 
             console.log('Prediction: ',this.outs);
@@ -336,18 +334,39 @@ class Dann {
 
     }
     setLossFunction(str) {
+
+        if (lossfuncs[str] == undefined) {
+            if (typeof str === 'string') {
+                console.error("Dann Error: '"+str+"' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.");
+
+            } else {
+                console.error("Dann Error: Did not detect string value, as a result, the loss function is set to 'mse' by default.");
+
+            }
+
+            str = 'mse';
+        }
         this.lossfunc_s = str
         this.lossfunc = lossfuncs[this.lossfunc_s];
 
     }
     outputActivation(act) {
 
+        if (activations[act] == undefined) {
+            if (typeof act === 'string') {
+                console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
+            } else {
+                console.error("Dann Error: Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.");
+            }
+
+            act = 'sigmoid';
+        }
         this.Layers[this.Layers.length-1].setAct(act);
 
     } //Layer ready
     makeWeights() {
 
-        //this function should be called after the initialisation of the hidden layers.
+
         for (let i = 0; i < this.Layers.length-1;i++) {
             let previousLayerObj = this.Layers[i];
             let layerObj = this.Layers[i+1];
@@ -386,7 +405,14 @@ class Dann {
 
     } //Layer Ready
     addHiddenLayer(size, act) {
-        if (act == undefined) {
+
+        if (activations[act] == undefined) {
+            if (typeof act === 'string') {
+                console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
+            } else {
+                console.error("Dann Error: Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.");
+            }
+
             act = 'sigmoid';
         }
         let layer = new Layer('hidden',size,act);
@@ -394,6 +420,10 @@ class Dann {
 
     } //Layer Ready
     log() {
+        if (this.weights.length === 0) {
+            //console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
+            this.makeWeights();
+        }
         console.log("Dann NeuralNetwork:")
         console.log(" ");
         console.log("  Layers:")
@@ -501,71 +531,77 @@ class Dann {
         }
 
     } //Layer Ready
-    mutateRandom(randomFactor,prob) {
-        let probability = 0;
-        if (prob == undefined) {
-            probability = 1;
-        } else {
-            probability = prob;
+    mutateRandom(randomFactor,probability) {
+
+        if (typeof randomFactor !== 'number') {
+            console.error('Dann Error: Dann.mutateRandom(); range argument must be a number.');
+            return null;
+        } else if (typeof probability !== 'number') {
+            console.error('Dann Error: Dann.mutateRandom(); probability argument must be a number.');
+            return null;
         }
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addRandom(randomFactor,probability);
         }
     }
     mutateAdd(randomFactor) {
+        if (typeof randomFactor !== 'number') {
+            console.error('Dann Error: Dann.mutateAdd(); percent argument must be a number.');
+            return null;
+        }
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
-    loadFromJSON(objstr) {
-
-        let xdata =  JSON.parse(objstr);
-
-        let newNN = xdata;
-
-        //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
-        nn.i = newNN.arch[0];
-        nn.inputs = new Matrix(this.i, 1);
-        nn.o = newNN.arch[newNN.arch.length-1];
-        nn.outputs = new Matrix(this.o,1);
-
-        let slayers = JSON.parse(newNN.lstr);
-        for (let i = 0; i < slayers.length; i++) {
-            nn.Layers[i] = JSON.parse(slayers[i]);
-        }
-        let sweights = JSON.parse(newNN.wstr);
-        if (!(this.weights.length > 0)) {
-            this.makeWeights();
-        }
-        for (let i = 0; i < sweights.length; i++) {
-            nn.weights[i].set(JSON.parse(sweights[i]));
-        }
-        let sbiases = JSON.parse(newNN.bstr);
-        for (let i = 0; i < sbiases.length; i++) {
-            nn.biases[i].set(JSON.parse(sbiases[i]));
-        }
-        let serrors = JSON.parse(newNN.estr);
-        for (let i = 0; i < serrors.length; i++) {
-            nn.errors[i].set(JSON.parse(serrors[i]));
-        }
-        let sgradients = JSON.parse(newNN.gstr);
-        for (let i = 0; i < sgradients.length; i++) {
-            nn.gradients[i].set(JSON.parse(sgradients[i]));
-        }
-
-        nn.lossfunc = window[newNN.lf];
-        nn.lossfunc_s = newNN.lf;
-
-        nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
-        nn.loss = 0;
-        nn.losses = [];
-        nn.lr = newNN.lrate;
-        nn.arch = newNN.arch;
-
-        nn.log();
-        console.log("");
-        console.log("Succesfully loaded the Dann Model");
-    } //Layer Ready
+    // loadFromJSON(objstr) {
+    //
+    //     let xdata =  JSON.parse(objstr);
+    //
+    //     let newNN = xdata;
+    //
+    //     //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
+    //     nn.i = newNN.arch[0];
+    //     nn.inputs = new Matrix(this.i, 1);
+    //     nn.o = newNN.arch[newNN.arch.length-1];
+    //     nn.outputs = new Matrix(this.o,1);
+    //
+    //     let slayers = JSON.parse(newNN.lstr);
+    //     for (let i = 0; i < slayers.length; i++) {
+    //         nn.Layers[i] = JSON.parse(slayers[i]);
+    //     }
+    //     let sweights = JSON.parse(newNN.wstr);
+    //     if (!(this.weights.length > 0)) {
+    //         this.makeWeights();
+    //     }
+    //     for (let i = 0; i < sweights.length; i++) {
+    //         nn.weights[i].set(JSON.parse(sweights[i]));
+    //     }
+    //     let sbiases = JSON.parse(newNN.bstr);
+    //     for (let i = 0; i < sbiases.length; i++) {
+    //         nn.biases[i].set(JSON.parse(sbiases[i]));
+    //     }
+    //     let serrors = JSON.parse(newNN.estr);
+    //     for (let i = 0; i < serrors.length; i++) {
+    //         nn.errors[i].set(JSON.parse(serrors[i]));
+    //     }
+    //     let sgradients = JSON.parse(newNN.gstr);
+    //     for (let i = 0; i < sgradients.length; i++) {
+    //         nn.gradients[i].set(JSON.parse(sgradients[i]));
+    //     }
+    //
+    //     nn.lossfunc = window[newNN.lf];
+    //     nn.lossfunc_s = newNN.lf;
+    //
+    //     nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
+    //     nn.loss = 0;
+    //     nn.losses = [];
+    //     nn.lr = newNN.lrate;
+    //     nn.arch = newNN.arch;
+    //
+    //     nn.log();
+    //     console.log("");
+    //     console.log("Succesfully loaded the Dann Model");
+    // } //Layer Ready
     load(name) {
         if (!isBrowser) {
             let path = './savedDanns/'+name+'/dannData.json';
@@ -636,200 +672,6 @@ class Dann {
 
     } //Layer Ready
 }
-function clickedUpload(nn) {
-    let element = document.getElementById('upload');
-    let file = element.files[0];
-
-    let reader = new FileReader();
-
-    reader.readAsText(file);
-
-    reader.onload = function() {
-        console.log();
-
-
-        let xdata =  JSON.parse(reader.result);
-
-        let newNN = xdata;
-
-        //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
-        nn.i = newNN.arch[0];
-        nn.inputs = new Matrix(this.i, 1);
-        nn.o = newNN.arch[newNN.arch.length-1];
-        nn.outputs = new Matrix(this.o,1);
-
-        let slayers = JSON.parse(newNN.lstr);
-        for (let i = 0; i < slayers.length; i++) {
-            nn.Layers[i] = JSON.parse(slayers[i]);
-        }
-        let sweights = JSON.parse(newNN.wstr);
-        for (let i = 0; i < sweights.length; i++) {
-            nn.weights[i].set(JSON.parse(sweights[i]));
-        }
-        let sbiases = JSON.parse(newNN.bstr);
-        for (let i = 0; i < sbiases.length; i++) {
-            nn.biases[i].set(JSON.parse(sbiases[i]));
-        }
-        let serrors = JSON.parse(newNN.estr);
-        for (let i = 0; i < serrors.length; i++) {
-            nn.errors[i].set(JSON.parse(serrors[i]));
-        }
-        let sgradients = JSON.parse(newNN.gstr);
-        for (let i = 0; i < sgradients.length; i++) {
-            nn.gradients[i].set(JSON.parse(sgradients[i]));
-        }
-
-        nn.lossfunc = window[newNN.lf];
-        nn.lossfunc_s = newNN.lf;
-
-        nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
-        nn.loss = 0;
-        nn.losses = [];
-        nn.lr = newNN.lrate;
-        nn.arch = newNN.arch;
-
-        nn.log();
-        console.log("");
-        console.log("Succesfully loaded the Dann Model");
-    };
-
-    reader.onerror = function() {
-      console.log(reader.error);
-    };
-
-    element.remove();
-
-}
-function upload(nn) {
-    let downloadAnchorNode = document.createElement('input');
-    downloadAnchorNode.setAttribute("type", "file");
-    downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload(nn)");
-    document.body.appendChild(downloadAnchorNode);
-
-}
-// loss functions:
-function mae(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let n = target.length;
-    for (let i = 0; i < n; i++) {
-        let y = target[i]
-        let yHat = predictions[i];
-        sum += abs(y - yHat);
-    }
-    ans = sum/n;
-    return ans;
-}
-function bce(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let n = target.length;
-    for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-      sum+= y*log(yHat)+(1-y)*log(1-yHat);
-
-    }
-    ans = -sum/n;
-    return ans;
-}
-function lcl(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-        sum += log(cosh(yHat - y));
-    }
-    ans = sum/l;
-    return ans;
-}
-function mbe(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-        sum += (y - yHat);
-    }
-    ans = sum/this.o;
-    return ans;
-}
-function rmse(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let n = target.length;
-    for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-        sum += pow(y - yHat,2);
-    }
-    ans = sqrt(sum/n);
-    return ans;
-}
-function mce(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let n = target.length;
-    for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-        sum += pow(abs(y - yHat),3);
-    }
-    ans = sum/n;
-    return ans;
-}
-function mse(predictions,target) {
-    let sum = 0;
-    let ans = 0;
-    let n = target.length;
-    for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-        sum += pow(y - yHat,2);
-    }
-    ans = sum/n;
-    return ans;
-}
-//softmax function (under developpement):
-function softmax(xarr,i) {
-  let l = xarr.length;
-  let sum = 0;
-  for (let j = 0; j < l;j++) {
-    sum+=exp(xarr[j])
-  }
-  if (arguments.length<2){
-    let arr = [];
-    for (let j = 0; j < l;j++) {
-      arr[j] = exp(xarr[j])/sum;
-    }
-    return arr
-  } else {
-    return exp(xarr[i])/sum;
-  }
-
-}
-function cce(predictions, target) {
-
-  let c = target.length;
-
-  let sum = 0;
-  for (let i = 0; i < c; i++) {
-    let t = target[i]
-    sum+= t*log(softmax(predictions,i))
-  }
-  return abs(-sum - 1.4611501717344748 - 0.0818903006748597);
-}
-// Matrix Math:
 class Matrix {
     constructor(rows,cols) {
 
@@ -964,6 +806,8 @@ class Matrix {
     }
     set(matrix) {
         this.matrix = matrix;
+        this.rows = matrix.length;
+        this.cols = matrix[0].length;
     }
     add(n) {
         if (n instanceof Matrix) {
@@ -1040,10 +884,207 @@ class Matrix {
         }
     }
 }
+// loss functions:
+function mae(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+        let y = target[i]
+        let yHat = predictions[i];
+        sum += abs(y - yHat);
+    }
+    ans = sum/n;
+    return ans;
+}
+function bce(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+      sum+= y*log(yHat)+(1-y)*log(1-yHat);
+
+    }
+    ans = -sum/n;
+    return ans;
+}
+function lcl(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += log(cosh(yHat - y));
+    }
+    ans = sum/l;
+    return ans;
+}
+function mbe(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let l = target.length;
+    for (let i = 0; i < l; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += (y - yHat);
+    }
+    ans = sum/this.o;
+    return ans;
+}
+function rmse(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += pow(y - yHat,2);
+    }
+    ans = sqrt(sum/n);
+    return ans;
+}
+function mce(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += pow(abs(y - yHat),3);
+    }
+    ans = sum/n;
+    return ans;
+}
+function mse(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i]
+      let yHat = predictions[i];
+
+        sum += pow(y - yHat,2);
+    }
+    ans = sum/n;
+    return ans;
+}
+// Download Functions:
+function downloadSTR(obj, exportName) {
+  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  let downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+
+}
+function clickedUpload(nn) {
+    let element = document.getElementById('upload');
+    let file = element.files[0];
+
+    let reader = new FileReader();
+
+    reader.readAsText(file);
+
+    reader.onload = function() {
+
+
+        let xdata =  JSON.parse(reader.result);
+
+        let newNN = xdata;
+
+        nn.i = newNN.arch[0];
+        nn.inputs = new Matrix(this.i, 1);
+        nn.o = newNN.arch[newNN.arch.length-1];
+        nn.outputs = new Matrix(this.o,1);
+
+        let slayers = JSON.parse(newNN.lstr);
+        for (let i = 0; i < slayers.length; i++) {
+            let layerObj = JSON.parse(slayers[i]);
+
+            let act = layerObj.actname;
+            let der = act + '_d';
+            layerObj.actname = act;
+            layerObj.actname_d = der;
+            let func;
+            let func_d;
+            if (isBrowser) {
+                func = window[act];
+                func_d = window[der];
+            } else {
+                func = activations[act];
+                func_d = activations[der];
+            }
+            layerObj.actfunc = func;
+            layerObj.actfunc_d = func_d;
+            nn.Layers[i] = layerObj;
+        }
+        let sweights = JSON.parse(newNN.wstr);
+        for (let i = 0; i < sweights.length; i++) {
+            nn.weights[i].set(JSON.parse(sweights[i]));
+        }
+        let sbiases = JSON.parse(newNN.bstr);
+        for (let i = 0; i < sbiases.length; i++) {
+            nn.biases[i].set(JSON.parse(sbiases[i]));
+        }
+        let serrors = JSON.parse(newNN.estr);
+        for (let i = 0; i < serrors.length; i++) {
+            nn.errors[i].set(JSON.parse(serrors[i]));
+        }
+        let sgradients = JSON.parse(newNN.gstr);
+        for (let i = 0; i < sgradients.length; i++) {
+            nn.gradients[i].set(JSON.parse(sgradients[i]));
+        }
+
+        nn.lossfunc = window[newNN.lf];
+        nn.lossfunc_s = newNN.lf;
+
+        nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
+        nn.loss = 0;
+        nn.losses = [];
+        nn.lr = newNN.lrate;
+        nn.arch = newNN.arch;
+
+        nn.log();
+        console.log("");
+        console.log("Succesfully loaded the Dann Model");
+    };
+
+    reader.onerror = function() {
+      console.log(reader.error);
+    };
+
+    element.remove();
+
+}
+function upload(nn) {
+    let downloadAnchorNode = document.createElement('input');
+    downloadAnchorNode.setAttribute("type", "file");
+    downloadAnchorNode.setAttribute("id", "upload");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload(nn)");
+    document.body.appendChild(downloadAnchorNode);
+
+}
+//Color Functions & values
+function colorGradientFunc(x) {
+  return 1 / (1+ exp(-2*x))
+}
+function colorGradientFunc2(x) {
+  return 1 / (1+ exp(-10*(x-0.5)))
+}
 let dragged = false;
 let fontColor = [255,255,255];
 let contourColor = [0,0,0];
-//Plot any Dann neural Network:
+//p5js Graphic tools (not documented yet).
 class NetPlot {
   constructor(x,y,w,h,nn) {
     this.pos = createVector(x,y);
@@ -1146,13 +1187,6 @@ class NetPlot {
 
   }
 }
-function colorGradientFunc(x) {
-  return 1 / (1+ exp(-2*x))
-}
-function colorGradientFunc2(x) {
-  return 1 / (1+ exp(-10*(x-0.5)))
-}
-// Graph (graph any values over time):
 class Graph {
     constructor(x,y,w,h) {
         this.pos = createVector(x,y);
@@ -1234,7 +1268,6 @@ class Graph {
     }
 
 }
-//Graph the gradients
 class GradientGraph {
     constructor(x,y,w,h,nn) {
         this.pos = createVector(x,y);
@@ -1314,6 +1347,7 @@ class GradientGraph {
 
     }
 }
+//Node Module Exports:
 let activations = {
     leakySigmoid: leakySigmoid,
     leakySigmoid_d: leakySigmoid_d,
@@ -1336,13 +1370,12 @@ let lossfuncs = {
     mce: mce,
     mse: mse,
     rmse: rmse
-    // softmax: softmax,
-    // cce: cce
 }
 if (typeof process === 'object') {
     module.exports = {
         dann: Dann,
         layer: Layer,
+        matrix: Matrix,
         activations: activations,
         lossfuncs: lossfuncs
     }
