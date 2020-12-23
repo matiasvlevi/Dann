@@ -721,7 +721,7 @@ function mae(predictions,target) {
     ans = sum/n;
     return ans;
 }
-function cel(predictions,target) {
+function bce(predictions,target) {
     let sum = 0;
     let ans = 0;
     let n = target.length;
@@ -1317,7 +1317,7 @@ let activations = {
 }
 let lossfuncs = {
     mae: mae,
-    cel: cel,
+    bce: bce,
     lcl: lcl,
     mbe: mbe,
     mse: mse,
