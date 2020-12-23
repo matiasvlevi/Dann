@@ -1301,6 +1301,7 @@ let activations = {
     leakyReLU: leakyReLU,
     leakyReLU_d: leakyReLU_d
 }
+console.log('layertest')
 let lossfuncs = {
     mae: mae,
     cel: cel,
