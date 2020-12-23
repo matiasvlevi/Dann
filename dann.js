@@ -194,12 +194,6 @@ class Dann {
         this.o = o;
         this.outputs = new Layer('output',o,'sigmoid');
 
-        this.aFunc = [];
-        this.aFunc_d = [];
-
-        this.aFunc_s = [];
-        this.aFunc_d_s = [];
-
         this.Layers = [this.inputs,this.outputs];
         this.weights = [];
         this.biases = [];
@@ -666,7 +660,7 @@ function clickedUpload(nn) {
 
         let slayers = JSON.parse(newNN.lstr);
         for (let i = 0; i < slayers.length; i++) {
-            nn.Layers[i].set(JSON.parse(slayers[i]));
+            nn.Layers[i] = JSON.parse(slayers[i]);
         }
         let sweights = JSON.parse(newNN.wstr);
         for (let i = 0; i < sweights.length; i++) {
@@ -683,17 +677,6 @@ function clickedUpload(nn) {
         let sgradients = JSON.parse(newNN.gstr);
         for (let i = 0; i < sgradients.length; i++) {
             nn.gradients[i].set(JSON.parse(sgradients[i]));
-        }
-
-        nn.aFunc_s = newNN.afunc;
-        nn.aFunc = [];
-        nn.aFunc_d = [];
-        nn.aFunc_d_s = [];
-        for (let i = 0; i < newNN.afunc.length;i++) {
-            let fstr = newNN.afunc[i];
-            nn.aFunc.push(window[fstr]);
-            nn.aFunc_d.push(window[(fstr+"_d")]);
-            nn.aFunc_d_s.push((fstr+"_d"))
         }
 
         nn.lossfunc = window[newNN.lf];
