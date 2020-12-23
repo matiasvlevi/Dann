@@ -45,6 +45,54 @@ if(!isBrowser) {
     }
 }
 
+class Layer {
+    constructor(type,size,act) {
+        this.type = type;
+        if (this.type == 'hidden' || this.type == 'output') {
+            this.size = size;
+            let der = act + '_d';
+            this.actname = act;
+            this.actname_d = der;
+            let func;
+            let func_d;
+            if (isBrowser) {
+                func = window[act];
+                func_d = window[der];
+            } else {
+                func = activations[act];
+                func_d = activations[der];
+            }
+            this.actfunc = func;
+            this.actfunc_d = func_d;
+            this.layer = new Matrix(this.size,1);
+        } else if (this.type == 'input') {
+            this.size = size;
+            this.layer = new Matrix(this.size,1);
+        } else {
+            console.log('You need to specify the type of the Layer');
+        }
+    }
+    setAct(act) {
+        let der = act + '_d';
+        this.actname = act;
+        this.actname_d = der;
+        let func;
+        let func_d;
+        if (isBrowser) {
+            func = window[act];
+            func_d = window[der];
+        } else {
+            func = activations[act];
+            func_d = activations[der];
+        }
+        this.actfunc = func;
+        this.actfunc_d = func_d;
+    }
+    log() {
+        console.log(this);
+
+    }
+}
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
@@ -137,15 +185,14 @@ function downloadSTR(obj, exportName) {
   downloadAnchorNode.remove();
 
 }
-
 class Dann {
     constructor(i,o) {
 
         this.i = i;
-        this.inputs = new Matrix(i,1);
+        this.inputs = new Layer('input',i);
 
         this.o = o;
-        this.outputs = new Matrix(o,1);
+        this.outputs = new Layer('output',o,'sigmoid');
 
         this.Layers = [this.inputs,this.outputs];
         this.weights = [];
@@ -173,71 +220,89 @@ class Dann {
       }
       return newArr;
     }
-    feedForward(inputs) {
+    feedForward(inputs, options) {
+        let showLog = false;
+        let mode = 'cpu';
+        if (options !== undefined) {
+            if (options.log !== undefined) {
+                showLog = options.log;
+            } else {
+                showLog = false;
+            }
+            if (options.mode !== undefined) {
+                mode = options.mode;
+                if (mode == 'gpu') {
+                    console.log('gpu version coming soon');
+                }
+            } else {
+                mode = 'cpu';
+            }
+        }
 
-        this.Layers[0] = Matrix.fromArray(inputs);
+        if (inputs.length == this.i) {
+            this.Layers[0].layer = Matrix.fromArray(inputs);
+        } else {
+            for (let i = 0; i < this.o; i++) {
+                this.outs[i] = 0;
+            }
+            console.error('The array specified does not match the number of inputs the dannjs model has.');
+            return this.outs;
+        }
+
 
         for(let i = 0; i < this.weights.length;i++) {
-            this.Layers[i+1] = Matrix.multiply(this.weights[i],this.Layers[i]);
-            this.Layers[i+1].add(this.biases[i]);
-            this.Layers[i+1].map(this.aFunc[i]);
+            let pLayer = this.Layers[i];
+
+            let layerObj = this.Layers[i+1];
+
+            layerObj.layer = Matrix.multiply(this.weights[i],pLayer.layer);
+            layerObj.layer.add(this.biases[i]);
+            layerObj.layer.map(layerObj.actfunc);
 
         }
-        for (let i = 0; i < this.o; i++) {
-            this.outs[i] = round((Matrix.toArray(this.Layers[this.Layers.length-1])[i])*1000)/1000;
+        this.outs = Matrix.toArray(this.Layers[this.Layers.length-1].layer);
+        if (showLog == true) {
 
-       }
+            console.log('Prediction: ',this.outs);
+
+        }
         return this.outs;
 
     }
-    backpropagate_gradients(inputs, g) {
-        let appLr = this.lr;
-        this.gradients[this.gradients.length-1] = Matrix.fromArray(g);
-
-        for (let i = this.weights.length-1; i > 0;i--) {
-            let h_t = Matrix.transpose(this.Layers[i]);
-
-            let weights_deltas = Matrix.multiply(this.gradients[i],h_t);
-
-            this.weights[i].add(weights_deltas);
-            this.biases[i].add(this.gradients[i]);
-
-            let weights_t = Matrix.transpose(this.weights[i]);
-            this.errors[i-1] = Matrix.multiply(weights_t,this.errors[i]);
-
-            this.gradients[i-1] = Matrix.map(this.Layers[i], this.aFunc_d[i-1]);
-            this.gradients[i-1].mult(this.errors[i-1]);
-            this.gradients[i-1].mult(appLr);
+    backpropagate(inputs, t, options) {
+        let showLog = false;
+        let mode = 'cpu';
+        if (options !== undefined) {
+            if (options.log !== undefined) {
+                showLog = options.log;
+            } else {
+                showLog = false;
+            }
+            if (options.mode !== undefined) {
+                mode = options.mode;
+                if (mode == 'gpu') {
+                    console.log('gpu version coming soon');
+                }
+            } else {
+                mode = 'cpu';
+            }
         }
 
-        let i_t = Matrix.transpose(this.Layers[0]);
-        let weights_deltas = Matrix.multiply(this.gradients[0], i_t);
-
-        this.weights[0].add(weights_deltas);
-        this.biases[0].add(this.gradients[0]);
-
-        this.loss = this.lossfunc(this.outs,g);
-        if (this.recordLoss == true) {
-            this.losses.push(this.loss);
-        }
-
-
-    }
-    backpropagate(inputs, t) {
         let targets = Matrix.fromArray(t);
+        //let layerObj = ;
 
-        let appLr = this.lr;
 
-        this.outs = this.feedForward(inputs);
 
-        this.errors[this.errors.length-1] = Matrix.subtract(targets, this.Layers[this.Layers.length-1]);
+        this.outs = this.feedForward(inputs, {log:false,mode:mode});
 
-        this.gradients[this.gradients.length-1] = Matrix.map(this.Layers[this.Layers.length-1],this.aFunc_d[this.aFunc_d.length-1]);
+        this.errors[this.errors.length-1] = Matrix.subtract(targets, this.Layers[this.Layers.length-1].layer);
+
+        this.gradients[this.gradients.length-1] = Matrix.map(this.Layers[this.Layers.length-1].layer,this.Layers[this.Layers.length-1].actfunc_d);
         this.gradients[this.gradients.length-1].mult(this.errors[this.errors.length-1]);
-        this.gradients[this.gradients.length-1].mult(appLr);
+        this.gradients[this.gradients.length-1].mult(this.lr);
 
         for (let i = this.weights.length-1; i > 0;i--) {
-            let h_t = Matrix.transpose(this.Layers[i]);
+            let h_t = Matrix.transpose(this.Layers[i].layer);
 
             let weights_deltas = Matrix.multiply(this.gradients[i],h_t);
 
@@ -246,13 +311,12 @@ class Dann {
 
             let weights_t = Matrix.transpose(this.weights[i]);
             this.errors[i-1] = Matrix.multiply(weights_t,this.errors[i]);
-
-            this.gradients[i-1] = Matrix.map(this.Layers[i], this.aFunc_d[i-1]);
+            this.gradients[i-1] = Matrix.map(this.Layers[i].layer, this.Layers[i].actfunc_d);
             this.gradients[i-1].mult(this.errors[i-1]);
-            this.gradients[i-1].mult(appLr);
+            this.gradients[i-1].mult(this.lr);
         }
 
-        let i_t = Matrix.transpose(this.Layers[0]);
+        let i_t = Matrix.transpose(this.Layers[0].layer);
         let weights_deltas = Matrix.multiply(this.gradients[0], i_t);
 
         this.weights[0].add(weights_deltas);
@@ -262,6 +326,13 @@ class Dann {
         if (this.recordLoss == true) {
             this.losses.push(this.loss);
         }
+        if (showLog == true) {
+
+            console.log('Prediction: ',this.outs);
+            console.log('target: ',t);
+            console.log('Loss: ',this.loss);
+
+        }
 
     }
     setLossFunction(str) {
@@ -270,111 +341,88 @@ class Dann {
 
     }
     outputActivation(act) {
-        let nor = (act);
-        let der = (act + "_d");
-        let func;
-        let func_d;
-        if (isBrowser) {
-            func = window[nor];
-            func_d = window[der];
-        } else {
-            func = activations[nor];
-            func_d = activations[der];
-        }
-        this.aFunc[this.Layers.length-2] = func;
-        this.aFunc_d[this.Layers.length-2] = func_d;
-        this.aFunc_s[this.Layers.length-2] = nor;
-        this.aFunc_d_s[this.Layers.length-2] = der;
-    }
+
+        this.Layers[this.Layers.length-1].setAct(act);
+
+    } //Layer ready
     makeWeights() {
+
         //this function should be called after the initialisation of the hidden layers.
         for (let i = 0; i < this.Layers.length-1;i++) {
+            let previousLayerObj = this.Layers[i];
+            let layerObj = this.Layers[i+1];
 
-
-            let weights = new Matrix(this.Layers[i+1].rows,this.Layers[i].rows);
-            let biases = new Matrix(this.Layers[i+1].rows,1);
+            let weights = new Matrix(layerObj.layer.rows,previousLayerObj.layer.rows);
+            let biases = new Matrix(layerObj.layer.rows,1);
 
             weights.randomize();
             biases.randomize();
             this.weights[i] = weights;
             this.biases[i] = biases;
 
-            this.errors[i] = new Matrix(this.Layers[i+1].rows,1);
-            this.gradients[i] = new Matrix(this.Layers[i+1].rows,1);
-            if (this.aFunc[i] == undefined) {
+            this.errors[i] = new Matrix(layerObj.layer.rows,1);
+            this.gradients[i] = new Matrix(layerObj.layer.rows,1);
+            if (layerObj.actfunc == undefined) {
+                let n = "sigmoid";
+                let d = n + "_d";
+                layerObj.actname = n;
+                layerObj.actname_d = d;
                 if (isBrowser) {
-                    this.aFunc[i] = window["sigmoid"];
-                    this.aFunc_d[i] = window["sigmoid_d"];
+                    layerObj.actfunc = window[n];
+                    layerObj.actfunc_d = window[d];
                 } else {
-                    this.aFunc[i] = activations["sigmoid"];
-                    this.aFunc_d[i] = activations["sigmoid_d"];
+                    layerObj.actfunc = activations[n];
+                    layerObj.actfunc_d = activations[d];
                 }
 
-                this.aFunc_s[i] = "sigmoid";
-                this.aFunc_d_s[i] = "sigmoid_d";
             }
 
 
         }
         for (let i = 0; i<this.Layers.length;i++) {
-            this.arch[i] = this.Layers[i].rows;
+            let layerObj = this.Layers[i];
+            this.arch[i] = layerObj.layer.rows;
         }
-    }
+
+    } //Layer Ready
     addHiddenLayer(size, act) {
-        let layer = new Matrix(size,1);
-        let index = this.Layers.length-2;
-        this.Layers.splice(this.Layers.length-1,0,layer);
-        if (act !== undefined) {
-
-            let nor = (act);
-            let der = (act + "_d");
-            let func;
-            let func_d;
-            if (isBrowser) {
-                func = window[nor];
-                func_d = window[der];
-            } else {
-                func = activations[nor];
-                func_d = activations[der];
-            }
-            this.aFunc[index] = func;
-            this.aFunc_d[index] = func_d;
-            this.aFunc_s[index] = nor;
-            this.aFunc_d_s[index] = der;
-
+        if (act == undefined) {
+            act = 'sigmoid';
         }
-    }
+        let layer = new Layer('hidden',size,act);
+        this.Layers.splice(this.Layers.length-1,0,layer);
 
+    } //Layer Ready
     log() {
         console.log("Dann NeuralNetwork:")
         console.log(" ");
         console.log("  Layers:")
         for (let i = 0; i < this.Layers.length;i++) {
+            let layerObj = this.Layers[i];
             let str = "Hidden Layer: ";
             let afunc = "";
             if (i == 0) {
                 str = "Input Layer:   ";
                 afunc = "       ";
-            } else if (i == this.Layers.length-1) {
+            } else if (i == layerObj.length-1) {
                 str = "Output Layer:  ";
-                afunc = "  ("+this.aFunc_s[i-1]+")";
+                afunc = "  ("+layerObj.actname+")";
             } else {
-                afunc = "  ("+this.aFunc_s[i-1]+")";
+                afunc = "  ("+layerObj.actname+")";
             }
-            console.log("    " + str + Matrix.toArray(this.Layers[i]).length + afunc);
+            console.log("    " + str + Matrix.toArray(layerObj.layer).length + afunc);
         }
         console.log(" ");
         console.log("  Other Values: ");
         console.log("    Learning rate: " + this.lr);
         console.log("    Loss Function: " + this.lossfunc.name);
 
-    }
+    } //Layer Ready
     save(name) {
         let path;
         let overwritten = false;
         if (!isBrowser) {
             path = './savedDanns/'+name+'/dannData.json';
-
             if (fs.existsSync(path)) {
                 overwritten = true;
             }
@@ -388,7 +436,7 @@ class Dann {
         //layers
         let ldata = [];
         for (let i = 0; i < this.Layers.length;i++) {
-            ldata[i] =  JSON.stringify(this.Layers[i].matrix);
+            ldata[i] =  JSON.stringify(this.Layers[i]);
         }
         let l_str = JSON.stringify(ldata);
         //biases
@@ -409,7 +457,7 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s};
+        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s};
 
         if (isBrowser) {
 
@@ -452,8 +500,7 @@ class Dann {
             }
         }
 
-        //downloadSTR({weights: str, arch: this.arch, aFunc: this.aFunc},name);
-    }
+    } //Layer Ready
     mutateRandom(randomFactor,prob) {
         let probability = 0;
         if (prob == undefined) {
@@ -462,12 +509,12 @@ class Dann {
             probability = prob;
         }
         for (let i = 0; i < this.Layers.length;i++) {
-            this.Layers[i].addRandom(randomFactor,probability);
+            this.Layers[i].layer.addRandom(randomFactor,probability);
         }
     }
     mutateAdd(randomFactor) {
         for (let i = 0; i < this.Layers.length;i++) {
-            this.Layers[i].addPrecent(randomFactor);
+            this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
     loadFromJSON(objstr) {
@@ -484,9 +531,12 @@ class Dann {
 
         let slayers = JSON.parse(newNN.lstr);
         for (let i = 0; i < slayers.length; i++) {
-            nn.Layers[i].set(JSON.parse(slayers[i]));
+            nn.Layers[i] = JSON.parse(slayers[i]);
         }
         let sweights = JSON.parse(newNN.wstr);
+        if (!(this.weights.length > 0)) {
+            this.makeWeights();
+        }
         for (let i = 0; i < sweights.length; i++) {
             nn.weights[i].set(JSON.parse(sweights[i]));
         }
@@ -503,17 +553,6 @@ class Dann {
             nn.gradients[i].set(JSON.parse(sgradients[i]));
         }
 
-        nn.aFunc_s = newNN.afunc;
-        nn.aFunc = [];
-        nn.aFunc_d = [];
-        nn.aFunc_d_s = [];
-        for (let i = 0; i < newNN.afunc.length;i++) {
-            let fstr = newNN.afunc[i];
-            nn.aFunc.push(window[fstr]);
-            nn.aFunc_d.push(window[(fstr+"_d")]);
-            nn.aFunc_d_s.push((fstr+"_d"))
-        }
-
         nn.lossfunc = window[newNN.lf];
         nn.lossfunc_s = newNN.lf;
 
@@ -526,7 +565,7 @@ class Dann {
         nn.log();
         console.log("");
         console.log("Succesfully loaded the Dann Model");
-    }
+    } //Layer Ready
     load(name) {
         if (!isBrowser) {
             let path = './savedDanns/'+name+'/dannData.json';
@@ -545,14 +584,18 @@ class Dann {
 
                 let slayers = JSON.parse(newNN.lstr);
                 for (let i = 0; i < slayers.length; i++) {
-
-                  this.Layers[i].set(JSON.parse(slayers[i]));
-
+                  this.Layers[i] = JSON.parse(slayers[i]);
                 }
                 let sweights = JSON.parse(newNN.wstr);
+
+                if (!(this.weights.length > 0)) {
+                    this.makeWeights();
+                }
                 for (let i = 0; i < sweights.length; i++) {
                   this.weights[i].set(JSON.parse(sweights[i]));
                 }
+
+
                 let sbiases = JSON.parse(newNN.bstr);
                 for (let i = 0; i < sbiases.length; i++) {
                   this.biases[i].set(JSON.parse(sbiases[i]));
@@ -564,17 +607,6 @@ class Dann {
                 let sgradients = JSON.parse(newNN.gstr);
                 for (let i = 0; i < sgradients.length; i++) {
                   this.gradients[i].set(JSON.parse(sgradients[i]));
-                }
-
-                this.aFunc_s = newNN.afunc;
-                this.aFunc = [];
-                this.aFunc_d = [];
-                this.aFunc_d_s = [];
-                for (let i = 0; i < newNN.afunc.length;i++) {
-                  let fstr = newNN.afunc[i];
-                  this.aFunc.push(activations[fstr]);
-                  this.aFunc_d.push(activations[(fstr+"_d")]);
-                  this.aFunc_d_s.push((fstr+"_d"))
                 }
 
                 this.epoch = newNN.age;
@@ -602,7 +634,7 @@ class Dann {
             upload(this);
         }
 
-    }
+    } //Layer Ready
 }
 function clickedUpload(nn) {
     let element = document.getElementById('upload');
@@ -628,7 +660,7 @@ function clickedUpload(nn) {
 
         let slayers = JSON.parse(newNN.lstr);
         for (let i = 0; i < slayers.length; i++) {
-            nn.Layers[i].set(JSON.parse(slayers[i]));
+            nn.Layers[i] = JSON.parse(slayers[i]);
         }
         let sweights = JSON.parse(newNN.wstr);
         for (let i = 0; i < sweights.length; i++) {
@@ -645,17 +677,6 @@ function clickedUpload(nn) {
         let sgradients = JSON.parse(newNN.gstr);
         for (let i = 0; i < sgradients.length; i++) {
             nn.gradients[i].set(JSON.parse(sgradients[i]));
-        }
-
-        nn.aFunc_s = newNN.afunc;
-        nn.aFunc = [];
-        nn.aFunc_d = [];
-        nn.aFunc_d_s = [];
-        for (let i = 0; i < newNN.afunc.length;i++) {
-            let fstr = newNN.afunc[i];
-            nn.aFunc.push(window[fstr]);
-            nn.aFunc_d.push(window[(fstr+"_d")]);
-            nn.aFunc_d_s.push((fstr+"_d"))
         }
 
         nn.lossfunc = window[newNN.lf];
@@ -687,7 +708,6 @@ function upload(nn) {
     document.body.appendChild(downloadAnchorNode);
 
 }
-
 // loss functions:
 function mae(predictions,target) {
     let sum = 0;
@@ -767,7 +787,7 @@ function mse(predictions,target) {
     ans = sum/n;
     return ans;
 }
-//softmax function:
+//softmax function (under developpement):
 function softmax(xarr,i) {
   let l = xarr.length;
   let sum = 0;
@@ -1308,6 +1328,7 @@ let lossfuncs = {
 if (typeof process === 'object') {
     module.exports = {
         dann: Dann,
+        layer: Layer,
         activations: activations,
         lossfuncs: lossfuncs
     }
