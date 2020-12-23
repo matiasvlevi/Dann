@@ -289,7 +289,10 @@ class Dann {
             console.error('Dann Error: The target array length does not match the number of inputs the dannjs model has.');
             return null;
         }
-
+        if (typeof this.lr !== 'number') {
+            console.error('Dann Error: The learning rate specified (Dann.lr property) is not a number.');
+            return null;
+        }
         this.outs = this.feedForward(inputs, {log:false,mode:mode});
 
         this.errors[this.errors.length-1] = Matrix.subtract(targets, this.Layers[this.Layers.length-1].layer);
