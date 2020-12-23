@@ -147,12 +147,6 @@ class Dann {
         this.o = o;
         this.outputs = new Matrix(o,1);
 
-        this.aFunc = [];
-        this.aFunc_d = [];
-
-        this.aFunc_s = [];
-        this.aFunc_d_s = [];
-
         this.Layers = [this.inputs,this.outputs];
         this.weights = [];
         this.biases = [];
