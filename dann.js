@@ -435,8 +435,8 @@ class Dann {
         let showGradients = false;
         let showErrors = false;
         let showBiases = false;
-        let showBaseSettings = true;
-        let showOther = true;
+        let showBaseSettings = false;
+        let showOther = false;
         let table = false;
         let decimals = 1000;
 
@@ -444,32 +444,27 @@ class Dann {
         if (options !== undefined) {
             if (options.weights) {
                 showWeights = options.weights;
-                showBaseSettings = !options.weights;
-                showOther = !options.weights;
+
             }
             if (options.gradients) {
                 showGradients = options.gradients;
-                showBaseSettings = !options.gradients;
-                showOther = !options.gradients;
+
             }
             if (options.errors) {
                 showErrors = options.errors;
-                showBaseSettings = !options.errors;
-                showOther = !options.errors;
+
             }
             if (options.biases) {
                 showBiases = options.biases;
-                showBaseSettings = !options.biases;
-                showOther = !options.biases;
+
             }
             if (options.struct) {
                 showBaseSettings = options.struct;
-                showOther = !options.struct;
+
 
             }
             if (options.misc) {
                 showOther = options.misc;
-                showBaseSettings = !options.misc;
             }
             if (options.table) {
                 table = options.table;
@@ -492,14 +487,18 @@ class Dann {
             }
         } else {
             showBaseSettings = true;
+            showOther = true;
         }
         // make weights if they werent made allready.
         if (this.weights.length === 0) {
             //console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
             this.makeWeights();
         }
+        if (options == undefined || (options !== undefined && options.details == true)) {
+            console.log("Dann NeuralNetwork:");
+        }
         if (showBaseSettings) {
-            console.log("Dann NeuralNetwork:")
+
             console.log(" ");
             console.log("  Layers:")
             for (let i = 0; i < this.Layers.length;i++) {
@@ -1437,7 +1436,7 @@ class Graph {
 
 }
 
-
+//Node Module Exports:
 let activations = {
     leakySigmoid: leakySigmoid,
     leakySigmoid_d: leakySigmoid_d,
@@ -1461,9 +1460,7 @@ let lossfuncs = {
     mse: mse,
     rmse: rmse
 }
-
-//Node Module Exports:
-if (!isBrowser) {
+if (typeof process === 'object') {
     module.exports = {
         dann: Dann,
         layer: Layer,
