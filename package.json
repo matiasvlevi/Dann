@@ -24,7 +24,8 @@
   "_spec": "dannjs",
   "_where": "C:\\Users\\Agustin\\Desktop\\dann_package_tester",
   "author": {
-    "name": "Matias Vazquez-Levi"
+    "name": "Matias Vazquez-Levi",
+    "email": "matiasvlevi@gmail.com"
   },
   "bugs": {
     "url": "https://github.com/matiasvlevi/Dann/issues"

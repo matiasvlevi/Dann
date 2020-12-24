@@ -270,16 +270,13 @@ class Dann {
             }
             if (options.mode !== undefined) {
                 mode = options.mode;
-                if (mode == 'gpu') {
-                    console.log('gpu version coming soon');
-                }
             } else {
                 mode = 'cpu';
             }
             if (options.saveLoss !== undefined) {
                 recordLoss = options.saveLoss;
             } else {
-                recordLoss = true;
+                recordLoss = false;
             }
         }
 
