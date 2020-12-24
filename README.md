@@ -1,4 +1,4 @@
-# Dannjs 
+# Dannjs
 Matias Vazquez-Levi 2020-11-17
 
 Contact info:
@@ -7,9 +7,9 @@ Email: matiasvlevi@gmail.com
 
 What it does:
 ------------
-Dannjs allows you to create Deep Neural Networks, feed them, train them & save/load their weights. 
+Dannjs allows for the creation of neural network js objects for web applications aswell as nodejs.You can train a model and save their weights in a .json file. You can use a model as an interpreter of pretrained weights previously saved in a json file.
 
-How it works:
+Usage (simplified):
 ------------
 1. Create the Dann Object (neural network), specify the number of input neurons and the number of output neurons.
 2. Add the hidden layers. To add a hidden layer, you have to specify the neuron count and the activation function.
