@@ -166,6 +166,7 @@ class Layer {
         this.actfunc_d = func_d;
     }
     log() {
+
         console.log(this);
     }
 }
@@ -207,6 +208,7 @@ class Dann {
     feedForward(inputs, options) {
         let showLog = false;
         let mode = 'cpu';
+
         if (options !== undefined) {
             if (options.log !== undefined) {
                 showLog = options.log;
@@ -216,11 +218,12 @@ class Dann {
             if (options.mode !== undefined) {
                 mode = options.mode;
                 if (mode == 'gpu') {
-                    console.log('gpu version coming soon');
+                    console.log('gpu version coming soon!');
                 }
             } else {
                 mode = 'cpu';
             }
+
         }
 
         if (inputs.length == this.i) {
@@ -248,6 +251,7 @@ class Dann {
 
         }
         this.outs = Matrix.toArray(this.Layers[this.Layers.length-1].layer);
+
         if (showLog == true) {
 
             console.log('Prediction: ',this.outs);
@@ -270,13 +274,16 @@ class Dann {
             }
             if (options.mode !== undefined) {
                 mode = options.mode;
+                if (mode == 'gpu') {
+                    console.log('gpu version coming soon');
+                }
             } else {
                 mode = 'cpu';
             }
             if (options.saveLoss !== undefined) {
                 recordLoss = options.saveLoss;
             } else {
-                recordLoss = false;
+                recordLoss = true;
             }
         }
 
@@ -422,33 +429,155 @@ class Dann {
         this.Layers.splice(this.Layers.length-1,0,layer);
 
     } //Layer Ready
-    log() {
+    log(options) {
+
+        let showWeights = false;
+        let showGradients = false;
+        let showErrors = false;
+        let showBiases = false;
+        let showBaseSettings = true;
+        let showOther = true;
+        let table = false;
+        let decimals = 1000;
+
+        //Optional parameters:
+        if (options !== undefined) {
+            if (options.weights) {
+                showWeights = options.weights;
+                showBaseSettings = !options.weights;
+                showOther = !options.weights;
+            }
+            if (options.gradients) {
+                showGradients = options.gradients;
+                showBaseSettings = !options.gradients;
+                showOther = !options.gradients;
+            }
+            if (options.errors) {
+                showErrors = options.errors;
+                showBaseSettings = !options.errors;
+                showOther = !options.errors;
+            }
+            if (options.biases) {
+                showBiases = options.biases;
+                showBaseSettings = !options.biases;
+                showOther = !options.biases;
+            }
+            if (options.struct) {
+                showBaseSettings = options.struct;
+                showOther = !options.struct;
+
+            }
+            if (options.misc) {
+                showOther = options.misc;
+                showBaseSettings = !options.misc;
+            }
+            if (options.table) {
+                table = options.table;
+            }
+            if (options.details) {
+                let v = options.details;
+                showGradients = v;
+                showWeights = v;
+                showErrors = v;
+                showBiases = v;
+                showBaseSettings = v;
+                showOther = v;
+            }
+            if (options.decimals) {
+                if (options.decimals > 21) {
+                    console.error('Dann Error: Maximum number of decimals is 21.');
+                    options.decimals = 21;
+                }
+                decimals = pow(10,options.decimals);
+            }
+        } else {
+            showBaseSettings = true;
+        }
+        // make weights if they werent made allready.
         if (this.weights.length === 0) {
             //console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
             this.makeWeights();
         }
-        console.log("Dann NeuralNetwork:")
-        console.log(" ");
-        console.log("  Layers:")
-        for (let i = 0; i < this.Layers.length;i++) {
-            let layerObj = this.Layers[i];
-            let str = "Hidden Layer: ";
-            let afunc = "";
-            if (i == 0) {
-                str = "Input Layer:   ";
-                afunc = "       ";
-            } else if (i == layerObj.length-1) {
-                str = "Output Layer:  ";
-                afunc = "  ("+layerObj.actname+")";
-            } else {
-                afunc = "  ("+layerObj.actname+")";
+        if (showBaseSettings) {
+            console.log("Dann NeuralNetwork:")
+            console.log(" ");
+            console.log("  Layers:")
+            for (let i = 0; i < this.Layers.length;i++) {
+                let layerObj = this.Layers[i];
+                let str = layerObj.type+" Layer: ";
+                let afunc = "";
+                if (i == 0) {
+                    str = "Input Layer:   ";
+                    afunc = "       ";
+                } else if (i == layerObj.length-1) {
+                    str = "Output Layer:  ";
+                    afunc = "  ("+layerObj.actname+")";
+                } else {
+                    afunc = "  ("+layerObj.actname+")";
+                }
+                console.log("    " + str + Matrix.toArray(layerObj.layer).length + afunc);
             }
-            console.log("    " + str + Matrix.toArray(layerObj.layer).length + afunc);
         }
-        console.log(" ");
-        console.log("  Other Values: ");
-        console.log("    Learning rate: " + this.lr);
-        console.log("    Loss Function: " + this.lossfunc.name);
+
+        if (showErrors) {
+            console.log(" ");
+            console.log("  Errors:");
+            for (let i = 0; i < this.errors.length; i++) {
+
+                    let e = Matrix.toArray(this.errors[i]);
+                    let er = [];
+                    for (let i = 0 ; i < e.length; i++) {
+                        er[i] = round(e[i]*decimals)/decimals;
+                    }
+                    console.log(er)
+                }
+
+        }
+
+        if (showGradients) {
+            console.log(" ");
+            console.log("  Gradients:");
+
+            for (let i = 0; i < this.gradients.length; i++) {
+                let g = Matrix.toArray(this.gradients[i]);
+                let gr = [];
+                for (let i = 0 ; i < g.length; i++) {
+                    gr[i] = round(g[i]*decimals)/decimals;
+                }
+                console.log(gr)
+            }
+        }
+        if (showWeights) {
+            console.log(" ");
+            console.log("  Weights:");
+            for (let i = 0; i < this.weights.length; i++) {
+                let w = this.weights[i];
+                w.log({decimals:options.decimals,table:table});
+            }
+        }
+        if (showBiases) {
+            console.log(" ");
+            console.log("  Biases:");
+
+            for (let i = 0; i < this.biases.length; i++) {
+                let b = Matrix.toArray(this.biases[i]);
+                let br = [];
+                for (let i = 0 ; i < b.length; i++) {
+                    br[i] = round(b[i]*decimals)/decimals;
+                }
+                console.log(br)
+            }
+        }
+        if (showOther) {
+            console.log(" ");
+            console.log("  Other Values: ");
+            console.log("    Learning rate: " + this.lr);
+            console.log("    Loss Function: " + this.lossfunc.name);
+            console.log("    Latest Loss: " + this.loss);
+
+        }
+
+        return;
 
     } //Layer Ready
     save(name) {
@@ -680,15 +809,9 @@ class Matrix {
 
         this.rows = rows;
         this.cols = cols;
-        this.matrix = [];
+        this.matrix = Matrix.make(rows,cols);
 
-        for (let i = 0; i < this.rows; i++) {
-            this.matrix[i] = [];
-            for (let j = 0; j < this.cols; j++) {
-                this.matrix[i][j] = 0;
-            }
 
-        }
     }
     static toArray(m) {
         let ans = [];
@@ -786,6 +909,21 @@ class Matrix {
             return ans;
         }
     }
+    static make(rows,cols) {
+        let m = [];
+        for (let i = 0; i < rows; i++) {
+            m[i] = [];
+            for (let j = 0; j < cols; j++) {
+                m[i][j] = 0;
+            }
+
+        }
+
+        return m;
+    }
+    insert(value,i,j) {
+        this.matrix[i][j] = value;
+    }
     addRandom(magnitude,prob) {
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
@@ -863,7 +1001,34 @@ class Matrix {
         }
 
     }
+    log(options) {
+        let dec = 1000;
+        let table = false;
 
+        if (options !== undefined) {
+            if (options.decimals) {
+                dec = pow(10,options.decimals);
+            }
+            if (options.table) {
+                table = options.table;
+            }
+        }
+        let m = new Matrix(this.rows,this.cols);
+
+        for (let i = 0; i < this.rows; i++) {
+
+            for (let j = 0; j < this.cols; j++) {
+                let v = this.matrix[i][j];
+                m.insert(round(v*dec)/dec,i,j);
+            }
+        }
+        if (table) {
+            console.table(m.matrix);
+        } else {
+            console.log(m);
+        }
+
+    }
     initiate() {
         for (let i = 0; i < this.matrix.length; i++) {
             for (let j = 0; j < this.matrix[i].length; j++) {
@@ -1271,86 +1436,8 @@ class Graph {
     }
 
 }
-class GradientGraph {
-    constructor(x,y,w,h,nn) {
-        this.pos = createVector(x,y);
-        this.w = w;
-        this.h = h;
-
-        this.nn = nn;
-        this.pixelSize = 5;
-        this.positionsX = [];
-        this.offsets = [];
-        this.boxespos = [];
-    }
-    initiateValues() {
-        for (let m = 0; m < nn.weights.length;m++) {
-            let weights = nn.weights[m].matrix;
-            let offset = 0;
-            if(m == 0) {
-                offset = 0;
-                this.positionsX[m] = offset;
-                this.offsets.push(offset);
-            } else {
-                let sum = 0;
-                for (let i = 0; i < m; i++) {
-                    sum+=this.positionsX[i];
-                }
-                offset = this.pixelSize*(sqrt(nn.weights[m-1].matrix[0].length))*sqrt(nn.weights[m-1].matrix.length);
-                this.positionsX[m] = offset;
-                offset += sum;
-                this.offsets.push(offset);
-            }
-
-        }
-    }
-    render() {
-
-        for (let m = 0; m < nn.weights.length;m++) {
-            let weights = nn.weights[m].matrix;
-
-            let len = sqrt(weights.length);
-
-            for (let i = 0; i < len;i++) {
-                for (let j = 0; j< len;j++) {
-
-                    let windex = 0;
-                    if (m !== 0) {
-                        windex = m-1;
-                    } else {
-                        windex = 0;
-                    }
-
-                    let innerLen = sqrt(weights[windex].length);
-
-                    let bx = this.pos.x+((this.pixelSize*innerLen)*i)+this.offsets[m]+(m*10);
-                    let by = this.pos.y+((this.pixelSize*innerLen)*j);
 
 
-                    for (let x = 0; x < innerLen;x++) {
-                        for (let y = 0; y< innerLen;y++) {
-                            let bx_ = (x*this.pixelSize)+bx;
-                            let by_ = (y*this.pixelSize)+by;
-                            fill(map(weights[(i*len)+j][(x*innerLen)+y],-1,1,0,255));
-                            noStroke()
-                            rect(bx_,by_,this.pixelSize,this.pixelSize)
-                        }
-                    }
-                    noFill();
-                    stroke(255,0,0,255);
-                    strokeWeight(1);
-                    rect(bx,by,(this.pixelSize*innerLen),(this.pixelSize*innerLen))
-
-                }
-            }
-        }
-
-
-
-
-    }
-}
-//Node Module Exports:
 let activations = {
     leakySigmoid: leakySigmoid,
     leakySigmoid_d: leakySigmoid_d,
@@ -1374,7 +1461,9 @@ let lossfuncs = {
     mse: mse,
     rmse: rmse
 }
-if (typeof process === 'object') {
+
+//Node Module Exports:
+if (!isBrowser) {
     module.exports = {
         dann: Dann,
         layer: Layer,
