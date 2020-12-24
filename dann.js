@@ -149,23 +149,24 @@ class Layer {
     }
     setAct(act) {
         let der = act + '_d';
+        if (activations[der] === undefined) {
+            console.error("Dann Error: You need to create the derivative of your custom function. The activation function is set to 'sigmoid' because '"+act+"' does not have a derivative assigned.");
+            act = 'sigmoid';
+            der = act + '_d';
+        }
         this.actname = act;
         this.actname_d = der;
         let func;
         let func_d;
-        if (isBrowser) {
-            func = window[act];
-            func_d = window[der];
-        } else {
-            func = activations[act];
-            func_d = activations[der];
-        }
+
+        func = activations[act];
+        func_d = activations[der];
+
         this.actfunc = func;
         this.actfunc_d = func_d;
     }
     log() {
         console.log(this);
-
     }
 }
 class Dann {
@@ -363,8 +364,10 @@ class Dann {
             }
 
             act = 'sigmoid';
+        } else {
+            this.Layers[this.Layers.length-1].setAct(act);
         }
-        this.Layers[this.Layers.length-1].setAct(act);
+
 
     } //Layer ready
     makeWeights() {
