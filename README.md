@@ -7,7 +7,8 @@ Email: matiasvlevi@gmail.com
 
 What it does:
 ------------
-Dannjs allows for the creation of neural network js objects for web applications aswell as nodejs.You can train a model and save their weights in a .json file. You can use a model as an interpreter of pretrained weights previously saved in a json file.
+Create Neural Networks In a few lines of code.
+Dannjs allows for the creation of neural network js objects for web applications aswell as nodejs. You can save & load weights.
 
 Usage (simplified):
 ------------
