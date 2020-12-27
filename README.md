@@ -25,7 +25,10 @@ Node installation:
 ----------
 To install the node package <br />
 `npm i dannjs`
+Npm link:
+https://www.npmjs.com/package/dannjs
 
+\
 \
 Python version:
 ------------------
