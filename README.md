@@ -23,9 +23,9 @@ https://dannjs.org/livedemo.html
 
 Node installation:
 ----------
-To install the node package <br />
-`npm i dannjs`
-Npm link:
+To install the node package <br /><br/>
+`npm i dannjs`<br/><br/>
+Package link:<br/>
 https://www.npmjs.com/package/dannjs
 
 \
