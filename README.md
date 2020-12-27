@@ -1,5 +1,5 @@
 # Dannjs
-Matias Vazquez-Levi 2020-11-17
+Matias Vazquez-Levi 2020-12-27
 
 Contact info:
 ------------
@@ -7,28 +7,29 @@ Email: matiasvlevi@gmail.com
 
 What it does:
 ------------
-Dannjs allows for the creation of neural network js objects for web applications aswell as nodejs.You can train a model and save their weights in a .json file. You can use a model as an interpreter of pretrained weights previously saved in a json file.
+Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
 
-Usage (simplified):
-------------
-1. Create the Dann Object (neural network), specify the number of input neurons and the number of output neurons.
-2. Add the hidden layers. To add a hidden layer, you have to specify the neuron count and the activation function.
-3. Change some other settings (learning rate, loss function) & .log(); the model to display information.
-4. Feed/train the model with some data!
+Website:
+-------------------
+https://dannjs.org/
 
-
-For documentation:
+Documentation:
 -------------------
 https://dannjs.org/#docs
 
+Live Demo:
+-------------------
+https://dannjs.org/livedemo.html
+
+Node installation:
+----------
+To install the node package <br /><br/>
+`npm i dannjs`<br/><br/>
+Package link:<br/>
+https://www.npmjs.com/package/dannjs
+
+\
+\
 Python version:
 ------------------
 https://github.com/matiasvlevi/Dannpy
-
-
-Note:
-----------
-To install the node package <br />
-`npm i dannjs`
-
-Dannjs is not at its final version, it is still in development.
