@@ -3,8 +3,6 @@
 
 ![Npm Downloads](https://img.shields.io/npm/v/dannjs?style=plastic&color=red) ![GitHub last commit](https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic) ![Npm Downloads](https://img.shields.io/npm/dm/dannjs?style=plastic&color=red)
 
-<br/>
-
 ## What it does:
 Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
 
@@ -18,7 +16,7 @@ https://dannjs.org/#docs
 https://dannjs.org/livedemo.html
 
 ## Node installation:
-`npm i dannjs`<br/>
+`npm i dannjs`<br/><br/>
 Package link:
 https://www.npmjs.com/package/dannjs
 <br/>
@@ -32,6 +30,6 @@ https://github.com/matiasvlevi/Dannpy
 </span>
 
 ---
-![GitHub repo size](https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=plastic) ![GitHub language count](https://img.shields.io/github/languages/count/matiasvlevi/Dann?style=plastic) ![GitHub top language](https://img.shields.io/github/languages/top/matiasvlevi/Dann?style=plastic)  
+![GitHub repo size](https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=plastic) ![GitHub language count](https://img.shields.io/github/languages/count/matiasvlevi/Dann?style=plastic) ![GitHub top language](https://img.shields.io/github/languages/top/matiasvlevi/Dann?style=plastic) 
 
 ---
