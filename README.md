@@ -1,5 +1,5 @@
 # Dannjs
-![Npm Downloads](https://img.shields.io/npm/v/dannjs?style=plastic&color=red) ![GitHub last commit](https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic) ![Npm Downloads](https://img.shields.io/npm/dm/dannjs?style=plastic&color=red)
+![Npm Version](https://img.shields.io/npm/v/dannjs?style=plastic&color=red) ![GitHub last commit](https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic) ![Npm Downloads](https://img.shields.io/npm/dt/dannjs?style=plastic&color=red)
 
 ## What it does:
 Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
