@@ -1,6 +1,4 @@
 # Dannjs
-![GitHub stars](https://img.shields.io/github/stars/matiasvlevi/Dann?style=social)  ![GitHub watchers](https://img.shields.io/github/watchers/matiasvlevi/Dann?style=social) ![GitHub followers](https://img.shields.io/github/followers/matiasvlevi?style=social)
-
 ![Npm Downloads](https://img.shields.io/npm/v/dannjs?style=plastic&color=red) ![GitHub last commit](https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic) ![Npm Downloads](https://img.shields.io/npm/dm/dannjs?style=plastic&color=red)
 
 ## What it does:
