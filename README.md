@@ -5,34 +5,32 @@
 
 <br/>
 
-### What it does:
-------------
+## What it does:
 Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
 
-#### Website:
--------------------
+## Website:
 https://dannjs.org/
 
-#### Documentation:
+## Documentation:
 -------------------
 https://dannjs.org/#docs
 
-#### Live Demo:
+## Live Demo:
 -------------------
 https://dannjs.org/livedemo.html
 
-#### Node installation:
+## Node installation:
 ----------
 `npm i dannjs`<br/>
 Package link:
 https://www.npmjs.com/package/dannjs
 <br/>
-#### Python version:
+## Python version:
 ---
 https://github.com/matiasvlevi/Dannpy
 <br/>
 
-##### Become a Patreon:
+### Become a Patreon:
 <span class="badge-patreon">
 <a href="https://www.patreon.com/dannjs" title="Donate to this project using Patreon"><img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fres-3.cloudinary.com%2Fcrunchbase-production%2Fimage%2Fupload%2Fc_lpad%2Ch_256%2Cw_256%2Cf_auto%2Cq_auto%3Aeco%2Fv1498102829%2Foul9xkady63xqqn3iw7c.png&f=1&nofb=1" alt="Patreon donate button" height="8%" width="8%"/></a>
 </span>
