@@ -1,6 +1,6 @@
 # Dannjs
 
-<a target="_blank" href="https://www.npmjs.com/package/dannjs" title="Donate to this project using Patreon"><img src="https://img.shields.io/npm/v/dannjs?style=plastic&color=red" alt="versionNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" title="Donate to this project using Patreon"><img src="https://img.shields.io/npm/dt/dannjs?style=plastic&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" title="Donate to this project using Patreon"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic" alt="lastcommitNpmStat"/></a>
+<a href="https://www.npmjs.com/package/dannjs" target="_blank><img src="https://img.shields.io/npm/v/dannjs?style=plastic&color=red" alt="versionNpmStat"/></a> <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=plastic&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic" " alt="lastcommitNpmStat"/></a>
 
 
 
