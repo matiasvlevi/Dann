@@ -12,21 +12,17 @@ Dannjs allows for the creation of Neural Network JS objects for Web Applications
 https://dannjs.org/
 
 ## Documentation:
--------------------
 https://dannjs.org/#docs
 
 ## Live Demo:
--------------------
 https://dannjs.org/livedemo.html
 
 ## Node installation:
-----------
 `npm i dannjs`<br/>
 Package link:
 https://www.npmjs.com/package/dannjs
 <br/>
 ## Python version:
----
 https://github.com/matiasvlevi/Dannpy
 <br/>
 
