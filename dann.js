@@ -291,7 +291,7 @@ class Dann {
         if (t.length == this.o) {
             targets = Matrix.fromArray(t);
         } else {
-            console.error('Dann Error: The target array length does not match the number of inputs the dannjs model has.');
+            console.error('Dann Error: The target array length does not match the number of ouputs the dannjs model has.');
             return null;
         }
         if (typeof this.lr !== 'number') {
@@ -1436,7 +1436,7 @@ class Graph {
 
 }
 
-//Node Module Exports:
+//Storing Activation Functions & their derivativess:
 let activations = {
     leakySigmoid: leakySigmoid,
     leakySigmoid_d: leakySigmoid_d,
@@ -1451,6 +1451,7 @@ let activations = {
     leakyReLU: leakyReLU,
     leakyReLU_d: leakyReLU_d
 }
+//Storing Loss Functions:
 let lossfuncs = {
     mae: mae,
     bce: bce,
@@ -1460,6 +1461,7 @@ let lossfuncs = {
     mse: mse,
     rmse: rmse
 }
+//Node Module Exports:
 if (typeof process === 'object') {
     module.exports = {
         dann: Dann,
