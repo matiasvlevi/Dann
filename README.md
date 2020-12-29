@@ -1,6 +1,6 @@
 # Dannjs
 
-<a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=plastic&color=red" alt="versionNpmStat"/></a> <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=plastic&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=plastic" alt="lastcommitNpmStat"/></a>
+<a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=red" alt="versionNpmStat"/></a> <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=flat" alt="lastcommitNpmStat"/></a>
 
 
 
@@ -31,6 +31,9 @@ https://github.com/matiasvlevi/Dannpy
 </span>
 
 ---
-![GitHub repo size](https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=plastic) ![GitHub language count](https://img.shields.io/github/languages/count/matiasvlevi/Dann?style=plastic) ![GitHub top language](https://img.shields.io/github/languages/top/matiasvlevi/Dann?style=plastic)
+<a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=flat" alt="versionNpmStat"/></a>
+<a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/LICENSE" target="_blank"><img alt="GitHub" src="https://img.shields.io/github/license/matiasvlevi/dann?color=blue"></a>
+<a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/dann.js" target="_blank"><img src="https://img.shields.io/tokei/lines/github/matiasvlevi/dann" alt="versionNpmStat"/></a>
+<a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/languages/top/matiasvlevi/Dann?style=flat" alt="versionNpmStat"/></a>
 
 ---
