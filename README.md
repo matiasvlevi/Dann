@@ -7,24 +7,68 @@
 
 ## What it does:
 Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
-
-## Website:
+#### Website:
 https://dannjs.org/
-
-## Documentation:
-https://dannjs.org/#docs
-
-## Live Demo:
+###### Live Demo:
 https://dannjs.org/livedemo.html
 
-## Node installation:
-`npm i dannjs`<br/><br/>
-Package link:
-https://www.npmjs.com/package/dannjs
+
+## Installation
+#### CDN :
+`<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@master/dann.min.js"></script>`
+#### Node :
+`npm i dannjs`
+
+
+## Getting started
+Setting up an XOR neural network.
+#### CDN :
+with p5js (will probably change soon)
+```
+let nn;
+
+function setup() {
+	nn = new Dann(2,1);
+	nn.addHiddenLayer(4,'sigmoid');
+	nn.makeWeights();
+	nn.log();
+}
+ ```
+ 
+#### Node :
+```
+const dn = require('dannjs');
+const Dann = dn.dann;
+
+let nn = new Dann(2,1);
+nn.addHiddenLayer(4,'sigmoid');
+nn.makeWeights();
+nn.log();
+ ```
+Other object types can be imported. 
+```
+const dn = require('dannjs');
+const Dann = dn.dann;
+const Layer = dn.layer;
+const Matrix = dn.matrix;
+ ```
+Lists of functions can also be imported.
+```
+const dn = require('dannjs');
+let lossfuncs = dn.lossfuncs;
+let activations = dn.activations;
+ ```
+
+## Documentation
+https://dannjs.org/#docs
 <br/>
-## Python version:
+
+
+
+#### Python version
+---
 https://github.com/matiasvlevi/Dannpy
-<br/>
+<br/><br/><br/>
 
 ### Become a Patreon:
 <span class="badge-patreon">
