@@ -1,9 +1,14 @@
-const isBrowser = typeof process !== 'object'; //true if running in browser
+const isBrowser = typeof process !== 'object';
 let csv;
 let fs;
 let w;
-function mathjsCDN() {
-    let element = document.createElement(script)
+
+//CDN dependencies:
+function addCDNdependencies() {
+    let element = document.createElement('script');
+    element.setAttribute('type','text/javascript');
+    element.setAttribute('src','//https://cdn.jsdelivr.net/npm/mathjs@8.1.0/lib/browser/math.min.js');
+    document.head.insertBefore(element, document.head.children[0]);
 }
 if(!isBrowser) {
     // nodejs
@@ -11,12 +16,11 @@ if(!isBrowser) {
     require('mathjs');
     csv = require('fast-csv');
     w = require('@fast-csv/format');
-
 } else {
-    mathjsCDN();
+    addCDNdependencies();
 }
 
-
+//Shortening Mathjs functions:
 function random(x1,x2) {
     return Math.random(x2-x1)+x1;
 }
@@ -48,8 +52,7 @@ function sqrt(x1) {
     return Math.sqrt(x1);
 }
 
-
-//Activations:
+//Activation functions:
 function sigmoid(x) {
     return 1/(1+exp(-x));
 }
@@ -122,13 +125,279 @@ function reLU_d(x) {
     }
 
 }
+
+//Other math functions:
 function cosh(x) {
     return ((exp(x)+exp(-x))/2);
 }
 function sech(x) {
     return 1/cosh(x);
 }
-//Object Classes
+
+//Object Classes:
+class Matrix {
+    constructor(rows,cols) {
+
+        this.rows = rows;
+        this.cols = cols;
+        this.matrix = Matrix.make(rows,cols);
+
+
+    }
+    static toArray(m) {
+        let ans = [];
+        if (m.cols == 1) {
+
+            for (let i = 0; i < m.rows; i++) {
+                ans[i] = m.matrix[i][0];
+            }
+        }
+        return ans;
+    }
+    static fromArray(arr) {
+        let m = new Matrix(arr.length,1);
+
+        for (let i = 0; i < arr.length; i++) {
+            m.matrix[i][0] = arr[i];
+        }
+
+        return m;
+    }
+    static transpose(m) {
+        let result = new Matrix(m.cols,m.rows);
+        for (let i = 0; i < m.rows; i++) {
+            for(let j = 0; j < m.cols; j++) {
+                result.matrix[j][i] = m.matrix[i][j];
+            }
+        }
+        return result;
+    }
+    static map(m,f) {
+        for (let i = 0; i < m.rows; i++) {
+            for(let j = 0; j < m.cols; j++) {
+                let v = m.matrix[i][j];
+                m.matrix[i][j] = f(v);
+            }
+        }
+        return m;
+    }
+    static addition(m1,m2) {
+
+        let a = m1;
+        let b = m2;
+
+        let ans = new Matrix(a.rows, a.cols);
+        if (a.rows !== b.rows || a.cols !== b.cols) {
+            return;
+        } else {
+            for (let i = 0; i < ans.rows; i++) {
+                for(let j = 0; j < ans.cols; j++) {
+                    ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
+                }
+            }
+        }
+        return ans;
+    }
+    static subtract(m1,m2) {
+
+        let a = m1;
+        let b = m2;
+
+        let ans = new Matrix(a.rows, a.cols);
+        if (a instanceof Matrix && b instanceof Matrix) {
+
+                for (let i = 0; i < ans.rows; i++) {
+
+                    for(let j = 0; j < ans.cols; j++) {
+
+                        ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
+                    }
+                }
+        }
+        return ans;
+    }
+    static multiply(m1,m2, options) {
+
+        let mode = 'cpu';
+        if (options !== undefined) {
+            if (options.mode) {
+                mode = options.mode;
+            }
+        }
+        if (mode == 'cpu') {
+            let a = m1;
+            let b = m2;
+
+            let ans = new Matrix(a.rows, b.cols);
+            if (m1 instanceof Matrix && m2 instanceof Matrix) {
+                if (a.cols !== b.rows) {
+                    console.log("not compatible");
+                    return undefined;
+                } else {
+                    for (let i = 0; i < ans.rows; i++) {
+                        for (let j = 0; j < ans.cols; j++) {
+                            let sum = 0;
+                            for (let k = 0; k < a.cols; k++) {
+                              sum += a.matrix[i][k] * b.matrix[k][j];
+                            }
+                            ans.matrix[i][j] = sum;
+                        }
+                    }
+                }
+                return ans;
+            }
+        } else if (mode == 'gpu') {
+            console.log('gpu coming soon');
+            mode = 'cpu';
+            return Matrix.multiply(m1,m2)
+        } else {
+            console.error('Dann Error: mode specified is not valid');
+        }
+
+    }
+    static make(rows,cols) {
+        let m = [];
+        for (let i = 0; i < rows; i++) {
+            m[i] = [];
+            for (let j = 0; j < cols; j++) {
+                m[i][j] = 0;
+            }
+
+        }
+
+        return m;
+    }
+    insert(value,i,j) {
+        this.matrix[i][j] = value;
+    }
+    addRandom(magnitude,prob) {
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                let w = this.matrix[i][j];
+                let ran = random(0,1);
+                if (ran < prob) {
+                    this.matrix[i][j] += w*random(-magnitude,magnitude);
+                }
+
+            }
+        }
+    }
+    addPrecent(magnitude) {
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                let w = this.matrix[i][j];
+                this.matrix[i][j] += w*magnitude;
+
+            }
+        }
+    }
+    set(matrix) {
+        this.matrix = matrix;
+        this.rows = matrix.length;
+        this.cols = matrix[0].length;
+    }
+    add(n) {
+        if (n instanceof Matrix) {
+            if (this.rows !== n.rows || this.cols !== n.cols) {
+                return;
+            } else {
+                for (let i = 0; i < this.rows; i++) {
+                    for(let j = 0; j < this.cols; j++) {
+                        this.matrix[i][j] += n.matrix[i][j];
+                    }
+                }
+            }
+
+        } else {
+            for (let i = 0; i < this.rows; i++) {
+                for(let j = 0; j < this.cols; j++) {
+                    this.matrix[i][j] += n;
+                }
+            }
+        }
+    }
+    sub(n) {
+
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                this.matrix[i][j] -= n;
+            }
+        }
+    }
+    mult(n) {
+
+        if (n instanceof Matrix) {
+            if (this.rows !== n.rows || this.cols !== n.cols) {
+                console.log("rows of A must match rows of B")
+                return;
+            } else {
+                for (let i = 0; i < this.rows; i++) {
+                    for(let j = 0; j < this.cols; j++) {
+                        this.matrix[i][j] *= n.matrix[i][j];
+                    }
+                }
+            }
+
+        } else {
+            for (let i = 0; i < this.rows; i++) {
+                for(let j = 0; j < this.cols; j++) {
+                    this.matrix[i][j] *= n;
+                }
+            }
+        }
+
+    }
+    log(options) {
+        let dec = 1000;
+        let table = false;
+
+        if (options !== undefined) {
+            if (options.decimals) {
+                dec = pow(10,options.decimals);
+            }
+            if (options.table) {
+                table = options.table;
+            }
+        }
+        let m = new Matrix(this.rows,this.cols);
+
+        for (let i = 0; i < this.rows; i++) {
+
+            for (let j = 0; j < this.cols; j++) {
+                let v = this.matrix[i][j];
+                m.insert(round(v*dec)/dec,i,j);
+            }
+        }
+        if (table) {
+            console.table(m.matrix);
+        } else {
+            console.log(m);
+        }
+
+    }
+    initiate() {
+        for (let i = 0; i < this.matrix.length; i++) {
+            for (let j = 0; j < this.matrix[i].length; j++) {
+                this.matrix[i][j] = 1;
+            }
+        }
+    }
+    map(f) {
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                let v = this.matrix[i][j];
+                this.matrix[i][j] = f(v);
+            }
+        }
+    }
+    randomize() {
+        for (let i = 0; i < this.matrix.length; i++) {
+            for (let j = 0; j < this.matrix[i].length; j++) {
+                this.matrix[i][j] = random(-1,1);
+            }
+        }
+    }
+}
 class Layer {
     constructor(type,size,act) {
         this.type = type;
@@ -693,55 +962,6 @@ class Dann {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
-    // loadFromJSON(objstr) {
-    //
-    //     let xdata =  JSON.parse(objstr);
-    //
-    //     let newNN = xdata;
-    //
-    //     //  {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,afunc:this.aFunc_s,arch:this.arch,lrate:this.lr}
-    //     nn.i = newNN.arch[0];
-    //     nn.inputs = new Matrix(this.i, 1);
-    //     nn.o = newNN.arch[newNN.arch.length-1];
-    //     nn.outputs = new Matrix(this.o,1);
-    //
-    //     let slayers = JSON.parse(newNN.lstr);
-    //     for (let i = 0; i < slayers.length; i++) {
-    //         nn.Layers[i] = JSON.parse(slayers[i]);
-    //     }
-    //     let sweights = JSON.parse(newNN.wstr);
-    //     if (!(this.weights.length > 0)) {
-    //         this.makeWeights();
-    //     }
-    //     for (let i = 0; i < sweights.length; i++) {
-    //         nn.weights[i].set(JSON.parse(sweights[i]));
-    //     }
-    //     let sbiases = JSON.parse(newNN.bstr);
-    //     for (let i = 0; i < sbiases.length; i++) {
-    //         nn.biases[i].set(JSON.parse(sbiases[i]));
-    //     }
-    //     let serrors = JSON.parse(newNN.estr);
-    //     for (let i = 0; i < serrors.length; i++) {
-    //         nn.errors[i].set(JSON.parse(serrors[i]));
-    //     }
-    //     let sgradients = JSON.parse(newNN.gstr);
-    //     for (let i = 0; i < sgradients.length; i++) {
-    //         nn.gradients[i].set(JSON.parse(sgradients[i]));
-    //     }
-    //
-    //     nn.lossfunc = window[newNN.lf];
-    //     nn.lossfunc_s = newNN.lf;
-    //
-    //     nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
-    //     nn.loss = 0;
-    //     nn.losses = [];
-    //     nn.lr = newNN.lrate;
-    //     nn.arch = newNN.arch;
-    //
-    //     nn.log();
-    //     console.log("");
-    //     console.log("Succesfully loaded the Dann Model");
-    // } //Layer Ready
     load(name) {
         if (!isBrowser) {
             let path = './savedDanns/'+name+'/dannData.json';
@@ -812,269 +1032,7 @@ class Dann {
 
     } //Layer Ready
 }
-class Matrix {
-    constructor(rows,cols) {
 
-        this.rows = rows;
-        this.cols = cols;
-        this.matrix = Matrix.make(rows,cols);
-
-
-    }
-    static toArray(m) {
-        let ans = [];
-        if (m.cols == 1) {
-
-            for (let i = 0; i < m.rows; i++) {
-                ans[i] = m.matrix[i][0];
-            }
-        }
-        return ans;
-    }
-    static fromArray(arr) {
-        let m = new Matrix(arr.length,1);
-
-        for (let i = 0; i < arr.length; i++) {
-            m.matrix[i][0] = arr[i];
-        }
-
-        return m;
-    }
-    static transpose(m) {
-        let result = new Matrix(m.cols,m.rows);
-        for (let i = 0; i < m.rows; i++) {
-            for(let j = 0; j < m.cols; j++) {
-                result.matrix[j][i] = m.matrix[i][j];
-            }
-        }
-        return result;
-    }
-    static map(m,f) {
-        for (let i = 0; i < m.rows; i++) {
-            for(let j = 0; j < m.cols; j++) {
-                let v = m.matrix[i][j];
-                m.matrix[i][j] = f(v);
-            }
-        }
-        return m;
-    }
-    static addition(m1,m2) {
-
-        let a = m1;
-        let b = m2;
-
-        let ans = new Matrix(a.rows, a.cols);
-        if (a.rows !== b.rows || a.cols !== b.cols) {
-            return;
-        } else {
-            for (let i = 0; i < ans.rows; i++) {
-                for(let j = 0; j < ans.cols; j++) {
-                    ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
-                }
-            }
-        }
-        return ans;
-    }
-    static subtract(m1,m2) {
-
-        let a = m1;
-        let b = m2;
-
-        let ans = new Matrix(a.rows, a.cols);
-        if (a instanceof Matrix && b instanceof Matrix) {
-
-                for (let i = 0; i < ans.rows; i++) {
-
-                    for(let j = 0; j < ans.cols; j++) {
-
-                        ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
-                    }
-                }
-        }
-        return ans;
-    }
-    static multiply(m1,m2, options) {
-
-        let mode = 'cpu';
-        if (options !== undefined) {
-            if (options.mode) {
-                mode = options.mode;
-            }
-        }
-        if (mode == 'cpu') {
-            let a = m1;
-            let b = m2;
-
-            let ans = new Matrix(a.rows, b.cols);
-            if (m1 instanceof Matrix && m2 instanceof Matrix) {
-                if (a.cols !== b.rows) {
-                    console.log("not compatible");
-                    return undefined;
-                } else {
-                    for (let i = 0; i < ans.rows; i++) {
-                        for (let j = 0; j < ans.cols; j++) {
-                            let sum = 0;
-                            for (let k = 0; k < a.cols; k++) {
-                              sum += a.matrix[i][k] * b.matrix[k][j];
-                            }
-                            ans.matrix[i][j] = sum;
-                        }
-                    }
-                }
-                return ans;
-            }
-        } else if (mode == 'gpu') {
-            console.log('gpu coming soon');
-            mode = 'cpu';
-            return Matrix.multiply(m1,m2)
-        } else {
-            console.error('Dann Error: mode specified is not valid');
-        }
-
-    }
-    static make(rows,cols) {
-        let m = [];
-        for (let i = 0; i < rows; i++) {
-            m[i] = [];
-            for (let j = 0; j < cols; j++) {
-                m[i][j] = 0;
-            }
-
-        }
-
-        return m;
-    }
-    insert(value,i,j) {
-        this.matrix[i][j] = value;
-    }
-    addRandom(magnitude,prob) {
-        for (let i = 0; i < this.rows; i++) {
-            for(let j = 0; j < this.cols; j++) {
-                let w = this.matrix[i][j];
-                let ran = random(0,1);
-                if (ran < prob) {
-                    this.matrix[i][j] += w*random(-magnitude,magnitude);
-                }
-
-            }
-        }
-    }
-    addPrecent(magnitude) {
-        for (let i = 0; i < this.rows; i++) {
-            for(let j = 0; j < this.cols; j++) {
-                let w = this.matrix[i][j];
-                this.matrix[i][j] += w*magnitude;
-
-            }
-        }
-    }
-    set(matrix) {
-        this.matrix = matrix;
-        this.rows = matrix.length;
-        this.cols = matrix[0].length;
-    }
-    add(n) {
-        if (n instanceof Matrix) {
-            if (this.rows !== n.rows || this.cols !== n.cols) {
-                return;
-            } else {
-                for (let i = 0; i < this.rows; i++) {
-                    for(let j = 0; j < this.cols; j++) {
-                        this.matrix[i][j] += n.matrix[i][j];
-                    }
-                }
-            }
-
-        } else {
-            for (let i = 0; i < this.rows; i++) {
-                for(let j = 0; j < this.cols; j++) {
-                    this.matrix[i][j] += n;
-                }
-            }
-        }
-    }
-    sub(n) {
-
-        for (let i = 0; i < this.rows; i++) {
-            for(let j = 0; j < this.cols; j++) {
-                this.matrix[i][j] -= n;
-            }
-        }
-    }
-    mult(n) {
-
-        if (n instanceof Matrix) {
-            if (this.rows !== n.rows || this.cols !== n.cols) {
-                console.log("rows of A must match rows of B")
-                return;
-            } else {
-                for (let i = 0; i < this.rows; i++) {
-                    for(let j = 0; j < this.cols; j++) {
-                        this.matrix[i][j] *= n.matrix[i][j];
-                    }
-                }
-            }
-
-        } else {
-            for (let i = 0; i < this.rows; i++) {
-                for(let j = 0; j < this.cols; j++) {
-                    this.matrix[i][j] *= n;
-                }
-            }
-        }
-
-    }
-    log(options) {
-        let dec = 1000;
-        let table = false;
-
-        if (options !== undefined) {
-            if (options.decimals) {
-                dec = pow(10,options.decimals);
-            }
-            if (options.table) {
-                table = options.table;
-            }
-        }
-        let m = new Matrix(this.rows,this.cols);
-
-        for (let i = 0; i < this.rows; i++) {
-
-            for (let j = 0; j < this.cols; j++) {
-                let v = this.matrix[i][j];
-                m.insert(round(v*dec)/dec,i,j);
-            }
-        }
-        if (table) {
-            console.table(m.matrix);
-        } else {
-            console.log(m);
-        }
-
-    }
-    initiate() {
-        for (let i = 0; i < this.matrix.length; i++) {
-            for (let j = 0; j < this.matrix[i].length; j++) {
-                this.matrix[i][j] = 1;
-            }
-        }
-    }
-    map(f) {
-        for (let i = 0; i < this.rows; i++) {
-            for(let j = 0; j < this.cols; j++) {
-                let v = this.matrix[i][j];
-                this.matrix[i][j] = f(v);
-            }
-        }
-    }
-    randomize() {
-        for (let i = 0; i < this.matrix.length; i++) {
-            for (let j = 0; j < this.matrix[i].length; j++) {
-                this.matrix[i][j] = random(-1,1);
-            }
-        }
-    }
-}
 // loss functions:
 function mae(predictions,target) {
     let sum = 0;
@@ -1263,200 +1221,6 @@ function upload(nn) {
     downloadAnchorNode.setAttribute("id", "upload");
     downloadAnchorNode.setAttribute("onChange", "clickedUpload(nn)");
     document.body.appendChild(downloadAnchorNode);
-
-}
-//Color Functions & values
-function colorGradientFunc(x) {
-  return 1 / (1+ exp(-2*x))
-}
-function colorGradientFunc2(x) {
-  return 1 / (1+ exp(-10*(x-0.5)))
-}
-let dragged = false;
-let fontColor = [255,255,255];
-let contourColor = [0,0,0];
-//p5js Graphic tools (not documented yet).
-class NetPlot {
-  constructor(x,y,w,h,nn) {
-    this.pos = createVector(x,y);
-    this.w = w;
-    this.h = h;
-    this.nn = nn;
-    this.spacingY = h/(this.nn.i-1);
-    this.layerSpacing = w/(this.nn.Layers.length-1);
-    this.bufferY = this.spacingY/2;
-    this.size = 8;
-    this.frame = false;
-    this.wColors = [[255, 60, 0],[0,195,255]];
-
-  }
-
-  renderWeights() {
-    stroke(contourColor);
-    for (let i = 0; i < this.nn.Layers.length; i++) {
-
-      let layer = Matrix.toArray(this.nn.Layers[i]);
-
-      this.spacingY = (this.h/(layer.length));
-      this.bufferY = this.spacingY/2
-
-      if (i !== this.nn.Layers.length-1) {
-
-        let nextLayer = Matrix.toArray(this.nn.Layers[i+1]);
-        let sY = (this.h/(nextLayer.length));
-        let bY = sY/2;
-
-        for (let j = 0; j < nextLayer.length; j++) {
-
-          let x = this.pos.x+((i+1)*this.layerSpacing);
-          let y = this.pos.y+bY+((j)*sY);
-          let x2 = 0;
-          let y2 = 0
-
-          for (let k = 0; k < layer.length; k++) {
-
-            let weights = (this.nn.weights[i]).matrix;
-            x2 = this.pos.x+((i)*this.layerSpacing);
-            y2 = this.pos.y+this.bufferY+((k)*this.spacingY);
-            stroke(this.mapColor(colorGradientFunc(weights[j][k])));
-            strokeWeight(map(sqrt(int(weights[j][k]*1000)/1000),0,2,1,2));
-            line(x,y,x2,y2);
-
-          }
-
-        }
-      }
-
-
-    }
-  }
-  renderLayers() {
-    fill(255);
-    noStroke();
-
-    for (let i = 0; i < this.nn.Layers.length; i++) {
-
-      let layer = Matrix.toArray(this.nn.Layers[i]);
-      this.spacingY = (this.h/(layer.length));
-      this.bufferY = this.spacingY/2;
-      for (let j = 0; j < layer.length; j++) {
-
-        let x = this.pos.x+((i)*this.layerSpacing);
-        let y = this.pos.y+this.bufferY+((j)*this.spacingY);
-
-        //let col = map(layer[j],0,1,0,255);
-        let col = this.mapColor(colorGradientFunc2(layer[j]))
-        fill(col);
-        ellipse(x,y,this.size,this.size);
-
-      }
-    }
-  }
-
-  mapColor(x) {
-    let color1 = this.wColors[0]
-    let color2 = this.wColors[1]
-    let r = map(x,0,1,color2[0],color1[0])
-    let g = map(x,0,1,color2[1],color1[1])
-    let b = map(x,0,1,color2[2],color1[2])
-    return color(r,g,b)
-  }
-  render() {
-    noFill();
-    stroke(contourColor[0],contourColor[1],contourColor[2]);
-    if (this.frame == true) {
-      rect(this.pos.x,this.pos.y,this.w,this.h);
-    }
-
-
-    if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
-        this.pos.x = mouseX-(this.w/2);
-        this.pos.y = mouseY-(this.h/2);
-    }
-    this.renderWeights();
-    this.renderLayers();
-
-  }
-}
-class Graph {
-    constructor(x,y,w,h) {
-        this.pos = createVector(x,y);
-        this.w = w;
-        this.h = h;
-        this.s = 1;
-        this.min = 1;
-        this.max = 0;
-        this.lines = [];
-        this.names = [];
-        this.color = [];
-        this.dragged = false;
-        this.grid = 4;
-        this.step = 0;
-
-    }
-    addValue(x,color,name) {
-        this.color.push(color)
-        this.lines.push(x);
-        this.names.push(name);
-    }
-    render() {
-        noFill();
-
-
-        strokeWeight(1);
-
-        stroke(contourColor[0],contourColor[1],contourColor[2],80);
-
-        for (let i = 0; i < this.grid; i++) {
-            let y = (this.h/this.grid)*i;
-            line(this.pos.x,y+this.pos.y,this.pos.x+this.w,y+this.pos.y);
-        }
-        stroke(contourColor[0],contourColor[1],contourColor[2])
-        rect(this.pos.x,this.pos.y,this.w,this.h);
-        if (dragged&&mouseX >= this.pos.x && mouseX<=this.pos.x+this.w&&mouseY >= this.pos.y&&mouseY<=this.pos.y+this.h) {
-          this.pos.x = mouseX-(this.w/2);
-          this.pos.y = mouseY-(this.h/2);
-        }
-        for (let a = 0; a < this.lines.length; a++) {
-            stroke(this.color[a]);
-            beginShape();
-            if (this.lines[a].length/int(this.s) >= this.w*int(this.s)) {
-                this.s*=2;
-            }
-
-            for (let i = 0; i < int(this.lines[a].length/int(this.s)); i+=int(this.s)) {
-                let x = (i/int(this.s))+this.pos.x;
-                let y = map(this.lines[a][i*int(this.s)],this.min,this.max,this.pos.y,this.pos.y+this.h);
-                vertex(x, y);
-
-            }
-            endShape();
-            noStroke();
-            fill(this.color[a])
-            rect((this.pos.x+this.w)-((this.pos.x+this.w)/6),(a*20)+10+this.pos.y,20,10);
-            //let textstr = Object.keys({this.lines[a]})[0];
-
-            //console.log(Object.keys(this.lines[a])[0]);
-            text(this.names[a],(this.pos.x+this.w)-((this.pos.x+this.w)/6)+23,(a*20)+19+this.pos.y);
-            noFill();
-        }
-        stroke(contourColor[0],contourColor[1],contourColor[2])
-        let div = 1;
-        if (this.s >= 8) {
-            div = 10;
-        }
-        let length = int(this.w/(this.step/(pow(this.s,2)))/div);
-        for (let i = 0; i < length; i++) {
-            if (this.s >= 8) {
-            }
-            let x = ((this.step/(pow(this.s,2)))*(i*div))+this.pos.x;
-            let y = this.pos.y+this.h;
-            line(x,y,x,y-5);
-            //text(x,y+8,div);
-
-        }
-        noStroke();
-    }
 
 }
 
