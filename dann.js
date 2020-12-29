@@ -884,29 +884,44 @@ class Matrix {
         }
         return ans;
     }
-    static multiply(m1,m2) {
+    static multiply(m1,m2, options) {
 
-        let a = m1;
-        let b = m2;
+        let mode = 'cpu';
+        if (options !== undefined) {
+            if (options.mode) {
+                mode = options.mode;
+            }
+        }
+        if (mode == 'cpu') {
+            let a = m1;
+            let b = m2;
 
-        let ans = new Matrix(a.rows, b.cols);
-        if (m1 instanceof Matrix && m2 instanceof Matrix) {
-            if (a.cols !== b.rows) {
-                console.log("not compatible");
-                return undefined;
-            } else {
-                for (let i = 0; i < ans.rows; i++) {
-                    for (let j = 0; j < ans.cols; j++) {
-                        let sum = 0;
-                        for (let k = 0; k < a.cols; k++) {
-                          sum += a.matrix[i][k] * b.matrix[k][j];
+            let ans = new Matrix(a.rows, b.cols);
+            if (m1 instanceof Matrix && m2 instanceof Matrix) {
+                if (a.cols !== b.rows) {
+                    console.log("not compatible");
+                    return undefined;
+                } else {
+                    for (let i = 0; i < ans.rows; i++) {
+                        for (let j = 0; j < ans.cols; j++) {
+                            let sum = 0;
+                            for (let k = 0; k < a.cols; k++) {
+                              sum += a.matrix[i][k] * b.matrix[k][j];
+                            }
+                            ans.matrix[i][j] = sum;
                         }
-                        ans.matrix[i][j] = sum;
                     }
                 }
+                return ans;
             }
-            return ans;
+        } else if (mode == 'gpu') {
+            console.log('gpu coming soon');
+            mode = 'cpu';
+            return Matrix.multiply(m1,m2)
+        } else {
+            console.error('Dann Error: mode specified is not valid');
         }
+
     }
     static make(rows,cols) {
         let m = [];
