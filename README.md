@@ -1,5 +1,5 @@
-# Dannjs
-
+Dannjs
+======
 <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=red" alt="versionNpmStat"/></a>
 <a href="https://github.com/matiasvlevi/dann/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/matiasvlevi/dann?label=Stars&color=red"></a>
 <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=flat" alt="lastcommitNpmStat"/></a>
@@ -14,17 +14,18 @@ https://dannjs.org/livedemo.html
 
 
 ## Installation
-#### CDN :
+### CDN :
 ```html
 <script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@master/dann.min.js"></script>
 ```
-#### Node :
+### Node :
 `npm i dannjs`
 
 
-## Getting started
-Setting up an XOR neural network.
-#### CDN :
+# Getting started
+Setting up an XOR neural network & console.logging information about the model. 
+<br/>
+### CDN :
 with p5js (will probably change soon)
 ```js
 let nn;
@@ -33,11 +34,11 @@ function setup() {
 	nn = new Dann(2,1);
 	nn.addHiddenLayer(4,'sigmoid');
 	nn.makeWeights();
-	nn.log();
+	nn.log({details:true});
 }
  ```
  
-#### Node :
+### Node :
 ```js
 const dn = require('dannjs');
 const Dann = dn.dann;
@@ -45,7 +46,7 @@ const Dann = dn.dann;
 let nn = new Dann(2,1);
 nn.addHiddenLayer(4,'sigmoid');
 nn.makeWeights();
-nn.log();
+nn.log({details:true});
  ```
 Other object types can be imported. 
 ```js
