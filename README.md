@@ -66,12 +66,11 @@ let activations = dn.activations;
 
 ## Documentation
 https://dannjs.org/#docs
-<br/>
+<br/><br/><br/>
 
 
 
 #### Python version
----
 https://github.com/matiasvlevi/Dannpy
 <br/><br/><br/>
 
