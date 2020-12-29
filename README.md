@@ -9,13 +9,15 @@
 Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
 #### Website:
 https://dannjs.org/
-###### Live Demo:
+#### Live Demo:
 https://dannjs.org/livedemo.html
 
 
 ## Installation
 #### CDN :
-`<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@master/dann.min.js"></script>`
+```html
+<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@master/dann.min.js"></script>
+```
 #### Node :
 `npm i dannjs`
 
@@ -24,7 +26,7 @@ https://dannjs.org/livedemo.html
 Setting up an XOR neural network.
 #### CDN :
 with p5js (will probably change soon)
-```
+```js
 let nn;
 
 function setup() {
@@ -36,7 +38,7 @@ function setup() {
  ```
  
 #### Node :
-```
+```js
 const dn = require('dannjs');
 const Dann = dn.dann;
 
@@ -46,14 +48,14 @@ nn.makeWeights();
 nn.log();
  ```
 Other object types can be imported. 
-```
+```js
 const dn = require('dannjs');
 const Dann = dn.dann;
 const Layer = dn.layer;
 const Matrix = dn.matrix;
  ```
-Lists of functions can also be imported.
-```
+The default saved lists of functions can also be imported.
+```js
 const dn = require('dannjs');
 let lossfuncs = dn.lossfuncs;
 let activations = dn.activations;
