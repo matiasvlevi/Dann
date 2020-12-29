@@ -25,21 +25,17 @@ npm i dannjs
 
 
 # Getting started
-Setting up an XOR neural network & console.logging information about the model. 
+Setting up an XOR neural network & console.logging information about the model.
 <br/>
 ### CDN :
-with p5js (will probably change soon)
 ```js
-let nn;
+let nn = new Dann(2,1);
+nn.addHiddenLayer(4,'sigmoid');
+nn.makeWeights();
+nn.log({details:true});
 
-function setup() {
-	nn = new Dann(2,1);
-	nn.addHiddenLayer(4,'sigmoid');
-	nn.makeWeights();
-	nn.log({details:true});
-}
  ```
- 
+
 ### Node :
 ```js
 const dn = require('dannjs');
@@ -50,7 +46,7 @@ nn.addHiddenLayer(4,'sigmoid');
 nn.makeWeights();
 nn.log({details:true});
  ```
-Other object types from the library can be imported like this: 
+Other object types from the library can be imported like this:
 ```js
 const dn = require('dannjs');
 const Dann = dn.dann;
