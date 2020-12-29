@@ -50,7 +50,7 @@ nn.addHiddenLayer(4,'sigmoid');
 nn.makeWeights();
 nn.log({details:true});
  ```
-Other object types can be imported. 
+Other object types from the library can be imported like this: 
 ```js
 const dn = require('dannjs');
 const Dann = dn.dann;
