@@ -2,6 +2,9 @@ const isBrowser = typeof process !== 'object'; //true if running in browser
 let csv;
 let fs;
 let w;
+function mathjsCDN() {
+    let element = document.createElement(script)
+}
 if(!isBrowser) {
     // nodejs
     fs = require('fs');
@@ -9,37 +12,43 @@ if(!isBrowser) {
     csv = require('fast-csv');
     w = require('@fast-csv/format');
 
-    function random(x1,x2) {
-        return Math.random(x2-x1)+x1;
-    }
-    function exp(x1) {
-        return Math.exp(x1);
-    }
-    function abs(x1) {
-        return Math.abs(x1);
-    }
-    function log(x1) {
-        return Math.log(x1);
-    }
-    function pow(x1,e) {
-        return Math.pow(x1,e);
-    }
-    function sin(x1) {
-        return Math.sin(x1);
-    }
-    function cos(x1) {
-        return Math.cos(x1);
-    }
-    function tan(x1) {
-        return Math.tan(x1);
-    }
-    function round(x1) {
-        return Math.round(x1);
-    }
-    function sqrt(x1) {
-        return Math.sqrt(x1);
-    }
+} else {
+    mathjsCDN();
 }
+
+
+function random(x1,x2) {
+    return Math.random(x2-x1)+x1;
+}
+function exp(x1) {
+    return Math.exp(x1);
+}
+function abs(x1) {
+    return Math.abs(x1);
+}
+function log(x1) {
+    return Math.log(x1);
+}
+function pow(x1,e) {
+    return Math.pow(x1,e);
+}
+function sin(x1) {
+    return Math.sin(x1);
+}
+function cos(x1) {
+    return Math.cos(x1);
+}
+function tan(x1) {
+    return Math.tan(x1);
+}
+function round(x1) {
+    return Math.round(x1);
+}
+function sqrt(x1) {
+    return Math.sqrt(x1);
+}
+
+
 //Activations:
 function sigmoid(x) {
     return 1/(1+exp(-x));
