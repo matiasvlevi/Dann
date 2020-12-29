@@ -19,7 +19,9 @@ https://dannjs.org/livedemo.html
 <script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@master/dann.min.js"></script>
 ```
 ### Node :
-`npm i dannjs`
+```
+npm i dannjs
+```
 
 
 # Getting started
