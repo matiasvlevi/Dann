@@ -6,7 +6,7 @@ Dannjs
 
 
 ## What it does:
-Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights, this allows you to use one model as interpreter of pre trained weights rather than a trainer.
+Dannjs allows for the creation of Neural Network JS objects for Web Applications & Nodejs. Train a neural network in multiple ways, you can either use mutations (Neuroevolution tasks) or backpropagation. You can then save & load weights.
 #### Website:
 https://dannjs.org/
 #### Live Demo:
