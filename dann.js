@@ -91,7 +91,7 @@ function leakyReLU(x) {
     if (x >= 0) {
         return 1*x;
     } else {
-        return 0.1*x;
+        return 0.01*x;
     }
 
 }
@@ -99,7 +99,7 @@ function leakyReLU_d(x) {
     if (x >= 0) {
         return 1;
     } else {
-        return 0.1;
+        return 0.01;
     }
 
 }
