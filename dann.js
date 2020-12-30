@@ -358,6 +358,7 @@ class Matrix {
             if (options.table) {
                 table = options.table;
             }
+
         }
         let m = new Matrix(this.rows,this.cols);
 
@@ -560,7 +561,7 @@ class Dann {
             if (options.saveLoss !== undefined) {
                 recordLoss = options.saveLoss;
             } else {
-                recordLoss = false;
+                recordLoss = true;
             }
         }
 
@@ -805,7 +806,11 @@ class Dann {
                     for (let j = 0 ; j < e.length; j++) {
                         er[j] = round(e[j]*decimals)/decimals;
                     }
-                    console.log(er)
+                    if (table == true) {
+                        console.table(er);
+                    } else {
+                        console.log(er);
+                    }
                 }
 
         }
@@ -820,7 +825,12 @@ class Dann {
                 for (let j = 0 ; j < g.length; j++) {
                     gr[j] = round(g[j]*decimals)/decimals;
                 }
-                console.log(gr)
+                if (table == true) {
+                    console.table(gr);
+                } else {
+                    console.log(gr);
+                }
+
             }
         }
         if (showWeights) {
@@ -841,12 +851,17 @@ class Dann {
                 for (let j = 0 ; j < b.length; j++) {
                     br[j] = round(b[j]*decimals)/decimals;
                 }
-                console.log(br)
+                if (table == true) {
+                    console.table(br);
+                } else {
+                    console.log(br);
+                }
             }
         }
         if (showOther) {
             console.log(" ");
             console.log("  Other Values: ");
+            console.log(" ");
             console.log("    Learning rate: " + this.lr);
             console.log("    Loss Function: " + this.lossfunc.name);
             console.log("    Latest Loss: " + this.loss);
