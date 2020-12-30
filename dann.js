@@ -362,7 +362,6 @@ class Matrix {
         let m = new Matrix(this.rows,this.cols);
 
         for (let i = 0; i < this.rows; i++) {
-
             for (let j = 0; j < this.cols; j++) {
                 let v = this.matrix[i][j];
                 m.insert(round(v*dec)/dec,i,j);
@@ -651,7 +650,7 @@ class Dann {
         }
 
 
-    } //Layer ready
+    }
     makeWeights() {
 
 
@@ -691,7 +690,7 @@ class Dann {
             this.arch[i] = layerObj.layer.rows;
         }
 
-    } //Layer Ready
+    }
     addHiddenLayer(size, act) {
 
         if (activations[act] == undefined) {
@@ -706,7 +705,7 @@ class Dann {
         let layer = new Layer('hidden',size,act);
         this.Layers.splice(this.Layers.length-1,0,layer);
 
-    } //Layer Ready
+    }
     log(options) {
 
         let showWeights = false;
@@ -804,7 +803,7 @@ class Dann {
                     let e = Matrix.toArray(this.errors[i]);
                     let er = [];
                     for (let j = 0 ; j < e.length; j++) {
-                        er[i] = round(e[j]*decimals)/decimals;
+                        er[j] = round(e[j]*decimals)/decimals;
                     }
                     console.log(er)
                 }
@@ -819,7 +818,7 @@ class Dann {
                 let g = Matrix.toArray(this.gradients[i]);
                 let gr = [];
                 for (let j = 0 ; j < g.length; j++) {
-                    gr[i] = round(g[j]*decimals)/decimals;
+                    gr[j] = round(g[j]*decimals)/decimals;
                 }
                 console.log(gr)
             }
@@ -840,7 +839,7 @@ class Dann {
                 let b = Matrix.toArray(this.biases[i]);
                 let br = [];
                 for (let j = 0 ; j < b.length; j++) {
-                    br[i] = round(b[j]*decimals)/decimals;
+                    br[j] = round(b[j]*decimals)/decimals;
                 }
                 console.log(br)
             }
@@ -856,7 +855,7 @@ class Dann {
 
         return;
 
-    } //Layer Ready
+    }
     save(name) {
         let path;
         let overwritten = false;
@@ -939,7 +938,7 @@ class Dann {
             }
         }
 
-    } //Layer Ready
+    }
     mutateRandom(randomFactor,probability) {
 
         if (typeof randomFactor !== 'number') {
@@ -1030,7 +1029,7 @@ class Dann {
             upload(this);
         }
 
-    } //Layer Ready
+    }
 }
 
 // loss functions:
