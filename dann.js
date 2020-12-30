@@ -560,7 +560,7 @@ class Dann {
             if (options.saveLoss !== undefined) {
                 recordLoss = options.saveLoss;
             } else {
-                recordLoss = true;
+                recordLoss = false;
             }
         }
 
