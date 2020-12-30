@@ -803,8 +803,8 @@ class Dann {
 
                     let e = Matrix.toArray(this.errors[i]);
                     let er = [];
-                    for (let i = 0 ; i < e.length; i++) {
-                        er[i] = round(e[i]*decimals)/decimals;
+                    for (let j = 0 ; j < e.length; j++) {
+                        er[i] = round(e[j]*decimals)/decimals;
                     }
                     console.log(er)
                 }
@@ -818,8 +818,8 @@ class Dann {
             for (let i = 0; i < this.gradients.length; i++) {
                 let g = Matrix.toArray(this.gradients[i]);
                 let gr = [];
-                for (let i = 0 ; i < g.length; i++) {
-                    gr[i] = round(g[i]*decimals)/decimals;
+                for (let j = 0 ; j < g.length; j++) {
+                    gr[i] = round(g[j]*decimals)/decimals;
                 }
                 console.log(gr)
             }
@@ -839,8 +839,8 @@ class Dann {
             for (let i = 0; i < this.biases.length; i++) {
                 let b = Matrix.toArray(this.biases[i]);
                 let br = [];
-                for (let i = 0 ; i < b.length; i++) {
-                    br[i] = round(b[i]*decimals)/decimals;
+                for (let j = 0 ; j < b.length; j++) {
+                    br[i] = round(b[j]*decimals)/decimals;
                 }
                 console.log(br)
             }
