@@ -60,7 +60,7 @@ const Dann = dn.dann;
 const Layer = dn.layer;
 const Matrix = dn.matrix;
  ```
-The default loss & activation function lists can be imported this way
+The default loss & activation function objects can be imported this way
 ```js
 const dn = require('dannjs');
 let lossfuncs = dn.lossfuncs;
