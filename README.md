@@ -13,7 +13,9 @@ Dannjs allows for the creation of Neural Network JS objects for Web Applications
 #### Website:
 https://dannjs.org
 #### Live Demo:
-[https://dannjs.org/demo](https://dannjs.org/livedemo.html)
+[https://dannjs.org/demo](https://dannjs.org/livedemo.html) <br/>
+more examples & demos [here](https://dannjs.org#demos)
+
 
 <br/>
 
