@@ -22,7 +22,7 @@ if(!isBrowser) {
 
 //Shortening Mathjs functions:
 function random(x1,x2) {
-    return Math.random(x2-x1)+x1;
+    return Math.random()*(x2-x1)+x1;
 }
 function exp(x1) {
     return Math.exp(x1);
@@ -390,10 +390,10 @@ class Matrix {
             }
         }
     }
-    randomize() {
+    randomize(min,max) {
         for (let i = 0; i < this.matrix.length; i++) {
             for (let j = 0; j < this.matrix[i].length; j++) {
-                this.matrix[i][j] = random(-1,1);
+                this.matrix[i][j] = random(min,max);
             }
         }
     }
@@ -675,8 +675,13 @@ class Dann {
 
 
     }
-    makeWeights() {
-
+    makeWeights(arg1,arg2) {
+        let min = -1;
+        let max = 1;
+        if (arg1 !== undefined && arg2 !== undefined) {
+            min = arg1;
+            max = arg2;
+        }
 
         for (let i = 0; i < this.Layers.length-1;i++) {
             let previousLayerObj = this.Layers[i];
@@ -685,7 +690,7 @@ class Dann {
             let weights = new Matrix(layerObj.layer.rows,previousLayerObj.layer.rows);
             let biases = new Matrix(layerObj.layer.rows,1);
 
-            weights.randomize();
+            weights.randomize(min,max);
             biases.randomize();
             this.weights[i] = weights;
             this.biases[i] = biases;
