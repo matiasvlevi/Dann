@@ -486,12 +486,16 @@ class Dann {
     feedForward(inputs, options) {
         let showLog = false;
         let mode = 'cpu';
+        let table = false;
 
         if (options !== undefined) {
             if (options.log !== undefined) {
                 showLog = options.log;
             } else {
                 showLog = false;
+            }
+            if (options.table !== undefined) {
+                table = options.table;
             }
             if (options.mode !== undefined) {
                 mode = options.mode;
@@ -531,8 +535,13 @@ class Dann {
         this.outs = Matrix.toArray(this.Layers[this.Layers.length-1].layer);
 
         if (showLog == true) {
+            if (table == true) {
+                console.log('Prediction: ');
+                console.table(this.outs);
+            } else {
+                console.log('Prediction: ',this.outs);
+            }
 
-            console.log('Prediction: ',this.outs);
 
         }
         return this.outs;
@@ -543,12 +552,15 @@ class Dann {
         let showLog = false;
         let mode = 'cpu';
         let recordLoss = false;
-
+        let table = false;
         if (options !== undefined) {
             if (options.log !== undefined) {
                 showLog = options.log;
             } else {
                 showLog = false;
+            }
+            if (options.table !== undefined) {
+                table = options.table;
             }
             if (options.mode !== undefined) {
                 mode = options.mode;
@@ -611,9 +623,20 @@ class Dann {
         }
 
         if (showLog == true) {
+            console.log('Prediction: ');
+            if (table) {
+                console.table(this.outs);
+            } else {
+                console.log(this.outs);
+            }
 
-            console.log('Prediction: ',this.outs);
-            console.log('target: ',t);
+            console.log('target: ');
+            if (table) {
+                console.table(t);
+            } else {
+                console.log(t);
+            }
+
             console.log('Loss: ',this.loss);
 
         }
@@ -867,7 +890,7 @@ class Dann {
             console.log("    Latest Loss: " + this.loss);
 
         }
-
+        console.log(' ')
         return;
 
     }
