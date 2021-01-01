@@ -22,7 +22,7 @@ if(!isBrowser) {
 
 //Shortening Mathjs functions:
 function random(x1,x2) {
-    return Math.random()*(x2-x1)+x1;
+    return Math.random(1)*(x2-x1)+x1;
 }
 function exp(x1) {
     return Math.exp(x1);
@@ -691,7 +691,7 @@ class Dann {
             let biases = new Matrix(layerObj.layer.rows,1);
 
             weights.randomize(min,max);
-            biases.randomize();
+            biases.randomize(1,-1);
             this.weights[i] = weights;
             this.biases[i] = biases;
 
