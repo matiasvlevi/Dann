@@ -75,11 +75,6 @@ https://dannjs.org/#docs
 <br/><br/><br/>
 
 
-
-#### Python version
-https://github.com/matiasvlevi/Dannpy
-<br/><br/><br/>
-
 ### Become a Patreon:
 <span class="badge-patreon">
 <a href="https://www.patreon.com/dannjs" title="Donate to this project using Patreon"><img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fres-3.cloudinary.com%2Fcrunchbase-production%2Fimage%2Fupload%2Fc_lpad%2Ch_256%2Cw_256%2Cf_auto%2Cq_auto%3Aeco%2Fv1498102829%2Foul9xkady63xqqn3iw7c.png&f=1&nofb=1" alt="Patreon donate button" height="8%" width="8%"/></a>
