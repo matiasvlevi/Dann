@@ -7,7 +7,7 @@ let w;
 function addCDNdependencies() {
     let element = document.createElement('script');
     element.setAttribute('type','text/javascript');
-    element.setAttribute('src','//https://cdn.jsdelivr.net/npm/mathjs@8.1.0/lib/browser/math.min.js');
+    element.setAttribute('src','https://cdn.jsdelivr.net/npm/mathjs@8.1.0/lib/browser/math.min.js');
     document.head.insertBefore(element, document.head.children[0]);
 }
 if(!isBrowser) {
