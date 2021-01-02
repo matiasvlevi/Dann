@@ -1071,6 +1071,10 @@ class Dann {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
+    loadFromStr(str,name) {
+        let newNN = str;
+        applyToModel(name,newNN)
+    }
     load(name, callback) {
         if (!isBrowser) {
             let path = './savedDanns/'+name+'/dannData.json';
@@ -1236,23 +1240,8 @@ function applyToModel(nn,newNN) {
     let slayers = JSON.parse(newNN.lstr);
     for (let i = 0; i < slayers.length; i++) {
         let layerObj = JSON.parse(slayers[i]);
-
-        let act = layerObj.actname;
-        let der = act + '_d';
-        layerObj.actname = act;
-        layerObj.actname_d = der;
-        let func;
-        let func_d;
-        if (isBrowser) {
-            func = window[act];
-            func_d = window[der];
-        } else {
-            func = activations[act];
-            func_d = activations[der];
-        }
-        layerObj.actfunc = func;
-        layerObj.actfunc_d = func_d;
-        nn.Layers[i] = layerObj;
+        let layer = new Layer(layerObj.type,layerObj.size,layerObj.actname);
+        nn.Layers[i] = layer;
     }
     nn.makeWeights();
     let sweights = JSON.parse(newNN.wstr);
