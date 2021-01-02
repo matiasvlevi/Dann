@@ -7,7 +7,7 @@ let w;
 function addCDNdependencies() {
     let element = document.createElement('script');
     element.setAttribute('type','text/javascript');
-    element.setAttribute('src','https://cdn.jsdelivr.net/npm/mathjs@8.1.0/lib/browser/math.min.js');
+    element.setAttribute('src','//https://cdn.jsdelivr.net/npm/mathjs@8.1.0/lib/browser/math.min.js');
     document.head.insertBefore(element, document.head.children[0]);
 }
 if(!isBrowser) {
@@ -1005,7 +1005,7 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s,loss:this.loss};
+        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s,loss:this.loss,e:this.epoch};
 
         if (isBrowser) {
 
@@ -1070,10 +1070,6 @@ class Dann {
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
-    }
-    loadFromStr(str) {
-        let newNN = str;
-        applyToModel(this,newNN)
     }
     load(name, callback) {
         if (!isBrowser) {
@@ -1240,8 +1236,23 @@ function applyToModel(nn,newNN) {
     let slayers = JSON.parse(newNN.lstr);
     for (let i = 0; i < slayers.length; i++) {
         let layerObj = JSON.parse(slayers[i]);
-        let layer = new Layer(layerObj.type,layerObj.size,layerObj.actname);
-        nn.Layers[i] = layer;
+
+        let act = layerObj.actname;
+        let der = act + '_d';
+        layerObj.actname = act;
+        layerObj.actname_d = der;
+        let func;
+        let func_d;
+        if (isBrowser) {
+            func = window[act];
+            func_d = window[der];
+        } else {
+            func = activations[act];
+            func_d = activations[der];
+        }
+        layerObj.actfunc = func;
+        layerObj.actfunc_d = func_d;
+        nn.Layers[i] = layerObj;
     }
     nn.makeWeights();
     let sweights = JSON.parse(newNN.wstr);
@@ -1274,6 +1285,7 @@ function applyToModel(nn,newNN) {
     nn.losses = [];
     nn.lr = newNN.lrate;
     nn.arch = newNN.arch;
+    nn.epoch = newNN.e;
     nn.log();
     if (isBrowser) {
         console.log("");
