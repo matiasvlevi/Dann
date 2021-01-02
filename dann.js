@@ -1071,9 +1071,9 @@ class Dann {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
-    loadFromStr(str,name) {
+    loadFromStr(str) {
         let newNN = str;
-        applyToModel(name,newNN)
+        applyToModel(this,newNN)
     }
     load(name, callback) {
         if (!isBrowser) {
