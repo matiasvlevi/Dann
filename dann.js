@@ -1237,21 +1237,13 @@ function applyToModel(nn,newNN) {
     for (let i = 0; i < slayers.length; i++) {
         let layerObj = JSON.parse(slayers[i]);
 
-        let act = layerObj.actname;
-        let der = act + '_d';
-        layerObj.actname = act;
-        layerObj.actname_d = der;
-        let func;
-        let func_d;
-        if (isBrowser) {
-            func = window[act];
-            func_d = window[der];
-        } else {
-            func = activations[act];
-            func_d = activations[der];
-        }
-        layerObj.actfunc = func;
-        layerObj.actfunc_d = func_d;
+        let obj = stringTofunc(layerObj.actname);
+
+        layerObj.actname = obj.name;
+        layerObj.actname_d = obj.name_d;
+        layerObj.actfunc = obj.func;
+        layerObj.actfunc_d = obj.func_d;
+
         nn.Layers[i] = layerObj;
     }
     nn.makeWeights();
@@ -1271,6 +1263,7 @@ function applyToModel(nn,newNN) {
     for (let i = 0; i < sgradients.length; i++) {
         nn.gradients[i].set(JSON.parse(sgradients[i]));
     }
+
     nn.lossfunc_s = newNN.lf;
     if (isBrowser) {
         nn.lossfunc = window[newNN.lf];
@@ -1278,15 +1271,13 @@ function applyToModel(nn,newNN) {
         nn.lossfunc = lossfuncs[newNN.lf];
     }
 
-
-
     nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
     nn.loss = newNN.loss;
     nn.losses = [];
     nn.lr = newNN.lrate;
     nn.arch = newNN.arch;
     nn.epoch = newNN.e;
-    nn.log();
+
     if (isBrowser) {
         console.log("");
         console.log("Succesfully loaded the Dann Model");
@@ -1297,11 +1288,26 @@ function applyToModel(nn,newNN) {
     }
 
 }
+function stringTofunc(str) {
+    let act = str;
+    let der = act + '_d';
+
+    let func;
+    let func_d;
+    if (isBrowser) {
+        func = window[act];
+        func_d = window[der];
+    } else {
+        func = activations[act];
+        func_d = activations[der];
+    }
+
+    return {name:act, name_d:der,func:func,func_d:func_d};
+}
 function upload(nn) {
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
     downloadAnchorNode.setAttribute("id", "upload");
-
     downloadAnchorNode.setAttribute("onChange", "clickedUpload("+nn+")");
     document.body.appendChild(downloadAnchorNode);
 
