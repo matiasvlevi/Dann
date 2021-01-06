@@ -235,10 +235,8 @@ function selectPools(arr,f,s) {
             for (let j = 0; j < f; j++){
                 for (let i = 0; i < f; i++) {
                     sample.push(arr[p(w,j+x,i+y)]);
-                    console.log(i,j);
                 }
             }
-            console.log(sample);
             samples.push(sample);
         }
     }
@@ -367,6 +365,7 @@ class Matrix {
         } else {
             console.error('Dann Error: mode specified is not valid');
             console.trace();
+            return;
         }
 
     }
@@ -539,7 +538,7 @@ class Layer {
                 console.trace();
             }
             this.size = getPoolOutputLength(arg1,arg2,arg3);
-            this.input = new Matrix(this.sampleLength,1);
+            this.input = new Matrix(this.inputSize,1);
             this.layer = new Matrix(this.size,1);
 
             // picking the pooling function:
@@ -797,9 +796,11 @@ class Dann {
             if (typeof str === 'string') {
                 console.error("Dann Error: '"+str+"' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.");
                 console.trace();
+                return;
             } else {
                 console.error("Dann Error: Did not detect string value, as a result, the loss function is set to 'mse' by default.");
                 console.trace();
+                return;
             }
             str = 'mse';
         }
@@ -811,9 +812,11 @@ class Dann {
             if (typeof act === 'string') {
                 console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
                 console.trace();
+                return;
             } else {
                 console.error("Dann Error: Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.");
                 console.trace();
+                return;
             }
             act = 'sigmoid';
         } else {
