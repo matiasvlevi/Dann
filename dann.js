@@ -215,6 +215,46 @@ function getSubtype(str) {
 
 }
 
+//Array pool selection:
+function p(w,i,j) {
+    return (w*j)+i;
+}
+function selectPools(arr,f,s) {
+    let len = arr.length;
+    let w = Math.sqrt(len);
+    if (w !== Math.floor(w)) {
+        return;
+    } else if (w/s !== Math.floor(w/s)) {
+        return;
+    }
+    let samples = [];
+    for (let y = 0; y+f <= w; y+=s) {
+        for (let x = 0; x+f <= w; x+=s) {
+            let sample = [];
+            for (let i = 0; i < f; i++){
+                for (let j = 0; j < f; j++) {
+                    sample.push(arr[p(w,j+x,i+y)]);
+                }
+            }
+            samples.push(sample);
+        }
+    }
+    return samples;
+}
+function getPoolOutputLength(w,f,s) {
+    let value = 0;
+    for (let y = 0; y+f <= w; y+=s) {
+        for (let x = 0; x+f <= w; x+=s) {
+            for (let i = 0; i < f; i++){
+                for (let j = 0; j < f; j++) {
+                    value++;
+                }
+            }
+        }
+    }
+    return value;
+}
+
 //Object Classes:
 class Matrix {
     constructor(rows,cols) {
@@ -481,7 +521,7 @@ class Matrix {
     }
 }
 class Layer {
-    constructor(type,arg1,arg2) {
+    constructor(type,arg1,arg2,arg3) {
         this.type = type;
         this.subtype = getSubtype(type);
         if (this.type == 'hidden' || this.type == 'output') {
@@ -493,24 +533,30 @@ class Layer {
             this.size = arg1;
             this.layer = new Matrix(this.size,1);
         } else if (this.subtype == 'pool') {
-            this.blocksize = arg2;
-            this.sampleLength = arg1;
-            this.size = this.sampleLength/this.blocksize;
+            this.stride = arg3;
+            this.sampleSize = arg2;
+            this.inputSize = arg1;
+            this.width = Math.sqrt(arg1);
+            if (this.width !== Math.floor(this.width)) {
+                console.error("Dann Error: the array can not be set in a square matrix");
+                console.trace();
+            }
+            if (this.width/this.stride !== Math.floor(this.width/this.stride)) {
+                console.error("Dann Error: the Width must be divisible by the stride (jumps size). Width is the root of the array's length.");
+                console.trace();
+            }
+            this.size = getPoolOutputLength(arg1,arg2,arg3);
             this.input = new Matrix(this.sampleLength,1);
             this.layer = new Matrix(this.size,1);
 
             // picking the pooling function:
             let prefix = getPrefix(this.type,4);
             this.pickFunc = poolFuncs[prefix];
-            this.downsample = function (data) {
+            this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
-                let sample = data;
-                let samples = [];
-                let j = 0;
-                for (let i = 0; i < this.size;i++) {
-                    samples[i] = sample.slice(j,j+this.blocksize);
-                    j+=this.blocksize;
-                }
+
+                let samples = selectPools(data,f,s);
+
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
                     output[i] = this.pickFunc(samples[i]);
@@ -521,7 +567,8 @@ class Layer {
             this.feed = function (data, options) {
                 let showLog = false;
                 let table = false;
-
+                let f = this.sampleSize;
+                let s = this.stride;
                 if (options !== undefined) {
                     if (options.log) {
                         showLog = options.log;
@@ -530,13 +577,12 @@ class Layer {
                         table = options.table;
                     }
                 }
-
-                if (data.length !== this.sampleLength) {
+                if (data.length !== this.inputSize) {
                     console.error('Dann Error: The data you are trying to feed to this '+this.type+' layer is not the same length as the number of input this layer has.');
                     console.trace();
                     return;
                 } else {
-                    let downsampled = this.downsample(data);
+                    let downsampled = this.downsample(data,f,s);
                     if (showLog) {
                         if (table) {
                             console.table(downsampled);
