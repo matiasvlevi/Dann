@@ -242,7 +242,8 @@ function selectPools(arr,f,s) {
     }
     return samples;
 }
-function getPoolOutputLength(w,f,s) {
+function getPoolOutputLength(len,f,s) {
+    let w = Math.sqrt(len);
     return ((w-f)/s+1)*((w-f)/s+1);
 }
 
