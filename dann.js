@@ -1,4 +1,4 @@
-const isBrowser = typeof process !== 'object';
+const isBrowser = (typeof process !== 'object');
 let csv;
 let fs;
 let w;
@@ -52,104 +52,167 @@ function sqrt(x1) {
     return Math.sqrt(x1);
 }
 
-//Activation functions:
-function sigmoid(x) {
-    return 1/(1+exp(-x));
-}
-function sigmoid_d(x) {
-    let x1 = sigmoid(x);
-    return x1 * (1 - x1);
-}
-function leakySigmoid(x) {
-    return 1/(1+exp(-x))+(x/100);
-}
-function leakySigmoid_d(x) {
-    let x1 = leakySigmoid(x);
-    return x1 * (1 - x1);
-}
-function siLU(x) {
-
-    return x/(1+exp(-x));
-}
-function siLU_d(x) {
-    let top = (1 + exp(-x))+(x*exp(-x));
-    let down = pow(1 + exp(-x), 2);
-    return top/down;
-}
-function tanH(x) {
-
-    let top = exp(x) - exp(-x);
-    let down = exp(x)+ exp(-x);
-
-    return (top/down);
-}
-function tanH_d(x) {
-
-    return 1 - pow(tanH(x),2);
-}
-function leakyReLUCapped(x) {
-    if (x >= 0 && x <= 6) {
-        return x;
-    } else if (x < 0) {
-        return 0.1*x;
-    } else {
-        return 6;
-    }
-}
-function leakyReLUCapped_d(x) {
-    if (x >= 0 && x <= 6) {
-        return 1;
-    } else if (x < 0) {
-        return 0.1;
-    } else {
-        return 0;
-    }
-}
-function leakyReLU(x) {
-    if (x >= 0) {
-        return 1*x;
-    } else {
-        return 0.01*x;
-    }
-
-}
-function leakyReLU_d(x) {
-    if (x >= 0) {
-        return 1;
-    } else {
-        return 0.01;
-    }
-
-}
-function linear(x) {
-  return x;
-}
-function linear_d(x) {
-  return 1;
-}
-function reLU(x) {
-    if (x >= 0) {
-        return 1*x;
-    } else {
-        return 0;
-    }
-
-}
-function reLU_d(x) {
-    if (x >= 0) {
-        return 1;
-    } else {
-        return 0;
-    }
-
-}
-
 //Other math functions:
 function cosh(x) {
     return ((exp(x)+exp(-x))/2);
 }
 function sech(x) {
     return 1/cosh(x);
+}
+
+// Browser Download function:
+function downloadSTR(obj, exportName) {
+  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  let downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+//Apply a dannData object to a Dann Prototype object.
+function applyToModel(model,dataOBJ) {
+    model.i = dataOBJ.arch[0];
+    model.inputs = new Matrix(model.i, 1);
+    model.o = dataOBJ.arch[dataOBJ.arch.length-1];
+    model.outputs = new Matrix(model.o,1);
+
+    let slayers = JSON.parse(dataOBJ.lstr);
+    for (let i = 0; i < slayers.length; i++) {
+        let data = JSON.parse(slayers[i]);
+
+        let layerObj = new Layer(data.type,data.size,data.actname);
+
+        model.Layers[i] = layerObj;
+    }
+    model.makeWeights();
+    let sweights = JSON.parse(dataOBJ.wstr);
+    for (let i = 0; i < sweights.length; i++) {
+        model.weights[i].set(JSON.parse(sweights[i]));
+    }
+    let sbiases = JSON.parse(dataOBJ.bstr);
+    for (let i = 0; i < sbiases.length; i++) {
+        model.biases[i].set(JSON.parse(sbiases[i]));
+    }
+    let serrors = JSON.parse(dataOBJ.estr);
+    for (let i = 0; i < serrors.length; i++) {
+        model.errors[i].set(JSON.parse(serrors[i]));
+    }
+    let sgradients = JSON.parse(dataOBJ.gstr);
+    for (let i = 0; i < sgradients.length; i++) {
+        model.gradients[i].set(JSON.parse(sgradients[i]));
+    }
+
+    model.lossfunc_s = dataOBJ.lf;
+    if (isBrowser) {
+        model.lossfunc = window[dataOBJ.lf];
+    } else {
+        model.lossfunc = lossfuncs[dataOBJ.lf];
+    }
+
+    model.outs = Matrix.toArray(model.Layers[model.Layers.length-1]);
+    model.loss = dataOBJ.loss;
+    model.losses = [];
+    model.lr = dataOBJ.lrate;
+    model.arch = dataOBJ.arch;
+    model.epoch = dataOBJ.e;
+
+    if (isBrowser) {
+        console.log("");
+        console.log("Succesfully loaded the Dann Model");
+    } else {
+        console.log('\x1b[32m',"");
+        console.log("Succesfully loaded the Dann Model");
+        console.log("\x1b[0m","");
+    }
+}
+// Takes a string of a activation function's name and returns an object containing the function, the function derivative, the name & the derivative name.
+function stringTofunc(str) {
+
+    let act = str;
+    let der = act + '_d';
+
+    let func;
+    let func_d;
+    if (isBrowser) {
+        func = window[act];
+        func_d = window[der];
+    } else {
+        func = activations[act];
+        func_d = activations[der];
+    }
+
+    if (func !== undefined) {
+        if (func_d !== undefined) {
+            return {name:act, name_d:der,func:func,func_d:func_d};
+        } else {
+            console.error("Dann Error: You need to create the derivative of your custom function. The activation function specified '"+str+"' does not have a derivative assigned. The activation function was set to the default 'sigmoid'.");
+            console.trace();
+            return;
+        }
+    } else {
+        console.error("Dann Error: the activation function '"+str+"' is not a valid activation function. The activation function was set to the default 'sigmoid'.");
+        console.trace();
+    }
+
+}
+// Sets the object generated by 'stringTofunc(str)' to a specific layer.
+function setLayerFunc(layer,obj) {
+    if (layer !== undefined && obj !== undefined) {
+        layer.actname = obj.name;
+        layer.actname_d = obj.name_d;
+        layer.actfunc = obj.func;
+        layer.actfunc_d = obj.func_d;
+    } else {
+        return;
+    }
+}
+// create the html element to upload the dannData.json
+function upload(nn) {
+    let downloadAnchorNode = document.createElement('input');
+    downloadAnchorNode.setAttribute("type", "file");
+    downloadAnchorNode.setAttribute("id", "upload");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+nn+")");
+    document.body.appendChild(downloadAnchorNode);
+}
+// function called when the html element is clicked
+function clickedUpload(model) {
+    let element = document.getElementById('upload');
+    let file = element.files[0];
+    let nn = model;
+    let reader = new FileReader();
+    reader.readAsText(file);
+    let newNN;
+    reader.onload = function() {
+
+        let xdata =  JSON.parse(reader.result);
+
+        newNN = xdata;
+        applyToModel(nn, newNN);
+
+    };
+    reader.onerror = function() {
+      console.log(reader.error);
+    };
+    element.remove();
+}
+
+// String Manipulation:
+function getPrefix(str,x) {
+
+    let len = str.length;
+    let prefix = str.slice(0,len-4);
+    return prefix;
+}
+function getSubtype(str) {
+    let len = str.length;
+    let subtype = str.slice(len-4,len);
+    if (subtype == 'pool') {
+        return subtype;
+    } else {
+        return str;
+    }
+
 }
 
 //Object Classes:
@@ -270,6 +333,7 @@ class Matrix {
             return Matrix.multiply(m1,m2)
         } else {
             console.error('Dann Error: mode specified is not valid');
+            console.trace();
         }
 
     }
@@ -419,43 +483,25 @@ class Matrix {
 class Layer {
     constructor(type,arg1,arg2) {
         this.type = type;
+        this.subtype = getSubtype(type);
         if (this.type == 'hidden' || this.type == 'output') {
             this.size = arg1;
-            let der = arg2 + '_d';
-            this.actname = arg2;
-            this.actname_d = der;
-            let func;
-            let func_d;
-            if (isBrowser) {
-                func = window[arg2];
-                func_d = window[der];
-            } else {
-                func = activations[arg2];
-                func_d = activations[der];
-            }
-            this.actfunc = func;
-            this.actfunc_d = func_d;
+            let obj = stringTofunc(arg2);
+            setLayerFunc(this,obj);
             this.layer = new Matrix(this.size,1);
         } else if (this.type == 'input') {
             this.size = arg1;
             this.layer = new Matrix(this.size,1);
-        } else if (this.type == 'avgpool') {
+        } else if (this.subtype == 'pool') {
             this.blocksize = arg2;
             this.sampleLength = arg1;
             this.size = this.sampleLength/this.blocksize;
             this.input = new Matrix(this.sampleLength,1);
             this.layer = new Matrix(this.size,1);
-            this.feed = function (data) {
-                if (data.length !== this.sampleLength) {
-                    console.error('Dann Error: The data you are trying to feed to this '+this.type+' layer is not the same length as the number of input this layer has.');
-                    return;
-                } else {
 
-
-                    return this.downsample(data);;
-                }
-
-            }
+            // picking the pooling function:
+            let prefix = getPrefix(this.type,4);
+            this.pickFunc = poolFuncs[prefix];
             this.downsample = function (data) {
                 this.input = Matrix.fromArray(data);
                 let sample = data;
@@ -467,40 +513,55 @@ class Layer {
                 }
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
-                    let sum = 0;
-                    for (let j = 0; j < samples[0].length; j++) {
-                        sum += samples[i][j];
-                    }
-                    output[i] = sum/samples[0].length;
+                    output[i] = this.pickFunc(samples[i]);
                 }
                 this.layer = Matrix.fromArray(output);
                 return output;
+            }
+            this.feed = function (data, options) {
+                let showLog = false;
+                let table = false;
 
+                if (options !== undefined) {
+                    if (options.log) {
+                        showLog = options.log;
+                    }
+                    if (options.table) {
+                        table = options.table;
+                    }
+                }
+
+                if (data.length !== this.sampleLength) {
+                    console.error('Dann Error: The data you are trying to feed to this '+this.type+' layer is not the same length as the number of input this layer has.');
+                    console.trace();
+                    return;
+                } else {
+                    let downsampled = this.downsample(data);
+                    if (showLog) {
+                        if (table) {
+                            console.table(downsampled);
+                        } else {
+                            console.log(downsampled);
+                        }
+                    }
+                    return ;
+                }
             }
         } else {
-            console.log('You need to specify the type of the Layer');
+            if (typeof this.type == 'string') {
+                console.error("Dann Error: The Layer type '"+this.type+"' is not valid.");
+                console.trace();
+            } else {
+                console.error("Dann Error: You need to specify a valid type of Layer");
+                console.trace();
+            }
         }
     }
     setAct(act) {
-        let der = act + '_d';
-        if (activations[der] === undefined) {
-            console.error("Dann Error: You need to create the derivative of your custom function. The activation function is set to 'sigmoid' because '"+act+"' does not have a derivative assigned.");
-            act = 'sigmoid';
-            der = act + '_d';
-        }
-        this.actname = act;
-        this.actname_d = der;
-        let func;
-        let func_d;
-
-        func = activations[act];
-        func_d = activations[der];
-
-        this.actfunc = func;
-        this.actfunc_d = func_d;
+        let obj = stringTofunc(act);
+        setLayerFunc(this,obj);
     }
     log() {
-
         console.log(this);
     }
 }
@@ -532,18 +593,14 @@ class Dann {
         this.lossfunc_s = this.lossfunc.name;
 
     }
-    static mapArray(arr,x1,y1,x2,y2) {
-      let newArr = [];
-      for (let i = 0; i < arr.length;i++) {
-        newArr[i] = map(arr[i],x1,y1,x2,y2);
-      }
-      return newArr;
-    }
     feedForward(inputs, options) {
+
+        //optional parameter values:
         let showLog = false;
         let mode = 'cpu';
         let table = false;
 
+        //optional parameters:
         if (options !== undefined) {
             if (options.log !== undefined) {
                 showLog = options.log;
@@ -556,12 +613,12 @@ class Dann {
             if (options.mode !== undefined) {
                 mode = options.mode;
                 if (mode == 'gpu') {
-                    console.log('gpu version coming soon!');
+                    console.log('Gpu support in the works.')
+                    mode = 'cpu';
                 }
             } else {
                 mode = 'cpu';
             }
-
         }
 
         if (inputs.length == this.i) {
@@ -571,10 +628,11 @@ class Dann {
                 this.outs[i] = 0;
             }
             console.error('Dann Error: The input array length does not match the number of inputs the dannjs model has.');
+            console.trace();
             return this.outs;
         }
         if (this.weights.length === 0) {
-            //console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
+            console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
             this.makeWeights();
         }
 
@@ -586,8 +644,8 @@ class Dann {
             layerObj.layer = Matrix.multiply(this.weights[i],pLayer.layer);
             layerObj.layer.add(this.biases[i]);
             layerObj.layer.map(layerObj.actfunc);
-
         }
+
         this.outs = Matrix.toArray(this.Layers[this.Layers.length-1].layer);
 
         if (showLog == true) {
@@ -597,18 +655,18 @@ class Dann {
             } else {
                 console.log('Prediction: ',this.outs);
             }
-
-
         }
         return this.outs;
-
     }
     backpropagate(inputs, t, options) {
 
+        //optional parameter values:
         let showLog = false;
         let mode = 'cpu';
         let recordLoss = false;
         let table = false;
+
+        //optional parameters:
         if (options !== undefined) {
             if (options.log !== undefined) {
                 showLog = options.log;
@@ -638,23 +696,24 @@ class Dann {
             targets = Matrix.fromArray(t);
         } else {
             console.error('Dann Error: The target array length does not match the number of ouputs the dannjs model has.');
-            return null;
+            console.trace();
+            return;
         }
         if (typeof this.lr !== 'number') {
             console.error('Dann Error: The learning rate specified (Dann.lr property) is not a number.');
-            return null;
+            console.trace();
+            return;
         }
+
         this.outs = this.feedForward(inputs, {log:false,mode:mode});
-
         this.errors[this.errors.length-1] = Matrix.subtract(targets, this.Layers[this.Layers.length-1].layer);
-
         this.gradients[this.gradients.length-1] = Matrix.map(this.Layers[this.Layers.length-1].layer,this.Layers[this.Layers.length-1].actfunc_d);
         this.gradients[this.gradients.length-1].mult(this.errors[this.errors.length-1]);
         this.gradients[this.gradients.length-1].mult(this.lr);
 
         for (let i = this.weights.length-1; i > 0;i--) {
-            let h_t = Matrix.transpose(this.Layers[i].layer);
 
+            let h_t = Matrix.transpose(this.Layers[i].layer);
             let weights_deltas = Matrix.multiply(this.gradients[i],h_t);
 
             this.weights[i].add(weights_deltas);
@@ -677,7 +736,6 @@ class Dann {
         if (recordLoss == true) {
             this.losses.push(this.loss);
         }
-
         if (showLog == true) {
             console.log('Prediction: ');
             if (table) {
@@ -685,51 +743,43 @@ class Dann {
             } else {
                 console.log(this.outs);
             }
-
             console.log('target: ');
             if (table) {
                 console.table(t);
             } else {
                 console.log(t);
             }
-
             console.log('Loss: ',this.loss);
-
         }
-
     }
     setLossFunction(str) {
-
-        if (lossfuncs[str] == undefined) {
+        let func = lossfuncs[str];
+        if (func == undefined) {
             if (typeof str === 'string') {
                 console.error("Dann Error: '"+str+"' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.");
-
+                console.trace();
             } else {
                 console.error("Dann Error: Did not detect string value, as a result, the loss function is set to 'mse' by default.");
-
+                console.trace();
             }
-
             str = 'mse';
         }
         this.lossfunc_s = str
-        this.lossfunc = lossfuncs[this.lossfunc_s];
-
+        this.lossfunc = func;
     }
     outputActivation(act) {
-
         if (activations[act] == undefined) {
             if (typeof act === 'string') {
                 console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
+                console.trace();
             } else {
                 console.error("Dann Error: Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.");
+                console.trace();
             }
-
             act = 'sigmoid';
         } else {
             this.Layers[this.Layers.length-1].setAct(act);
         }
-
-
     }
     makeWeights(arg1,arg2) {
         let min = -1;
@@ -738,7 +788,6 @@ class Dann {
             min = arg1;
             max = arg2;
         }
-
         for (let i = 0; i < this.Layers.length-1;i++) {
 
             let previousLayerObj = this.Layers[i];
@@ -754,59 +803,41 @@ class Dann {
 
             this.errors[i] = new Matrix(layerObj.layer.rows,1);
             this.gradients[i] = new Matrix(layerObj.layer.rows,1);
+
             if (layerObj.actfunc == undefined) {
-                let n = "sigmoid";
-                let d = n + "_d";
-                layerObj.actname = n;
-                layerObj.actname_d = d;
-                if (isBrowser) {
-                    layerObj.actfunc = window[n];
-                    layerObj.actfunc_d = window[d];
-                } else {
-                    layerObj.actfunc = activations[n];
-                    layerObj.actfunc_d = activations[d];
-                }
-
+                let obj = stringTofunc('sigmoid');
+                setLayerFunc(layerObj,obj);
             }
-
-
         }
         for (let i = 0; i<this.Layers.length;i++) {
             let layerObj = this.Layers[i];
             this.arch[i] = layerObj.layer.rows;
         }
-
     }
-    // addPool(type,blocksize) {
-    //     let previousLayer = this.Layers[this.Layers.length-2];
-    //     let index = this.Layers.length-1;
-    //     console.log(this.Layers[previousLayer]);
-    //     let layer = new Layer(type,previousLayer.size,blocksize);
-    //     this.Layers.splice(index,0,layer);
-    // }
     addHiddenLayer(size, act) {
-
         if (activations[act] == undefined) {
             if (typeof act === 'string') {
                 console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
+                console.trace();
             } else {
                 console.error("Dann Error: Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.");
+                console.trace();
             }
-
             act = 'sigmoid';
         }
         let layer = new Layer('hidden',size,act);
         this.Layers.splice(this.Layers.length-1,0,layer);
-
     }
     log(options) {
 
+        //Optional parameters values:
         let showWeights = false;
         let showGradients = false;
         let showErrors = false;
         let showBiases = false;
         let showBaseSettings = false;
         let showOther = false;
+        let showDetailedLayers = false;
         let table = false;
         let decimals = 1000;
 
@@ -814,30 +845,28 @@ class Dann {
         if (options !== undefined) {
             if (options.weights) {
                 showWeights = options.weights;
-
             }
             if (options.gradients) {
                 showGradients = options.gradients;
-
             }
             if (options.errors) {
                 showErrors = options.errors;
-
             }
             if (options.biases) {
                 showBiases = options.biases;
-
             }
             if (options.struct) {
                 showBaseSettings = options.struct;
-
-
             }
             if (options.misc) {
                 showOther = options.misc;
             }
             if (options.table) {
                 table = options.table;
+            }
+            if (options.layers) {
+                showDetailedLayers = options.layers;
+                showBaseSettings = options.layers;
             }
             if (options.details) {
                 let v = options.details;
@@ -847,10 +876,12 @@ class Dann {
                 showBiases = v;
                 showBaseSettings = v;
                 showOther = v;
+                showDetailedLayers = v;
             }
             if (options.decimals) {
                 if (options.decimals > 21) {
                     console.error('Dann Error: Maximum number of decimals is 21.');
+                    console.trace();
                     options.decimals = 21;
                 }
                 decimals = pow(10,options.decimals);
@@ -859,23 +890,20 @@ class Dann {
             showBaseSettings = true;
             showOther = true;
         }
-        // make weights if they werent made allready.
         if (this.weights.length === 0) {
-            //console.error('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
+            // make weights if they werent made allready.
             this.makeWeights();
         }
         if (options == undefined || (options !== undefined && options.details == true)) {
             console.log("Dann NeuralNetwork:");
         }
         if (showBaseSettings) {
-
             console.log(" ");
             console.log("  Layers:")
             for (let i = 0; i < this.Layers.length;i++) {
                 let layerObj = this.Layers[i];
                 let str = layerObj.type+" Layer: ";
                 let afunc = "";
-
                 if (i == 0) {
                     str = "Input Layer:   ";
                     afunc = "       ";
@@ -888,32 +916,30 @@ class Dann {
                     afunc = "  ("+layerObj.actname+")";
                 }
                 console.log("    " + str + layerObj.size + afunc);
+                if (showDetailedLayers) {
+                    console.log(this.Layers[i]);
+                }
             }
         }
-
         if (showErrors) {
             console.log(" ");
             console.log("  Errors:");
             for (let i = 0; i < this.errors.length; i++) {
-
-                    let e = Matrix.toArray(this.errors[i]);
-                    let er = [];
-                    for (let j = 0 ; j < e.length; j++) {
-                        er[j] = round(e[j]*decimals)/decimals;
-                    }
-                    if (table == true) {
-                        console.table(er);
-                    } else {
-                        console.log(er);
-                    }
+                let e = Matrix.toArray(this.errors[i]);
+                let er = [];
+                for (let j = 0 ; j < e.length; j++) {
+                    er[j] = round(e[j]*decimals)/decimals;
                 }
-
+                if (table == true) {
+                    console.table(er);
+                } else {
+                    console.log(er);
+                }
+            }
         }
-
         if (showGradients) {
             console.log(" ");
             console.log("  Gradients:");
-
             for (let i = 0; i < this.gradients.length; i++) {
                 let g = Matrix.toArray(this.gradients[i]);
                 let gr = [];
@@ -925,7 +951,6 @@ class Dann {
                 } else {
                     console.log(gr);
                 }
-
             }
         }
         if (showWeights) {
@@ -939,7 +964,6 @@ class Dann {
         if (showBiases) {
             console.log(" ");
             console.log("  Biases:");
-
             for (let i = 0; i < this.biases.length; i++) {
                 let b = Matrix.toArray(this.biases[i]);
                 let br = [];
@@ -959,12 +983,11 @@ class Dann {
             console.log(" ");
             console.log("    Learning rate: " + this.lr);
             console.log("    Loss Function: " + this.lossfunc.name);
+            console.log("    Current Epoch: " + this.epoch);
             console.log("    Latest Loss: " + this.loss);
-
         }
         console.log(' ')
         return;
-
     }
     save(name) {
         let path;
@@ -1053,10 +1076,12 @@ class Dann {
 
         if (typeof randomFactor !== 'number') {
             console.error('Dann Error: Dann.mutateRandom(); range argument must be a number.');
-            return null;
+            console.trace();
+            return;
         } else if (typeof probability !== 'number') {
             console.error('Dann Error: Dann.mutateRandom(); probability argument must be a number.');
-            return null;
+            console.trace();
+            return;
         }
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addRandom(randomFactor,probability);
@@ -1064,15 +1089,22 @@ class Dann {
     }
     mutateAdd(randomFactor) {
         if (typeof randomFactor !== 'number') {
+
             console.error('Dann Error: Dann.mutateAdd(); percent argument must be a number.');
-            return null;
+            console.trace();
+            return;
         }
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
     load(name, callback) {
-        if (!isBrowser) {
+        if (isBrowser) {
+            upload(name);
+            if (typeof callback == 'function') {
+                callback();
+            }
+        } else {
             let path = './savedDanns/'+name+'/dannData.json';
             if (fs.existsSync(path)) {
                 let text = fs.readFileSync(path, 'utf8');
@@ -1082,20 +1114,11 @@ class Dann {
 
                 applyToModel(this,newNN)
 
-
-
-
             } else {
-                console.error('ERROR: file not found');
+                console.error('Dann Error: file not found');
+                console.trace();
             }
-        } else {
-            upload(name);
-            if (typeof callback == 'function') {
-                callback();
-            }
-
         }
-
     }
 }
 
@@ -1191,128 +1214,100 @@ function mse(predictions,target) {
     ans = sum/n;
     return ans;
 }
-// Download Functions:
-function downloadSTR(obj, exportName) {
-  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  let downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href",     dataStr);
-  downloadAnchorNode.setAttribute("download", exportName + ".json");
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
 
+//Activation functions:
+function sigmoid(x) {
+    return 1/(1+exp(-x));
 }
-function clickedUpload(model) {
-    let element = document.getElementById('upload');
-    let file = element.files[0];
-
-    let nn = model;
-    let reader = new FileReader();
-
-    reader.readAsText(file);
-    let newNN;
-    reader.onload = function() {
-
-        let xdata =  JSON.parse(reader.result);
-
-        newNN = xdata;
-        applyToModel(nn, newNN);
-
-    };
-
-    reader.onerror = function() {
-      console.log(reader.error);
-    };
-
-    element.remove();
-
+function sigmoid_d(x) {
+    let x1 = sigmoid(x);
+    return x1 * (1 - x1);
 }
-function applyToModel(nn,newNN) {
-    nn.i = newNN.arch[0];
-    nn.inputs = new Matrix(nn.i, 1);
-    nn.o = newNN.arch[newNN.arch.length-1];
-    nn.outputs = new Matrix(nn.o,1);
+function leakySigmoid(x) {
+    return 1/(1+exp(-x))+(x/100);
+}
+function leakySigmoid_d(x) {
+    let x1 = leakySigmoid(x);
+    return x1 * (1 - x1);
+}
+function siLU(x) {
 
-    let slayers = JSON.parse(newNN.lstr);
-    for (let i = 0; i < slayers.length; i++) {
-        let layerObj = JSON.parse(slayers[i]);
+    return x/(1+exp(-x));
+}
+function siLU_d(x) {
+    let top = (1 + exp(-x))+(x*exp(-x));
+    let down = pow(1 + exp(-x), 2);
+    return top/down;
+}
+function tanH(x) {
 
-        let obj = stringTofunc(layerObj.actname);
+    let top = exp(x) - exp(-x);
+    let down = exp(x)+ exp(-x);
 
-        layerObj.actname = obj.name;
-        layerObj.actname_d = obj.name_d;
-        layerObj.actfunc = obj.func;
-        layerObj.actfunc_d = obj.func_d;
+    return (top/down);
+}
+function tanH_d(x) {
 
-        nn.Layers[i] = layerObj;
-    }
-    nn.makeWeights();
-    let sweights = JSON.parse(newNN.wstr);
-    for (let i = 0; i < sweights.length; i++) {
-        nn.weights[i].set(JSON.parse(sweights[i]));
-    }
-    let sbiases = JSON.parse(newNN.bstr);
-    for (let i = 0; i < sbiases.length; i++) {
-        nn.biases[i].set(JSON.parse(sbiases[i]));
-    }
-    let serrors = JSON.parse(newNN.estr);
-    for (let i = 0; i < serrors.length; i++) {
-        nn.errors[i].set(JSON.parse(serrors[i]));
-    }
-    let sgradients = JSON.parse(newNN.gstr);
-    for (let i = 0; i < sgradients.length; i++) {
-        nn.gradients[i].set(JSON.parse(sgradients[i]));
-    }
-
-    nn.lossfunc_s = newNN.lf;
-    if (isBrowser) {
-        nn.lossfunc = window[newNN.lf];
+    return 1 - pow(tanH(x),2);
+}
+function leakyReLUCapped(x) {
+    if (x >= 0 && x <= 6) {
+        return x;
+    } else if (x < 0) {
+        return 0.1*x;
     } else {
-        nn.lossfunc = lossfuncs[newNN.lf];
+        return 6;
     }
-
-    nn.outs = Matrix.toArray(nn.Layers[nn.Layers.length-1]);
-    nn.loss = newNN.loss;
-    nn.losses = [];
-    nn.lr = newNN.lrate;
-    nn.arch = newNN.arch;
-    nn.epoch = newNN.e;
-
-    if (isBrowser) {
-        console.log("");
-        console.log("Succesfully loaded the Dann Model");
+}
+function leakyReLUCapped_d(x) {
+    if (x >= 0 && x <= 6) {
+        return 1;
+    } else if (x < 0) {
+        return 0.1;
     } else {
-        console.log('\x1b[32m',"");
-        console.log("Succesfully loaded the Dann Model");
-        console.log("\x1b[0m","");
+        return 0;
     }
-
 }
-function stringTofunc(str) {
-    let act = str;
-    let der = act + '_d';
-
-    let func;
-    let func_d;
-    if (isBrowser) {
-        func = window[act];
-        func_d = window[der];
+function leakyReLU(x) {
+    if (x >= 0) {
+        return 1*x;
     } else {
-        func = activations[act];
-        func_d = activations[der];
+        return 0.01*x;
     }
 
-    return {name:act, name_d:der,func:func,func_d:func_d};
 }
-function upload(nn) {
-    let downloadAnchorNode = document.createElement('input');
-    downloadAnchorNode.setAttribute("type", "file");
-    downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+nn+")");
-    document.body.appendChild(downloadAnchorNode);
+function leakyReLU_d(x) {
+    if (x >= 0) {
+        return 1;
+    } else {
+        return 0.01;
+    }
 
 }
-//Storing Activation Functions & their derivativess:
+function linear(x) {
+  return x;
+}
+function linear_d(x) {
+  return 1;
+}
+function reLU(x) {
+    if (x >= 0) {
+        return 1*x;
+    } else {
+        return 0;
+    }
+
+}
+function reLU_d(x) {
+    if (x >= 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+
+}
+// Exporting Functions:
+// Activations & their derivatives:
 let activations = {
     leakySigmoid: leakySigmoid,
     leakySigmoid_d: leakySigmoid_d,
@@ -1329,7 +1324,7 @@ let activations = {
     leakyReLUCapped: leakyReLUCapped,
     leakyReLUCapped_d: leakyReLUCapped_d
 }
-//Storing Loss Functions:
+// Loss Functions:
 let lossfuncs = {
     mae: mae,
     bce: bce,
@@ -1339,6 +1334,37 @@ let lossfuncs = {
     mse: mse,
     rmse: rmse
 }
+// Pooling functions:
+let poolFuncs = {
+    max: function (arr) {
+        let record = 0;
+        let len = arr.length;
+        for (let i = 0; i < len; i++) {
+            if (arr[i] > record) {
+                record = arr[i];
+            }
+        }
+        return record;
+    },
+    min: function (arr) {
+        let record = 100000; // Bigger enough value, technically should represent infinity.
+        let len = arr.length;
+        for (let i = 0; i < len; i++) {
+            if (arr[i] < record) {
+                record = arr[i];
+            }
+        }
+        return record;
+    },
+    avg: function (arr) {
+        let sum = 0;
+        let len = arr.length;
+        for (let i = 0; i < len; i++) {
+            sum += arr[i];
+        }
+        return sum/len;
+    }
+}
 //Node Module Exports:
 if (typeof process === 'object') {
     module.exports = {
@@ -1346,6 +1372,7 @@ if (typeof process === 'object') {
         layer: Layer,
         matrix: Matrix,
         activations: activations,
-        lossfuncs: lossfuncs
+        lossfuncs: lossfuncs,
+        poolFuncs: poolFuncs
     }
 }
