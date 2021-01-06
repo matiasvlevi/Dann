@@ -222,37 +222,30 @@ function p(w,i,j) {
 function selectPools(arr,f,s) {
     let len = arr.length;
     let w = Math.sqrt(len);
+    let h = w;
     if (w !== Math.floor(w)) {
         return;
     } else if (w/s !== Math.floor(w/s)) {
         return;
     }
     let samples = [];
-    for (let y = 0; y+f <= w; y+=s) {
+    for (let y = 0; y+f <= h; y+=s) {
         for (let x = 0; x+f <= w; x+=s) {
             let sample = [];
-            for (let i = 0; i < f; i++){
-                for (let j = 0; j < f; j++) {
+            for (let j = 0; j < f; j++){
+                for (let i = 0; i < f; i++) {
                     sample.push(arr[p(w,j+x,i+y)]);
+                    console.log(i,j);
                 }
             }
+            console.log(sample);
             samples.push(sample);
         }
     }
     return samples;
 }
 function getPoolOutputLength(w,f,s) {
-    let value = 0;
-    for (let y = 0; y+f <= w; y+=s) {
-        for (let x = 0; x+f <= w; x+=s) {
-            for (let i = 0; i < f; i++){
-                for (let j = 0; j < f; j++) {
-                    value++;
-                }
-            }
-        }
-    }
-    return value;
+    return ((w-f)/s+1)*((w-f)/s+1);
 }
 
 //Object Classes:
