@@ -236,7 +236,6 @@ function selectPools(arr,f,s,w,h) {
                 }
             }
             samples.push(sample);
-            console.log(sample)
         }
     }
     return samples;
