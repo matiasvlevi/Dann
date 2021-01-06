@@ -219,10 +219,8 @@ function getSubtype(str) {
 function p(w,i,j) {
     return (w*j)+i;
 }
-function selectPools(arr,f,s) {
-    let len = arr.length;
-    let w = Math.sqrt(len);
-    let h = w;
+function selectPools(arr,f,s,w,h) {
+    let len = arr.length
     if (w !== Math.floor(w)) {
         return;
     } else if (w/s !== Math.floor(w/s)) {
@@ -234,17 +232,17 @@ function selectPools(arr,f,s) {
             let sample = [];
             for (let j = 0; j < f; j++){
                 for (let i = 0; i < f; i++) {
-                    sample.push(arr[p(w,j+x,i+y)]);
+                    sample.push(arr[p(w,i+x,j+y)]);
                 }
             }
             samples.push(sample);
+            console.log(sample)
         }
     }
     return samples;
 }
-function getPoolOutputLength(len,f,s) {
-    let w = Math.sqrt(len);
-    return ((w-f)/s+1)*((w-f)/s+1);
+function getPoolOutputLength(len,f,s,w,h) {
+    return ((w-f)/s+1)*((h-f)/s+1);
 }
 
 //Object Classes:
@@ -514,7 +512,7 @@ class Matrix {
     }
 }
 class Layer {
-    constructor(type,arg1,arg2,arg3) {
+    constructor(type,arg1,arg2,arg3,arg4,arg5) {
         this.type = type;
         this.subtype = getSubtype(type);
         if (this.type == 'hidden' || this.type == 'output') {
@@ -529,16 +527,33 @@ class Layer {
             this.stride = arg3;
             this.sampleSize = arg2;
             this.inputSize = arg1;
-            this.width = Math.sqrt(arg1);
-            if (this.width !== Math.floor(this.width)) {
-                console.error("Dann Error: the array can not be set in a square matrix");
-                console.trace();
+
+            if (arg4 !== undefined && arg5 !== undefined) {
+                this.sizeX = arg4;
+                this.sizeY = arg5;
+                let divx = this.size/this.sizeX;
+                let divy = this.size/this.sizeY;
+                if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
+                    console.error("Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)");
+                    console.trace();
+                    return;
+                }
+            } else {
+                this.sizeX = Math.sqrt(this.inputSize);
+                this.sizeY = this.sizeX;
+                if (this.sizeX !== Math.floor(this.sizeX)) {
+                    console.error("Dann Error: the array can not be set in a square matrix");
+                    console.trace();
+                    return;
+                }
             }
-            if (this.width/this.stride !== Math.floor(this.width/this.stride)) {
+            this.size = getPoolOutputLength(arg1,arg2,arg3,this.sizeX,this.sizeY);
+            if (this.size !== Math.floor(this.size)) {
                 console.error("Dann Error: the Width must be divisible by the stride (jumps size). Width is the root of the array's length.");
                 console.trace();
+                return;
             }
-            this.size = getPoolOutputLength(arg1,arg2,arg3);
+
             this.input = new Matrix(this.inputSize,1);
             this.layer = new Matrix(this.size,1);
 
@@ -548,7 +563,7 @@ class Layer {
             this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
 
-                let samples = selectPools(data,f,s);
+                let samples = selectPools(data,f,s,this.sizeX,this.sizeY);
 
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
