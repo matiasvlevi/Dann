@@ -531,13 +531,7 @@ class Layer {
             if (arg4 !== undefined && arg5 !== undefined) {
                 this.sizeX = arg4;
                 this.sizeY = arg5;
-                let divx = this.size/this.sizeX;
-                let divy = this.size/this.sizeY;
-                if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
-                    console.error("Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)");
-                    console.trace();
-                    return;
-                }
+
             } else {
                 this.sizeX = Math.sqrt(this.inputSize);
                 this.sizeY = this.sizeX;
@@ -548,6 +542,15 @@ class Layer {
                 }
             }
             this.size = getPoolOutputLength(arg1,arg2,arg3,this.sizeX,this.sizeY);
+            let divx = this.size/this.sizeX;
+            let divy = this.size/this.sizeY;
+            console.log(divx,divy)
+            if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
+                console.error("Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)");
+                console.trace();
+                return;
+            }
+
             if (this.size !== Math.floor(this.size)) {
                 console.error("Dann Error: the Width must be divisible by the stride (jumps size). Width is the root of the array's length.");
                 console.trace();
