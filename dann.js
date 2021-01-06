@@ -590,7 +590,7 @@ class Layer {
                             console.log(downsampled);
                         }
                     }
-                    return ;
+                    return downsampled;
                 }
             }
         } else {
