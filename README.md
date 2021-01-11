@@ -66,6 +66,7 @@ The default loss & activation function objects can be imported this way
 const dn = require('dannjs');
 let lossfuncs = dn.lossfuncs;
 let activations = dn.activations;
+let poolFuncs = dn.poolFuncs;
  ```
 <br/>
 
