@@ -341,7 +341,9 @@ class Matrix {
             let ans = new Matrix(a.rows, b.cols);
             if (m1 instanceof Matrix && m2 instanceof Matrix) {
                 if (a.cols !== b.rows) {
-                    console.log("not compatible");
+                    console.log(a,b)
+                    console.error("not compatible");
+                    console.trace();
                     return undefined;
                 } else {
                     for (let i = 0; i < ans.rows; i++) {
@@ -519,6 +521,7 @@ class Layer {
             let obj = stringTofunc(arg2);
             setLayerFunc(this,obj);
             this.layer = new Matrix(this.size,1);
+
         } else if (this.type == 'input') {
             this.size = arg1;
             this.layer = new Matrix(this.size,1);
@@ -668,7 +671,7 @@ class Dann {
             if (options.mode !== undefined) {
                 mode = options.mode;
                 if (mode == 'gpu') {
-                    console.log('Gpu support in the works.')
+                    console.warn('Gpu support in the works.')
                     mode = 'cpu';
                 }
             } else {
@@ -1048,13 +1051,26 @@ class Dann {
         console.log(' ')
         return;
     }
-    save(name) {
+    save(name, options) {
         let path;
         let overwritten = false;
-        if (!isBrowser) {
-            path = './savedDanns/'+name+'/dannData.json';
-            if (fs.existsSync(path)) {
-                overwritten = true;
+        let report = false;
+        let result = 0;
+        let rstr = 'none';
+        //options
+        if (options !== undefined) {
+            if (options.report !== undefined) {
+                report = options.report;
+            }
+            if (options.test !== undefined) {
+                if (typeof options.test == 'function') {
+                    let testfunc = options.test;
+                    result = testfunc()*100;
+                    rstr = result+"%"
+                } else {
+                    console.error("Dann Error: the test option can only be a function.");
+                    console.trace();
+                }
             }
         }
         //weights
@@ -1090,31 +1106,43 @@ class Dann {
         let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s,loss:this.loss,e:this.epoch};
 
         if (isBrowser) {
-
             downloadSTR(dataOBJ,name);
         } else {
+            path = './savedDanns/'+name+'/dannData.json';
+            if (fs.existsSync(path)) {
+                overwritten = true;
+            }
             if (!fs.existsSync('./savedDanns')){
                 fs.mkdirSync('./savedDanns');
             }
             if (!fs.existsSync('./savedDanns/'+name)){
                 fs.mkdirSync('./savedDanns/'+name);
             }
+            if (report == true) {
+                let acts = [];
+                for (let i = 1; i < this.arch.length;i++) {
+                    acts[i-1] = this.Layers[i].actname;
+                }
+                let csvFile = [];
+                csvFile.push(['Dann','train report']);
+                csvFile.push(['Arch: ', this.arch]);
+                csvFile.push(['Acts: ', acts]);
+                csvFile.push(['Lr: ', this.lr]);
+                csvFile.push(['Epoch:',this.epoch]);
 
-            let csvFile = [];
-            csvFile.push(['Dann','']);
-            csvFile.push(['Arch: ', this.arch]);
-            csvFile.push(['Lr: ', this.lr]);
-            csvFile.push(['','']);
-            csvFile.push(['Index','AvgLoss']);
-            for (let i = 0; i < this.losses.length; i++) {
-                csvFile.push([i+1,this.losses[i]]);
+                if (typeof options.test == 'function') {
+                    csvFile.push(['Accuracy:',rstr]);
+                }
+                csvFile.push(['Index','AvgLoss']);
+                for (let i = 0; i < this.losses.length; i++) {
+                    csvFile.push([i+1,this.losses[i]]);
+                }
+
+                w.writeToPath('./savedDanns/'+name+'/report.csv', csvFile)
+                .on('error', err => console.error(err))
+                .on('finish', () => console.log('saved training report at '+'./savedDanns/'+name+'/report.csv'));
+
             }
-
-            w.writeToPath('./savedDanns/'+name+'/losses.csv', csvFile)
-            .on('error', err => console.error(err))
-            .on('finish', () => console.log('saved loss report at '+'./savedDanns/'+name+'/losses.csv'));
-
-
 
             fs.writeFileSync(path, JSON.stringify(dataOBJ));
             if (overwritten == true) {
@@ -1123,7 +1151,7 @@ class Dann {
                 console.log("Succesfully overwritten the Dann Model at ./savedDanns/"+name+"/dannData.json ");
                 console.log("\x1b[0m","");
             } else {
-                console.log('\x1b[32m',"");
+                console.log("\x1b[32m","");
                 this.log();
                 console.log("Succesfully saved the Dann Model at ./savedDanns/"+name+"/dannData.json ");
                 console.log("\x1b[0m","");
