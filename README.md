@@ -35,7 +35,7 @@ Setting up an XOR neural network & console.logging information about the model.
 
 ### CDN :
 ```js
-let nn = new Dann(2,1);
+const nn = new Dann(2,1);
 nn.addHiddenLayer(4,'sigmoid');
 nn.makeWeights();
 nn.log({details:true});
