@@ -15,7 +15,6 @@ https://dannjs.org
 [https://dannjs.org/demo](https://dannjs.org/livedemo.html) <br/>
 more examples & demos [here](https://dannjs.org/#exm)
 
-
 <br/>
 
 ## Installation
@@ -27,6 +26,7 @@ more examples & demos [here](https://dannjs.org/#exm)
 ```
 npm i dannjs
 ```
+[dannjs on npmjs.com](https://www.npmjs.com/package/dannjs)
 <br/><br/>
 
 ## Getting started
