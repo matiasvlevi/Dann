@@ -1208,7 +1208,6 @@ class Dann {
         }
     }
 }
-
 // loss functions:
 function mae(predictions,target) {
     let sum = 0;
