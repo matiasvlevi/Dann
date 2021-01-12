@@ -72,8 +72,12 @@ let poolFuncs = dn.poolFuncs;
 
 ## Documentation
 https://dannjs.org/#docs
-<br/><br/><br/>
+<br/>
 
+## Wiki
+https://github.com/matiasvlevi/Dann/wiki
+
+<br/><br/>
 
 ### Become a Patreon:
 <span class="badge-patreon">
