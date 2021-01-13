@@ -77,6 +77,9 @@ https://dannjs.org/#docs
 ## Wiki
 https://github.com/matiasvlevi/Dann/wiki
 
+#### Contact
+matias@dannjs.org
+
 <br/><br/>
 
 ### Become a Patreon:
