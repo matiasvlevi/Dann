@@ -4,7 +4,8 @@ Dannjs
 ======
 <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=red" alt="versionNpmStat"/></a>
 <a href="https://github.com/matiasvlevi/dann/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/matiasvlevi/dann?label=Stars&color=red"></a>
-<a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=flat" alt="lastcommitNpmStat"/></a> 
+<a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=flat" alt="lastcommitNpmStat"/></a> <a href="https://twitter.com/DannjsAi" target="_blanck"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/DannjsAi?label=Twitter&style=social"></a>
+
 
 
 ## What it does:
@@ -79,7 +80,6 @@ https://github.com/matiasvlevi/Dann/wiki
 
 #### Contact
 matias@dannjs.org
-<a href="https://twitter.com/DannjsAi" target="_blanck"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/DannjsAi?label=Twitter&style=social"></a>
 
 <br/><br/>
 
