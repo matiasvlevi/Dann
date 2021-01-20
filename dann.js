@@ -376,13 +376,33 @@ class Matrix {
             for (let j = 0; j < cols; j++) {
                 m[i][j] = 0;
             }
-
         }
-
         return m;
     }
-    insert(value,i,j) {
-        this.matrix[i][j] = value;
+    insert(value,x,y) {
+        if (typeof value !== 'number') {
+            console.error('Dann error: first "value" argument is not a number');
+            console.trace();
+            return;
+        }
+        if (typeof x !== 'number') {
+            console.error('Dann error: second "x" argument is not a number');
+            console.trace();
+            return;
+        }
+        if (typeof y !== 'number') {
+            console.error('Dann error: third "y" argument is not a number');
+            console.trace();
+            return;
+        }
+        if ((x < this.cols) && (y < this.rows)) {
+            this.matrix[y][x] = value;
+            return;
+        } else {
+            console.error('Dann error: x,y arguments exceed the matrix dimensions.');
+            console.trace();
+        }
+
     }
     addRandom(magnitude,prob) {
         for (let i = 0; i < this.rows; i++) {
@@ -406,9 +426,15 @@ class Matrix {
         }
     }
     set(matrix) {
-        this.matrix = matrix;
-        this.rows = matrix.length;
-        this.cols = matrix[0].length;
+        if (typeof matrix.length == 'number' && typeof matrix[0].length == 'number' && typeof matrix == 'object') {
+            this.matrix = matrix;
+            this.rows = matrix.length;
+            this.cols = matrix[0].length;
+        } else {
+            console.error('Dann error: the argument of set(); must be an array within an array. Here is an example: [[1,0],[0,1]]');
+            console.trace();
+            return;
+        }
     }
     add(n) {
         if (n instanceof Matrix) {
@@ -478,7 +504,7 @@ class Matrix {
 
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
-                let v = this.matrix[i][j];
+                let v = this.matrix[j][i];
                 m.insert(round(v*dec)/dec,i,j);
             }
         }
@@ -489,10 +515,21 @@ class Matrix {
         }
 
     }
-    initiate() {
+    initiate(value) {
+        let v = 0;
+        if (value !== undefined) {
+            if (typeof value == 'number') {
+                v = value;
+            } else {
+                console.error('Dann error: the value entered as an argument is not a number');
+                console.trace();
+                return;
+            }
+
+        }
         for (let i = 0; i < this.matrix.length; i++) {
             for (let j = 0; j < this.matrix[i].length; j++) {
-                this.matrix[i][j] = 1;
+                this.matrix[i][j] = v;
             }
         }
     }
