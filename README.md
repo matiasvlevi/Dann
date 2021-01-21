@@ -8,14 +8,14 @@
 <p align="center">
     <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=f69e7b&labelColor=383e56" alt="versionNpmStat"/></a> <a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=flat&label=size&color=f69e7b&labelColor=383e56" alt="repoSize"/></a> <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=f69e7b&labelColor=383e56" alt="downloadNpmStat"/></a> <a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/LICENSE" target="_blank"><img alt="GitHub" src="https://img.shields.io/github/license/matiasvlevi/dann?color=f69e7b&labelColor=383e56" alt="Liscence"></a>
 </p>
-<h4 align="center">Easy way to create neural networks with Javascript</h4>
+<h4 align="center">Easy way to create neural networks in Javascript</h4>
 <p align="center">
     Train a neural network with your dataset & save it's trained state in order to load it back later.
 
 </p>
 
 <p align="center">
-  <a href="https://dannjs.org/livedemo.html">Demo</a> •
+  <a href="#Demo">Demo</a> •
   <a href="#Installation">Installation</a> •
   <a href="#Getting-started">Getting started</a> •
   <a href="https://github.com/matiasvlevi/Dann/wiki">Docs</a> •
@@ -74,8 +74,8 @@ nn.log({details:true});
 ```
 <br/>
 
-## Train
-#### Train by backpropagation
+
+### Train by backpropagation
 Training with a dataset.
 ```js
 //some example data... 4 inputs, 2 outputs
@@ -109,7 +109,7 @@ for (data of dataset) {
 
 <br/>
 
-#### Train by mutation
+### Train by mutation
 For neuroevolution simulations. Works best with small models & large population size.
 ```js
 const population = 1000;
@@ -126,15 +126,15 @@ for (let i = 0; i < population; i++) {
 
 ```
 
----
+<br/>
 
 <br/>
 
-## Documentation
+### Documentation
 https://dannjs.org#docs
 
-## Demo:
-[AI predicts San-francisco Housing prices.](https://dannjs.org/livedemo.html)
+### Demo:
+[AI predicts San-francisco Housing prices.](https://dannjs.org/livedemo.html) <br/>
 more examples & demos [here](https://dannjs.org/#exm)
 <br/>
 
