@@ -1,22 +1,28 @@
 
+<p align="center">
+  <a href="https://dannjs.org/">
+    <img src="https://dannjs.org/transparentlogo.png" alt="Dannjs" height="150" />
+  </a>
+</p>
 
-Dannjs
-======
-<a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=red" alt="versionNpmStat"/></a>
-<a href="https://github.com/matiasvlevi/dann/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/matiasvlevi/dann?label=Stars&color=red"></a>
-<a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=red" alt="downloadNpmStat"/></a> <a target="_blank" href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/github/last-commit/matiasvlevi/Dann?color=red&style=flat" alt="lastcommitNpmStat"/></a> <a href="https://twitter.com/DannjsAi" target="_blanck"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/DannjsAi?label=Twitter&style=social"></a>
+<p align="center">
+    <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=f69e7b&labelColor=383e56" alt="versionNpmStat"/></a> <a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=flat&label=size&color=f69e7b&labelColor=383e56" alt="repoSize"/></a> <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=f69e7b&labelColor=383e56" alt="downloadNpmStat"/></a> <a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/LICENSE" target="_blank"><img alt="GitHub" src="https://img.shields.io/github/license/matiasvlevi/dann?color=f69e7b&labelColor=383e56" alt="Liscence"></a>
+</p>
+<h4 align="center">Easy way to create neural networks with Javascript</h4>
+<p align="center">
+    Train a neural network with your dataset & save it's trained state in order to load it back later.
 
+</p>
 
-
-## What it does:
-Dannjs allows for the creation of Neural Network objects for Web Applications & Nodejs. You can train a neural network according to some data. You can then save & load weights.
-#### Website:
-https://dannjs.org
-#### Live Demo:
-[https://dannjs.org/demo](https://dannjs.org/livedemo.html) <br/>
-more examples & demos [here](https://dannjs.org/#exm)
-
+<p align="center">
+  <a href="https://dannjs.org/livedemo.html">Demo</a> •
+  <a href="#Installation">Installation</a> •
+  <a href="#Getting-started">Getting started</a> •
+  <a href="https://github.com/matiasvlevi/Dann/wiki">Docs</a> •
+  <a href="#license">License</a>
+</p>
 <br/>
+
 
 ## Installation
 ### CDN :
@@ -31,30 +37,10 @@ npm i dannjs
 <br/><br/>
 
 ## Getting started
-Setting up an XOR neural network & console.logging information about the model.
-<br/>
 
-### CDN :
-```js
-const nn = new Dann(2,1);
-nn.addHiddenLayer(4,'sigmoid');
-nn.makeWeights();
-nn.log({details:true});
 
- ```
+### Node Imports
 
-### Node :
-```js
-const dn = require('dannjs');
-const Dann = dn.dann;
-
-let nn = new Dann(2,1);
-nn.addHiddenLayer(4,'sigmoid');
-nn.makeWeights();
-nn.log({details:true});
- ```
-### Other Imports 
- 
  Object types from the library can be imported like this
 ```js
 const dn = require('dannjs');
@@ -62,36 +48,115 @@ const Dann = dn.dann;
 const Layer = dn.layer;
 const Matrix = dn.matrix;
  ```
-The default loss & activation function objects can be imported this way
+The objects containing functions can be imported this way
 ```js
 const dn = require('dannjs');
-let lossfuncs = dn.lossfuncs;
-let activations = dn.activations;
-let poolFuncs = dn.poolFuncs;
+const lossfuncs = dn.lossfuncs;
+const activations = dn.activations;
+const poolFuncs = dn.poolFuncs;
  ```
+
+<br/>
+
+### Basic model construction
+Setting up a small (4,6,6,2) neural network.
+```js
+const dn = require('dannjs');
+const Dann = dn.dann;
+
+let nn = new Dann(4,2);
+nn.addHiddenLayer(6,'leakyReLU');
+nn.addHiddenLayer(6,'leakyReLU');
+nn.outputActivation('tanH');
+nn.makeWeights();
+nn.lr = 0.0001;
+nn.log({details:true});
+```
+<br/>
+
+## Train
+#### Train by backpropagation
+Training with a dataset.
+```js
+//some example data... 4 inputs, 2 outputs
+const dataset = [
+    {
+        input: [0,1,0,0],
+        output: [0,1]
+    },
+    {
+        input: [0,0,0,1],
+        output: [0,1]
+    },
+    {
+        input: [0,1,0,1],
+        output: [1,0]
+    },
+    {
+        input: [0,1,1,0],
+        output: [1,1]
+    },
+    // ... more data
+];
+
+//train 1 epoch
+for (data of dataset) {
+    nn.backpropagate(data.input,data.output);
+    console.log(nn.loss);
+}
+
+```
+
+<br/>
+
+#### Train by mutation
+For neuroevolution simulations. Works best with small models & large population size.
+```js
+const population = 1000;
+let newGeneration = [];
+
+for (let i = 0; i < population; i++) {
+
+    // parentNN would be the best nn from past generation.
+    const childNN = parentNN;
+    childNN.mutateRandom(0.01,0.65);
+
+    newGeneration.push(childNN);
+}
+
+```
+
+---
+
 <br/>
 
 ## Documentation
-https://dannjs.org/#docs
-<br/>
+https://dannjs.org#docs
 
-## Wiki
-https://github.com/matiasvlevi/Dann/wiki
+## Demo:
+[AI predicts San-francisco Housing prices.](https://dannjs.org/livedemo.html)
+more examples & demos [here](https://dannjs.org/#exm)
+<br/>
 
 #### Contact
 matias@dannjs.org
 
-<br/><br/>
 
-### Become a Patreon:
-<span class="badge-patreon">
-<a href="https://www.patreon.com/dannjs" title="Donate to this project using Patreon"><img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fres-3.cloudinary.com%2Fcrunchbase-production%2Fimage%2Fupload%2Fc_lpad%2Ch_256%2Cw_256%2Cf_auto%2Cq_auto%3Aeco%2Fv1498102829%2Foul9xkady63xqqn3iw7c.png&f=1&nofb=1" alt="Patreon donate button" height="8%" width="8%"/></a>
+#### Socials
+
 </span>
+<a href="https://twitter.com/DannjsAi" target="_blanck"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/DannjsAi?label=Twitter&style=social"></a>
+<span class="badge-patreon">
+<a href="https://www.patreon.com/dannjs" title="Donate to this project using Patreon"><img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fres-3.cloudinary.com%2Fcrunchbase-production%2Fimage%2Fupload%2Fc_lpad%2Ch_256%2Cw_256%2Cf_auto%2Cq_auto%3Aeco%2Fv1498102829%2Foul9xkady63xqqn3iw7c.png&f=1&nofb=1" alt="Patreon donate button" height="2.5%" width="2.5%"/></a>
 
----
-<a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=flat" alt="repoSize"/></a>
-<a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/LICENSE" target="_blank"><img alt="GitHub" src="https://img.shields.io/github/license/matiasvlevi/dann?color=blue" alt="Liscence"></a>
-<a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/dann.js" target="_blank"><img src="https://img.shields.io/tokei/lines/github/matiasvlevi/dann" alt="totalLines"/></a>
-<a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/languages/top/matiasvlevi/Dann?style=flat" alt="languages"/></a>
+<br/>
+<br/>
+<br/>
+<br/>
+
+## License
+
+MIT
+
 
 ---
