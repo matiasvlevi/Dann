@@ -52,7 +52,7 @@ The objects containing functions can be imported this way
 const dn = require('dannjs');
 const lossfuncs = dn.lossfuncs;
 const activations = dn.activations;
-const poolFuncs = dn.poolFuncs;
+const poolfuncs = dn.poolfuncs;
  ```
 
 <br/>
