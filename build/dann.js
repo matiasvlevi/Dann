@@ -786,7 +786,7 @@ class Layer {
     }
     setAct(act) {
         let obj = Layer.stringTofunc(act);
-        this.setFunc(this,obj);
+        this.setFunc(obj);
     }
     setFunc(obj) {
         if (obj !== undefined) {
@@ -849,7 +849,7 @@ class Dann {
         this.lossfunc = func;
     }
     outputActivation(act) {
-        if (activations[act] == undefined) {
+        if (activations[act] == undefined && !isBrowser) {
             if (typeof act === 'string') {
                 console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
                 console.trace();
@@ -860,9 +860,9 @@ class Dann {
                 return;
             }
             act = 'sigmoid';
-        } else {
-            this.Layers[this.Layers.length-1].setAct(act);
         }
+        this.Layers[this.Layers.length-1].setAct(act);
+
     }
     makeWeights(arg1,arg2) {
         let min = -1;
@@ -898,7 +898,7 @@ class Dann {
         }
     }
     addHiddenLayer(size, act) {
-        if (activations[act] == undefined) {
+        if (activations[act] == undefined && !isBrowser) {
             if (typeof act === 'string') {
                 console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
                 console.trace();

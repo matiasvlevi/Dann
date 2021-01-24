@@ -173,7 +173,7 @@ class Layer {
     }
     setAct(act) {
         let obj = Layer.stringTofunc(act);
-        this.setFunc(this,obj);
+        this.setFunc(obj);
     }
     setFunc(obj) {
         if (obj !== undefined) {

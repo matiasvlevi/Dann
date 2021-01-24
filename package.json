@@ -40,7 +40,7 @@
   "description": "A simple neural network library.",
   "homepage": "https://github.com/matiasvlevi/Dann#readme",
   "license": "ISC",
-  "main": "dann.js",
+  "main": "build/dann.js",
   "name": "dannjs",
   "repository": {
     "type": "git",
