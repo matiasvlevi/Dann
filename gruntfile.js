@@ -18,16 +18,14 @@ module.exports = function(grunt) {
             },
         },
         terser: {
-
             src: {
                 files: [{
                     src: 'build/dann.js',
                     dest: 'build/dann.min.js'
                 }]
-            },
-        },
+            }
+        }
     });
-
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-terser');
 }
