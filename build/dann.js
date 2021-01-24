@@ -565,8 +565,8 @@ class Matrix {
 
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
-                let v = this.matrix[j][i];
-                m.insert(round(v*dec)/dec,i,j);
+                let v = this.matrix[i][j];
+                m.insert(round(v*dec)/dec,j,i);
             }
         }
         if (table) {
