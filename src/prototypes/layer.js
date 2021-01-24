@@ -49,7 +49,7 @@ class Layer {
 
             // picking the pooling function:
             let prefix = Layer.getPrefix(this.type,4);
-            this.pickFunc = poolFuncs[prefix];
+            this.pickFunc = poolfuncs[prefix];
             this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
 

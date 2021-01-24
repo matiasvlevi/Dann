@@ -24,7 +24,7 @@ let lossfuncs = {
     mse: mse,
     rmse: rmse
 }
-let poolFuncs = {
+let poolfuncs = {
     max: max,
     min: min,
     avg: avg
@@ -37,6 +37,6 @@ if (typeof process === 'object') {
         matrix: Matrix,
         activations: activations,
         lossfuncs: lossfuncs,
-        poolFuncs: poolFuncs
+        poolfuncs: poolfuncs
     }
 }

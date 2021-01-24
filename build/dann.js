@@ -668,7 +668,7 @@ class Layer {
 
             // picking the pooling function:
             let prefix = Layer.getPrefix(this.type,4);
-            this.pickFunc = poolFuncs[prefix];
+            this.pickFunc = poolfuncs[prefix];
             this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
 
@@ -1474,7 +1474,7 @@ let lossfuncs = {
     mse: mse,
     rmse: rmse
 }
-let poolFuncs = {
+let poolfuncs = {
     max: max,
     min: min,
     avg: avg
@@ -1487,6 +1487,6 @@ if (typeof process === 'object') {
         matrix: Matrix,
         activations: activations,
         lossfuncs: lossfuncs,
-        poolFuncs: poolFuncs
+        poolfuncs: poolfuncs
     }
 }
