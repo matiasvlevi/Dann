@@ -9,7 +9,7 @@
 </p>
 <h4 align="center">Easy way to create neural networks in Javascript</h4>
 <p align="center">
-    Train a neural network with your dataset & save it's trained state in order to load it back later.
+    Train a neural network with your dataset & save it's trained state.
 
 </p>
 
