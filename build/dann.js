@@ -314,17 +314,13 @@ function avg(arr) {
 
 class Matrix {
     constructor(rows,cols) {
-
         this.rows = rows;
         this.cols = cols;
         this.matrix = Matrix.make(rows,cols);
-
-
     }
     static toArray(m) {
         let ans = [];
         if (m.cols == 1) {
-
             for (let i = 0; i < m.rows; i++) {
                 ans[i] = m.matrix[i][0];
             }
@@ -333,11 +329,9 @@ class Matrix {
     }
     static fromArray(arr) {
         let m = new Matrix(arr.length,1);
-
         for (let i = 0; i < arr.length; i++) {
             m.matrix[i][0] = arr[i];
         }
-
         return m;
     }
     static transpose(m) {
