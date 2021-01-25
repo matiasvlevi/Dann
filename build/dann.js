@@ -1076,11 +1076,17 @@ class Dann {
             console.error('Dann Error: Dann.mutateRandom(); range argument must be a number.');
             console.trace();
             return;
-        } else if (typeof probability !== 'number') {
-            console.error('Dann Error: Dann.mutateRandom(); probability argument must be a number.');
-            console.trace();
-            return;
         }
+        if (probability !== undefined) {
+            if (typeof probability !== 'number') {
+                console.error('Dann Error: Dann.mutateRandom(); probability argument must be a number.');
+                console.trace();
+                return;
+            }
+        } else {
+            probability = 1;
+        }
+
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addRandom(randomFactor,probability);
         }
