@@ -26,6 +26,5 @@ echo !multiline!>nodeTest.js
 echo //__________________________ // BROWSER TEST BELOW // __________________________// > browserTest.js
 cd..
 cls
-npm install
-pause
+start npm install
 del devsetup.bat
