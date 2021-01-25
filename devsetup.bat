@@ -15,6 +15,9 @@ set "multiline=<html>!LF!    <head>!LF!        <script src="build/dann.js" type=
 echo !multiline!
 echo !multiline!>test.htm
 
+set "multiline=@echo off!LF!echo.!LF!call grunt concat!LF!echo.!LF!call grunt terser!LF!echo.!LF!echo Dann distribution files successfully built!LF!TIMEOUT 5 >nul"
+echo !multiline!
+echo !multiline!>build.bat
 
 mkdir tests
 cd tests
