@@ -14,7 +14,6 @@ function leakySigmoid_d(x) {
     return x1 * (1 - x1);
 }
 function siLU(x) {
-
     return x/(1+exp(-x));
 }
 function siLU_d(x) {
@@ -23,14 +22,11 @@ function siLU_d(x) {
     return top/down;
 }
 function tanH(x) {
-
     let top = exp(x) - exp(-x);
     let down = exp(x)+ exp(-x);
-
     return (top/down);
 }
 function tanH_d(x) {
-
     return 1 - pow(tanH(x),2);
 }
 function leakyReLUCapped(x) {
@@ -57,7 +53,6 @@ function leakyReLU(x) {
     } else {
         return 0.01*x;
     }
-
 }
 function leakyReLU_d(x) {
     if (x >= 0) {
@@ -65,7 +60,6 @@ function leakyReLU_d(x) {
     } else {
         return 0.01;
     }
-
 }
 function reLU(x) {
     if (x >= 0) {
@@ -73,7 +67,6 @@ function reLU(x) {
     } else {
         return 0;
     }
-
 }
 function reLU_d(x) {
     if (x >= 0) {
@@ -81,5 +74,4 @@ function reLU_d(x) {
     } else {
         return 0;
     }
-
 }

@@ -9,6 +9,7 @@ function addCDNdependencies() {
     element.setAttribute('src','https://cdn.jsdelivr.net/npm/mathjs@8.1.0/lib/browser/math.min.js');
     document.head.insertBefore(element, document.head.children[0]);
 }
+
 if(isBrowser) {
     addCDNdependencies();
 } else {
