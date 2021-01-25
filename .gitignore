@@ -1,6 +1,7 @@
 node_modules
-command.bat
+.npmignore
 test.bat
-test.html
+test.htm
 tests
 docs
+cmd.cmd
