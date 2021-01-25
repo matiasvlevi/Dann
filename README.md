@@ -157,5 +157,3 @@ matias@dannjs.org
 
 MIT
 
-
----
