@@ -1,11 +1,9 @@
 @echo off
 setlocal enableDelayedExpansion
 
-:: Create LF containing a line feed character
 set ^"LF=^
 %= This creates a Line Feed character =%
 ^"
-
 
 set "multiline=@echo off!LF!echo Nodejs Test Environment!LF!echo.!LF!cd tests!LF!node nodeTest.js!LF!pause"
 echo !multiline!
