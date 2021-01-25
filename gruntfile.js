@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/imports/init.js',
+                    'src/imports/imports.js',
                     'src/dom/dom.js',
                     'src/functions/mathfuncs.js',
                     'src/functions/activations.js',

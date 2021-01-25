@@ -44,12 +44,9 @@ function clickedUpload(nn) {
     reader.readAsText(file);
     let newNN;
     reader.onload = function() {
-
         let xdata =  JSON.parse(reader.result);
-
         newNN = xdata;
         nn.applyToModel(newNN);
-
     };
     reader.onerror = function() {
       console.log(reader.error);
@@ -309,10 +306,8 @@ class Matrix {
         return m;
     }
     static addition(m1,m2) {
-
         let a = m1;
         let b = m2;
-
         let ans = new Matrix(a.rows, a.cols);
         if (a.rows !== b.rows || a.cols !== b.cols) {
             return;
@@ -326,10 +321,8 @@ class Matrix {
         return ans;
     }
     static subtract(m1,m2) {
-
         let a = m1;
         let b = m2;
-
         let ans = new Matrix(a.rows, a.cols);
         if (a instanceof Matrix && b instanceof Matrix) {
 
@@ -344,7 +337,6 @@ class Matrix {
         return ans;
     }
     static multiply(m1,m2, options) {
-
         let mode = 'cpu';
         if (options !== undefined) {
             if (options.mode) {
@@ -354,7 +346,6 @@ class Matrix {
         if (mode == 'cpu') {
             let a = m1;
             let b = m2;
-
             let ans = new Matrix(a.rows, b.cols);
             if (m1 instanceof Matrix && m2 instanceof Matrix) {
                 if (a.cols !== b.rows) {
@@ -419,7 +410,6 @@ class Matrix {
             console.error('Dann error: x,y arguments exceed the matrix dimensions.');
             console.trace();
         }
-
     }
     addRandom(magnitude,prob) {
         for (let i = 0; i < this.rows; i++) {
@@ -429,7 +419,6 @@ class Matrix {
                 if (ran < prob) {
                     this.matrix[i][j] += w*random(-magnitude,magnitude);
                 }
-
             }
         }
     }
@@ -438,7 +427,6 @@ class Matrix {
             for(let j = 0; j < this.cols; j++) {
                 let w = this.matrix[i][j];
                 this.matrix[i][j] += w*magnitude;
-
             }
         }
     }
@@ -474,7 +462,6 @@ class Matrix {
         }
     }
     sub(n) {
-
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
                 this.matrix[i][j] -= n;
@@ -482,7 +469,6 @@ class Matrix {
         }
     }
     mult(n) {
-
         if (n instanceof Matrix) {
             if (this.rows !== n.rows || this.cols !== n.cols) {
                 console.log("rows of A must match rows of B")
@@ -494,7 +480,6 @@ class Matrix {
                     }
                 }
             }
-
         } else {
             for (let i = 0; i < this.rows; i++) {
                 for(let j = 0; j < this.cols; j++) {
@@ -502,12 +487,10 @@ class Matrix {
                 }
             }
         }
-
     }
     log(options) {
         let dec = 1000;
         let table = false;
-
         if (options !== undefined) {
             if (options.decimals) {
                 dec = pow(10,options.decimals);
@@ -515,10 +498,8 @@ class Matrix {
             if (options.table) {
                 table = options.table;
             }
-
         }
         let m = new Matrix(this.rows,this.cols);
-
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 let v = this.matrix[i][j];
@@ -530,7 +511,6 @@ class Matrix {
         } else {
             console.log(m);
         }
-
     }
     initiate(value) {
         let v = 0;
@@ -542,7 +522,6 @@ class Matrix {
                 console.trace();
                 return;
             }
-
         }
         for (let i = 0; i < this.matrix.length; i++) {
             for (let j = 0; j < this.matrix[i].length; j++) {
@@ -1304,7 +1283,7 @@ class Dann {
             showOther = true;
         }
         if (this.weights.length === 0) {
-            // make weights if they werent made allready.
+            // make weights if they weren't made allready.
             this.makeWeights();
         }
         if (options == undefined || (options !== undefined && options.details == true)) {

@@ -24,12 +24,9 @@ function clickedUpload(nn) {
     reader.readAsText(file);
     let newNN;
     reader.onload = function() {
-
         let xdata =  JSON.parse(reader.result);
-
         newNN = xdata;
         nn.applyToModel(newNN);
-
     };
     reader.onerror = function() {
       console.log(reader.error);

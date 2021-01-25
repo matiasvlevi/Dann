@@ -543,7 +543,7 @@ class Dann {
             showOther = true;
         }
         if (this.weights.length === 0) {
-            // make weights if they werent made allready.
+            // make weights if they weren't made allready.
             this.makeWeights();
         }
         if (options == undefined || (options !== undefined && options.details == true)) {
