@@ -27,4 +27,3 @@ echo //__________________________ // BROWSER TEST BELOW // _____________________
 cd..
 cls
 start npm install
-del devsetup.bat
