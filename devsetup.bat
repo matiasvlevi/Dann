@@ -20,7 +20,7 @@ echo !multiline!>build.bat
 mkdir tests
 cd tests
 
-set "multiline=const dn = require('../build/dann.min.js');!LF!const Dann = dn.dann;!LF!const Layer = dn.layer;!LF!const Matrix = dn.matrix;!LF!const activations = dn.activations;!LF!const lossfuncs = dn.lossfuncs;!LF!const poolfuncs = dn.poolfuncs;!LF!//__________________________ // NODEJS TEST BELOW // __________________________//"
+set "multiline=const dn = require('../build/dann.js');!LF!const Dann = dn.dann;!LF!const Layer = dn.layer;!LF!const Matrix = dn.matrix;!LF!const activations = dn.activations;!LF!const lossfuncs = dn.lossfuncs;!LF!const poolfuncs = dn.poolfuncs;!LF!//__________________________ // NODEJS TEST BELOW // __________________________//"
 echo !multiline!
 echo !multiline!>nodeTest.js
 

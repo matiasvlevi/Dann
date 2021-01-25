@@ -483,7 +483,6 @@ class Dann {
     load(name, callback) {
         if (isBrowser) {
             upload(name,callback);
-
         } else {
             let path = './savedDanns/'+name+'/dannData.json';
             if (fs.existsSync(path)) {
