@@ -57,7 +57,7 @@
     "deep-learning",
     "machinelearning",
     "neural-network",
-    "ai",
+    "ai"
   ],
   "devDependencies": {
     "grunt": "^1.3.0",

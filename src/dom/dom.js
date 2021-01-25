@@ -9,15 +9,19 @@ function downloadSTR(obj, exportName) {
   downloadAnchorNode.remove();
 }
 // create the html element to upload the dannData.json
-function upload(nn) {
+function upload(modelname,callback) {
+
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
     downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+nn+")");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+","+callback.toString()+")");
     document.body.appendChild(downloadAnchorNode);
+
+
 }
 // function called when the html element is clicked
-function clickedUpload(nn) {
+function clickedUpload(nn,callback) {
+    let callfunc = eval(callback);
     let element = document.getElementById('upload');
     let file = element.files[0];
     let reader = new FileReader();
@@ -27,9 +31,11 @@ function clickedUpload(nn) {
         let xdata =  JSON.parse(reader.result);
         newNN = xdata;
         nn.applyToModel(newNN);
+        callfunc(false);
     };
     reader.onerror = function() {
-      console.log(reader.error);
+        console.log(reader.error);
+        callfunc(true);
     };
     element.remove();
 }

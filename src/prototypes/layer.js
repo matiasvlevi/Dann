@@ -7,7 +7,6 @@ class Layer {
             let obj = Layer.stringTofunc(arg2);
             this.setFunc(obj);
             this.layer = new Matrix(this.size,1);
-
         } else if (this.type == 'input') {
             this.size = arg1;
             this.layer = new Matrix(this.size,1);
@@ -15,11 +14,9 @@ class Layer {
             this.stride = arg3;
             this.sampleSize = arg2;
             this.inputSize = arg1;
-
             if (arg4 !== undefined && arg5 !== undefined) {
                 this.sizeX = arg4;
                 this.sizeY = arg5;
-
             } else {
                 this.sizeX = Math.sqrt(this.inputSize);
                 this.sizeY = this.sizeX;
@@ -32,7 +29,6 @@ class Layer {
             this.size = Layer.getPoolOutputLength(arg1,arg2,arg3,this.sizeX,this.sizeY);
             let divx = this.inputSize/this.sizeX;
             let divy = this.inputSize/this.sizeY;
-
             if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
                 console.error("Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)");
                 console.trace();
@@ -43,18 +39,14 @@ class Layer {
                 console.trace();
                 return;
             }
-
             this.input = new Matrix(this.inputSize,1);
             this.layer = new Matrix(this.size,1);
-
             // picking the pooling function:
             let prefix = Layer.getPrefix(this.type,4);
             this.pickFunc = poolfuncs[prefix];
             this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
-
                 let samples = Layer.selectPools(data,f,s,this.sizeX,this.sizeY);
-
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
                     output[i] = this.pickFunc(samples[i]);
@@ -102,10 +94,8 @@ class Layer {
         }
     }
     static stringTofunc(str) {
-
         let act = str;
         let der = act + '_d';
-
         let func;
         let func_d;
         if (isBrowser) {
@@ -115,7 +105,6 @@ class Layer {
             func = activations[act];
             func_d = activations[der];
         }
-
         if (func !== undefined) {
             if (func_d !== undefined) {
                 return {name:act, name_d:der,func:func,func_d:func_d};
@@ -128,7 +117,6 @@ class Layer {
             console.error("Dann Error: the activation function '"+str+"' is not a valid activation function. The activation function was set to the default 'sigmoid'.");
             console.trace();
         }
-
     }
     static getPrefix(str,x) {
         let len = str.length;

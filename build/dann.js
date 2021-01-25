@@ -18,42 +18,6 @@ if(isBrowser) {
     w = require('@fast-csv/format');
 }
 
-// Browser Download function:
-function downloadSTR(obj, exportName) {
-  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  let downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href",     dataStr);
-  downloadAnchorNode.setAttribute("download", exportName + ".json");
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-}
-// create the html element to upload the dannData.json
-function upload(nn) {
-    let downloadAnchorNode = document.createElement('input');
-    downloadAnchorNode.setAttribute("type", "file");
-    downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+nn+")");
-    document.body.appendChild(downloadAnchorNode);
-}
-// function called when the html element is clicked
-function clickedUpload(nn) {
-    let element = document.getElementById('upload');
-    let file = element.files[0];
-    let reader = new FileReader();
-    reader.readAsText(file);
-    let newNN;
-    reader.onload = function() {
-        let xdata =  JSON.parse(reader.result);
-        newNN = xdata;
-        nn.applyToModel(newNN);
-    };
-    reader.onerror = function() {
-      console.log(reader.error);
-    };
-    element.remove();
-}
-
 //Shortening Mathjs functions:
 const random = (a,b) => Math.random(1)*(b-a)+a;
 const exp = (x) => Math.exp(x);
@@ -555,7 +519,6 @@ class Layer {
             let obj = Layer.stringTofunc(arg2);
             this.setFunc(obj);
             this.layer = new Matrix(this.size,1);
-
         } else if (this.type == 'input') {
             this.size = arg1;
             this.layer = new Matrix(this.size,1);
@@ -563,11 +526,9 @@ class Layer {
             this.stride = arg3;
             this.sampleSize = arg2;
             this.inputSize = arg1;
-
             if (arg4 !== undefined && arg5 !== undefined) {
                 this.sizeX = arg4;
                 this.sizeY = arg5;
-
             } else {
                 this.sizeX = Math.sqrt(this.inputSize);
                 this.sizeY = this.sizeX;
@@ -580,7 +541,6 @@ class Layer {
             this.size = Layer.getPoolOutputLength(arg1,arg2,arg3,this.sizeX,this.sizeY);
             let divx = this.inputSize/this.sizeX;
             let divy = this.inputSize/this.sizeY;
-
             if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
                 console.error("Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)");
                 console.trace();
@@ -591,18 +551,14 @@ class Layer {
                 console.trace();
                 return;
             }
-
             this.input = new Matrix(this.inputSize,1);
             this.layer = new Matrix(this.size,1);
-
             // picking the pooling function:
             let prefix = Layer.getPrefix(this.type,4);
             this.pickFunc = poolfuncs[prefix];
             this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
-
                 let samples = Layer.selectPools(data,f,s,this.sizeX,this.sizeY);
-
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
                     output[i] = this.pickFunc(samples[i]);
@@ -650,10 +606,8 @@ class Layer {
         }
     }
     static stringTofunc(str) {
-
         let act = str;
         let der = act + '_d';
-
         let func;
         let func_d;
         if (isBrowser) {
@@ -663,7 +617,6 @@ class Layer {
             func = activations[act];
             func_d = activations[der];
         }
-
         if (func !== undefined) {
             if (func_d !== undefined) {
                 return {name:act, name_d:der,func:func,func_d:func_d};
@@ -676,7 +629,6 @@ class Layer {
             console.error("Dann Error: the activation function '"+str+"' is not a valid activation function. The activation function was set to the default 'sigmoid'.");
             console.trace();
         }
-
     }
     static getPrefix(str,x) {
         let len = str.length;
@@ -739,7 +691,7 @@ class Layer {
 }
 
 class Dann {
-    constructor(i,o) {
+    constructor(i=1,o=1) {
 
         this.i = i;
         this.inputs = new Layer('input',i);
@@ -757,7 +709,7 @@ class Dann {
         this.loss = 0;
         this.losses = [];
         this.lr = 0.001;
-        this.arch = [];
+        this.arch = [i,o];
 
         this.epoch = 0;
         this.recordLoss = false;
@@ -833,13 +785,15 @@ class Dann {
         }
     }
     addHiddenLayer(size, act) {
-        if (activations[act] == undefined && !isBrowser) {
+        if (activations[act] == undefined) {
             if (typeof act === 'string') {
                 console.error("Dann Error: '" +act+ "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.");
                 console.trace();
+                return;
             } else {
                 console.error("Dann Error: Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.");
                 console.trace();
+                return;
             }
             act = 'sigmoid';
         }
@@ -1037,59 +991,9 @@ class Dann {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
-    applyToModel(dataOBJ) {
-        this.i = dataOBJ.arch[0];
-        this.inputs = new Matrix(this.i, 1);
-        this.o = dataOBJ.arch[dataOBJ.arch.length-1];
-        this.outputs = new Matrix(this.o,1);
-
-        let slayers = JSON.parse(dataOBJ.lstr);
-        for (let i = 0; i < slayers.length; i++) {
-            let data = JSON.parse(slayers[i]);
-            let layerObj = new Layer(data.type,data.size,data.actname);
-            this.Layers[i] = layerObj;
-        }
-        this.makeWeights();
-        let sweights = JSON.parse(dataOBJ.wstr);
-        for (let i = 0; i < sweights.length; i++) {
-            this.weights[i].set(JSON.parse(sweights[i]));
-        }
-        let sbiases = JSON.parse(dataOBJ.bstr);
-        for (let i = 0; i < sbiases.length; i++) {
-            this.biases[i].set(JSON.parse(sbiases[i]));
-        }
-        let serrors = JSON.parse(dataOBJ.estr);
-        for (let i = 0; i < serrors.length; i++) {
-            this.errors[i].set(JSON.parse(serrors[i]));
-        }
-        let sgradients = JSON.parse(dataOBJ.gstr);
-        for (let i = 0; i < sgradients.length; i++) {
-            this.gradients[i].set(JSON.parse(sgradients[i]));
-        }
-
-        this.lossfunc_s = dataOBJ.lf;
-        if (isBrowser) {
-            this.lossfunc = window[dataOBJ.lf];
-        } else {
-            this.lossfunc = lossfuncs[dataOBJ.lf];
-        }
-
-        this.outs = Matrix.toArray(this.Layers[this.Layers.length-1]);
-        this.loss = dataOBJ.loss;
-        this.losses = [];
-        this.lr = dataOBJ.lrate;
-        this.arch = dataOBJ.arch;
-        this.epoch = dataOBJ.e;
-
-        if (isBrowser) {
-            console.log("");
-            console.log("Succesfully loaded the Dann Model");
-        } else {
-            console.log('\x1b[32m',"");
-            console.log("Succesfully loaded the Dann Model");
-            console.log("\x1b[0m","");
-        }
-    }
+    // applyToModel(dataOBJ) {
+    //
+    // }
     save(name, options) {
         let path;
         let overwritten = false;
@@ -1198,12 +1102,80 @@ class Dann {
         }
 
     }
+    applyToModel(dataOBJ) {
+        this.i = dataOBJ.arch[0];
+        this.inputs = new Matrix(this.i, 1);
+        this.o = dataOBJ.arch[dataOBJ.arch.length-1];
+        this.outputs = new Matrix(this.o,1);
+
+        let slayers = JSON.parse(dataOBJ.lstr);
+        for (let i = 0; i < slayers.length; i++) {
+            let data = JSON.parse(slayers[i]);
+            let layerObj = new Layer(data.type,data.size,data.actname);
+            this.Layers[i] = layerObj;
+        }
+        this.makeWeights();
+        let sweights = JSON.parse(dataOBJ.wstr);
+        for (let i = 0; i < sweights.length; i++) {
+            this.weights[i].set(JSON.parse(sweights[i]));
+        }
+        let sbiases = JSON.parse(dataOBJ.bstr);
+        for (let i = 0; i < sbiases.length; i++) {
+            this.biases[i].set(JSON.parse(sbiases[i]));
+        }
+        let serrors = JSON.parse(dataOBJ.estr);
+        for (let i = 0; i < serrors.length; i++) {
+            this.errors[i].set(JSON.parse(serrors[i]));
+        }
+        let sgradients = JSON.parse(dataOBJ.gstr);
+        for (let i = 0; i < sgradients.length; i++) {
+            this.gradients[i].set(JSON.parse(sgradients[i]));
+        }
+
+        this.lossfunc_s = dataOBJ.lf;
+        if (isBrowser) {
+            this.lossfunc = window[dataOBJ.lf];
+        } else {
+            this.lossfunc = lossfuncs[dataOBJ.lf];
+        }
+
+        this.outs = Matrix.toArray(this.Layers[this.Layers.length-1]);
+        this.loss = dataOBJ.loss;
+        this.losses = [];
+        this.lr = dataOBJ.lrate;
+        this.arch = dataOBJ.arch;
+        this.epoch = dataOBJ.e;
+
+        if (isBrowser) {
+            console.log("");
+            //console.log("Succesfully loaded the Dann Model");
+        } else {
+            console.log('\x1b[32m',"");
+            //console.log("Succesfully loaded the Dann Model");
+            console.log("\x1b[0m","");
+        }
+        return this;
+    }
+    static createModelFromJSON(model,dataOBJ) {
+        let nn = new Dann(0,0);
+        nn.applyToModel(JSON.stringify(dataOBJ));
+        return Object.assign(nn,model);;
+    }
+    static load(name) {
+        if (isBrowser) {
+            nn.load(name, function () {
+                return this;
+            });
+        } else {
+            nn.load(name, function () {
+                return this;
+            });
+        }
+    }
     load(name, callback) {
         if (isBrowser) {
-            upload(name);
-            if (typeof callback == 'function') {
-                callback();
-            }
+            upload(name,callback);
+
         } else {
             let path = './savedDanns/'+name+'/dannData.json';
             if (fs.existsSync(path)) {
@@ -1211,8 +1183,7 @@ class Dann {
                 let xdata =  JSON.parse(text);
 
                 let newNN = xdata;
-
-                this.applyToModel(newNN)
+                this.applyToModel(newNN);
 
             } else {
                 console.error('Dann Error: file not found');
@@ -1322,11 +1293,8 @@ class Dann {
                 for (let j = 0 ; j < e.length; j++) {
                     er[j] = round(e[j]*decimals)/decimals;
                 }
-                if (table == true) {
-                    console.table(er);
-                } else {
-                    console.log(er);
-                }
+                console.log(er);
+
             }
         }
         if (showGradients) {
@@ -1338,11 +1306,7 @@ class Dann {
                 for (let j = 0 ; j < g.length; j++) {
                     gr[j] = round(g[j]*decimals)/decimals;
                 }
-                if (table == true) {
-                    console.table(gr);
-                } else {
-                    console.log(gr);
-                }
+                console.log(gr);
             }
         }
         if (showWeights) {
@@ -1362,11 +1326,7 @@ class Dann {
                 for (let j = 0 ; j < b.length; j++) {
                     br[j] = round(b[j]*decimals)/decimals;
                 }
-                if (table == true) {
-                    console.table(br);
-                } else {
-                    console.log(br);
-                }
+                console.log(br);
             }
         }
         if (showOther) {
@@ -1381,6 +1341,48 @@ class Dann {
         console.log(' ')
         return;
     }
+}
+
+// Browser Download function:
+function downloadSTR(obj, exportName) {
+  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  let downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+// create the html element to upload the dannData.json
+function upload(modelname,callback) {
+
+    let downloadAnchorNode = document.createElement('input');
+    downloadAnchorNode.setAttribute("type", "file");
+    downloadAnchorNode.setAttribute("id", "upload");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+","+callback.toString()+")");
+    document.body.appendChild(downloadAnchorNode);
+
+
+}
+// function called when the html element is clicked
+function clickedUpload(nn,callback) {
+    let callfunc = eval(callback);
+    let element = document.getElementById('upload');
+    let file = element.files[0];
+    let reader = new FileReader();
+    reader.readAsText(file);
+    let newNN;
+    reader.onload = function() {
+        let xdata =  JSON.parse(reader.result);
+        newNN = xdata;
+        nn.applyToModel(newNN);
+        callfunc(false);
+    };
+    reader.onerror = function() {
+        console.log(reader.error);
+        callfunc(true);
+    };
+    element.remove();
 }
 
 // Exporting Functions:
