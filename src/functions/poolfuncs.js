@@ -10,7 +10,7 @@ function max(arr) {
     return record;
 }
 function min(arr) {
-    let record = 100000; // Bigger enough value, technically should represent infinity.
+    let record = Infinity;
     let len = arr.length;
     for (let i = 0; i < len; i++) {
         if (arr[i] < record) {

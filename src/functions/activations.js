@@ -67,12 +67,6 @@ function leakyReLU_d(x) {
     }
 
 }
-function linear(x) {
-  return x;
-}
-function linear_d(x) {
-  return 1;
-}
 function reLU(x) {
     if (x >= 0) {
         return 1*x;
