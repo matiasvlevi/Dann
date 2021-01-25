@@ -28,4 +28,4 @@ cd..
 cls
 npm install
 pause
-del setup.bat
+del devsetup.bat
