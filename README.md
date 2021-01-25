@@ -140,6 +140,8 @@ more examples & demos [here](https://dannjs.org/#exm)
 #### Contact
 matias@dannjs.org
 
+#### Report Bugs
+[Report an issue](https://github.com/matiasvlevi/Dann/issues/new)
 
 #### Socials
 
