@@ -492,10 +492,19 @@ class Dann {
 
                 let newNN = xdata;
                 this.applyToModel(newNN);
+                if (callback !== undefined) {
+                    callback(false);
+                }
 
             } else {
-                console.error('Dann Error: file not found');
-                console.trace();
+
+                if (callback !== undefined) {
+                    callback(true);
+                } else {
+                    console.error('Dann Error: file not found');
+                    console.trace();
+                }
+
             }
         }
     }

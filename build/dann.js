@@ -1184,10 +1184,19 @@ class Dann {
 
                 let newNN = xdata;
                 this.applyToModel(newNN);
+                if (callback !== undefined) {
+                    callback(false);
+                }
 
             } else {
-                console.error('Dann Error: file not found');
-                console.trace();
+
+                if (callback !== undefined) {
+                    callback(true);
+                } else {
+                    console.error('Dann Error: file not found');
+                    console.trace();
+                }
+
             }
         }
     }
@@ -1355,17 +1364,22 @@ function downloadSTR(obj, exportName) {
 }
 // create the html element to upload the dannData.json
 function upload(modelname,callback) {
+    let funcstr = '';
+    if (callback !== undefined) {
+        funcstr = ','+callback.toString();
+    }
 
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
     downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+","+callback.toString()+")");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
     document.body.appendChild(downloadAnchorNode);
 
 
 }
 // function called when the html element is clicked
 function clickedUpload(nn,callback) {
+
     let callfunc = eval(callback);
     let element = document.getElementById('upload');
     let file = element.files[0];
@@ -1376,11 +1390,16 @@ function clickedUpload(nn,callback) {
         let xdata =  JSON.parse(reader.result);
         newNN = xdata;
         nn.applyToModel(newNN);
-        callfunc(false);
+        if (callfunc !== undefined) {
+            callfunc(false);
+        }
     };
     reader.onerror = function() {
-        console.log(reader.error);
-        callfunc(true);
+        if (callfunc !== undefined) {
+            callfunc(true);
+        } else {
+            console.log(reader.error);
+        }
     };
     element.remove();
 }
