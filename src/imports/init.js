@@ -1,5 +1,4 @@
 const isBrowser = (typeof process !== 'object');
-let csv;
 let fs;
 let w;
 
@@ -15,6 +14,5 @@ if(isBrowser) {
 } else {
     fs = require('fs');
     require('mathjs');
-    csv = require('fast-csv');
     w = require('@fast-csv/format');
 }

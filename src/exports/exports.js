@@ -30,7 +30,7 @@ let poolfuncs = {
     avg: avg
 }
 //Node Module Exports:
-if (typeof process === 'object') {
+if (!isBrowser) {
     module.exports = {
         dann: Dann,
         layer: Layer,

@@ -1,5 +1,4 @@
 const isBrowser = (typeof process !== 'object');
-let csv;
 let fs;
 let w;
 
@@ -15,7 +14,6 @@ if(isBrowser) {
 } else {
     fs = require('fs');
     require('mathjs');
-    csv = require('fast-csv');
     w = require('@fast-csv/format');
 }
 
@@ -144,12 +142,6 @@ function leakyReLU_d(x) {
     }
 
 }
-function linear(x) {
-  return x;
-}
-function linear_d(x) {
-  return 1;
-}
 function reLU(x) {
     if (x >= 0) {
         return 1*x;
@@ -185,11 +177,9 @@ function bce(predictions,target) {
     let ans = 0;
     let n = target.length;
     for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
-      sum+= y*log(yHat)+(1-y)*log(1-yHat);
-
+        let y = target[i]
+        let yHat = predictions[i];
+        sum+= y*log(yHat)+(1-y)*log(1-yHat);
     }
     ans = -sum/n;
     return ans;
@@ -199,9 +189,8 @@ function lcl(predictions,target) {
     let ans = 0;
     let l = target.length;
     for (let i = 0; i < l; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
+        let y = target[i]
+        let yHat = predictions[i];
         sum += log(cosh(yHat - y));
     }
     ans = sum/l;
@@ -212,9 +201,8 @@ function mbe(predictions,target) {
     let ans = 0;
     let l = target.length;
     for (let i = 0; i < l; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
+        let y = target[i]
+        let yHat = predictions[i];
         sum += (y - yHat);
     }
     ans = sum/this.o;
@@ -225,9 +213,8 @@ function rmse(predictions,target) {
     let ans = 0;
     let n = target.length;
     for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
+        let y = target[i]
+        let yHat = predictions[i];
         sum += pow(y - yHat,2);
     }
     ans = sqrt(sum/n);
@@ -238,9 +225,8 @@ function mce(predictions,target) {
     let ans = 0;
     let n = target.length;
     for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
+        let y = target[i]
+        let yHat = predictions[i];
         sum += pow(abs(y - yHat),3);
     }
     ans = sum/n;
@@ -251,9 +237,8 @@ function mse(predictions,target) {
     let ans = 0;
     let n = target.length;
     for (let i = 0; i < n; i++) {
-      let y = target[i]
-      let yHat = predictions[i];
-
+        let y = target[i]
+        let yHat = predictions[i];
         sum += pow(y - yHat,2);
     }
     ans = sum/n;
@@ -272,7 +257,7 @@ function max(arr) {
     return record;
 }
 function min(arr) {
-    let record = 100000; // Bigger enough value, technically should represent infinity.
+    let record = Infinity;
     let len = arr.length;
     for (let i = 0; i < len; i++) {
         if (arr[i] < record) {
@@ -1458,7 +1443,7 @@ let poolfuncs = {
     avg: avg
 }
 //Node Module Exports:
-if (typeof process === 'object') {
+if (!isBrowser) {
     module.exports = {
         dann: Dann,
         layer: Layer,
