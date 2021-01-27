@@ -159,7 +159,7 @@ class Dann {
             return this.outs;
         }
         if (this.weights.length === 0) {
-            console.warn('Dann Error: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
+            console.warn('Dann Warning: The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.');
             this.makeWeights();
         }
 
