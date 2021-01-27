@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.2.2f",
+  "_id": "dannjs@2.2.3",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -49,7 +49,7 @@
   "scripts": {
     "test": "danntest"
   },
-  "version": "2.2.2f",
+  "version": "2.2.3",
   "keywords": [
     "dann",
     "dannjs",
