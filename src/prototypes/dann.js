@@ -114,7 +114,8 @@ class Dann {
         let showLog = false;
         let mode = 'cpu';
         let table = false;
-
+        let roundData = false;
+        let dec = 1000;
         //optional parameters:
         if (options !== undefined) {
             if (options.log !== undefined) {
@@ -122,13 +123,24 @@ class Dann {
             } else {
                 showLog = false;
             }
+            if (options.decimals !== undefined) {
+                if (options.decimals > 21) {
+                    console.error('Dann Error: Maximum number of decimals is 21.');
+                    console.trace();
+                    options.decimals = 21;
+                }
+                dec = pow(10,options.decimals);
+                roundData = true;
+            }
             if (options.table !== undefined) {
                 table = options.table;
+
             }
             if (options.mode !== undefined) {
                 mode = options.mode;
                 if (mode == 'gpu') {
-                    console.warn('Gpu support in the works.')
+                    console.warn('Gpu support in the works.');
+
                     mode = 'cpu';
                 }
             } else {
@@ -162,16 +174,20 @@ class Dann {
         }
 
         this.outs = Matrix.toArray(this.Layers[this.Layers.length-1].layer);
-
+        let out = this.outs;
         if (showLog == true) {
+
+            if (roundData == true) {
+                out = out.map((x) => (round(x*dec)/dec));
+            }
             if (table == true) {
                 console.log('Prediction: ');
-                console.table(this.outs);
+                console.table(out);
             } else {
-                console.log('Prediction: ',this.outs);
+                console.log('Prediction: ',out);
             }
         }
-        return this.outs;
+        return out;
     }
     backpropagate(inputs, t, options) {
 
