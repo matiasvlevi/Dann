@@ -137,8 +137,8 @@ https://dannjs.org#docs
 more examples & demos [here](https://dannjs.org/#exm)
 <br/>
 
-#### Contact
-matias@dannjs.org
+### Contribute
+[Contributor docs](https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md)
 
 #### Report Bugs
 [Report an issue](https://github.com/matiasvlevi/Dann/issues/new)
@@ -154,6 +154,9 @@ matias@dannjs.org
 <br/>
 <br/>
 <br/>
+
+#### Contact
+matias@dannjs.org
 
 ## License
 
