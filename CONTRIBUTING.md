@@ -1,6 +1,6 @@
 # Contributing to Dannjs
 Welcome contributors! Here is the recommended contribution guide for Dannjs. <br/>
-[see the project README](https://github.com/matiasvlevi/Dann/edit/master/README.md)
+[see the project README](https://github.com/matiasvlevi/Dann/blob/master/README.md)
 <br/><br/><br/>
 
 ## Setup
