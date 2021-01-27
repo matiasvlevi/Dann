@@ -1,5 +1,5 @@
 # Contributing to Dannjs
-Welcome contributors ! Here is the recommended contribution guide for Dannjs.
+Welcome contributors! Here is the recommended contribution guide for Dannjs.
 <br/><br/><br/>
 
 ## Setup
