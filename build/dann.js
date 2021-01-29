@@ -18,6 +18,56 @@ if(isBrowser) {
     w = require('@fast-csv/format');
 }
 
+// Browser Download function:
+function downloadSTR(obj, exportName) {
+  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+  let downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+// create the html element to upload the dannData.json
+function upload(modelname,callback) {
+    let funcstr = '';
+    if (callback !== undefined) {
+        funcstr = ','+callback.toString();
+    }
+    let downloadAnchorNode = document.createElement('input');
+    downloadAnchorNode.setAttribute("type", "file");
+    downloadAnchorNode.setAttribute("id", "upload");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
+    document.body.appendChild(downloadAnchorNode);
+}
+
+// function called when the html element is clicked
+function clickedUpload(nn,callback) {
+
+    let callfunc = eval(callback);
+    let element = document.getElementById('upload');
+    let file = element.files[0];
+    let reader = new FileReader();
+    reader.readAsText(file);
+    let newNN;
+    reader.onload = function() {
+        let xdata =  JSON.parse(reader.result);
+        newNN = xdata;
+        nn.applyToModel(newNN);
+        if (callfunc !== undefined) {
+            callfunc(false);
+        }
+    };
+    reader.onerror = function() {
+        if (callfunc !== undefined) {
+            callfunc(true);
+        } else {
+            console.log(reader.error);
+        }
+    };
+    element.remove();
+}
+
 //Shortening Mathjs functions:
 const random = (a,b) => Math.random(1)*(b-a)+a;
 const exp = (x) => Math.exp(x);
@@ -1025,31 +1075,7 @@ class Dann {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
-    // applyToModel(dataOBJ) {
-    //
-    // }
-    save(name, options) {
-        let path;
-        let overwritten = false;
-        let report = false;
-        let result = 0;
-        let rstr = 'none';
-        //options
-        if (options !== undefined) {
-            if (options.report !== undefined) {
-                report = options.report;
-            }
-            if (options.test !== undefined) {
-                if (typeof options.test == 'function') {
-                    let testfunc = options.test;
-                    result = testfunc()*100;
-                    rstr = result+"%"
-                } else {
-                    console.error("Dann Error: the test option can only be a function.");
-                    console.trace();
-                }
-            }
-        }
+    dataObject() {
         //weights
         let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
@@ -1080,7 +1106,43 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s,loss:this.loss,e:this.epoch};
+        const data = {
+            wstr: w_str,
+            lstr:l_str,
+            bstr:b_str,
+            estr:e_str,
+            gstr:g_str,
+            arch:this.arch,
+            lrate:this.lr,
+            lf:this.lossfunc_s,
+            loss:this.loss,
+            e:this.epoch
+        };
+        return data;
+    }
+    save(name, options) {
+        let path;
+        let overwritten = false;
+        let report = false;
+        let result = 0;
+        let rstr = 'none';
+        //options
+        if (options !== undefined) {
+            if (options.report !== undefined) {
+                report = options.report;
+            }
+            if (options.test !== undefined) {
+                if (typeof options.test == 'function') {
+                    let testfunc = options.test;
+                    result = testfunc()*100;
+                    rstr = result+"%"
+                } else {
+                    console.error("Dann Error: the test option can only be a function.");
+                    console.trace();
+                }
+            }
+        }
+        let dataOBJ = this.dataObject()
 
         if (isBrowser) {
             downloadSTR(dataOBJ,name);
@@ -1383,59 +1445,6 @@ class Dann {
         console.log(' ')
         return;
     }
-}
-
-// Browser Download function:
-function downloadSTR(obj, exportName) {
-  let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
-  let downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute("href",     dataStr);
-  downloadAnchorNode.setAttribute("download", exportName + ".json");
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-}
-// create the html element to upload the dannData.json
-function upload(modelname,callback) {
-    let funcstr = '';
-    if (callback !== undefined) {
-        funcstr = ','+callback.toString();
-    }
-
-    let downloadAnchorNode = document.createElement('input');
-    downloadAnchorNode.setAttribute("type", "file");
-    downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
-    document.body.appendChild(downloadAnchorNode);
-
-
-}
-
-// function called when the html element is clicked
-function clickedUpload(nn,callback) {
-
-    let callfunc = eval(callback);
-    let element = document.getElementById('upload');
-    let file = element.files[0];
-    let reader = new FileReader();
-    reader.readAsText(file);
-    let newNN;
-    reader.onload = function() {
-        let xdata =  JSON.parse(reader.result);
-        newNN = xdata;
-        nn.applyToModel(newNN);
-        if (callfunc !== undefined) {
-            callfunc(false);
-        }
-    };
-    reader.onerror = function() {
-        if (callfunc !== undefined) {
-            callfunc(true);
-        } else {
-            console.log(reader.error);
-        }
-    };
-    element.remove();
 }
 
 // Exporting Functions:
