@@ -9,7 +9,7 @@ set "multiline=@echo off!LF!echo Nodejs Test Environment!LF!echo.!LF!cd tests!LF
 echo !multiline!
 echo !multiline!>test.bat
 
-set "multiline=<html>!LF!    <head>!LF!        <script src="build/dann.js" type="text/javascript"></script>!LF!        <script src="tests/browserTest.js" type="text/javascript"></script>!LF!        <title>Browser Test Environment</title>!LF!    </head>!LF!    <body>!LF!    </body>!LF!</html>"
+set "multiline=<htm>!LF!    <head>!LF!        <script src="build/dann.js" type="text/javascript"></script>!LF!        <script src="tests/browserTest.js" type="text/javascript"></script>!LF!        <title>Browser Test Environment</title>!LF!    </head>!LF!    <body>!LF!    </body>!LF!</htm>"
 echo !multiline!
 echo !multiline!>test.htm
 
