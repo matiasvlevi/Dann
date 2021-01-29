@@ -382,7 +382,7 @@ class Dann {
                 }
             }
         }
-        let dataOBJ = this.dataObject()
+        let dataOBJ = this.dataObject();
 
         if (isBrowser) {
             downloadSTR(dataOBJ,name);
