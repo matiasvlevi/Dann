@@ -4,6 +4,7 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                     'src/imports/imports.js',
+                    'src/dom/dom.js',
                     'src/functions/mathfuncs.js',
                     'src/functions/activations.js',
                     'src/functions/lossfuncs.js',
@@ -11,7 +12,6 @@ module.exports = function(grunt) {
                     'src/prototypes/matrix.js',
                     'src/prototypes/layer.js',
                     'src/prototypes/dann.js',
-                    'src/dom/dom.js',
                     'src/exports/exports.js'
                 ],
                 dest: 'build/dann.js'
