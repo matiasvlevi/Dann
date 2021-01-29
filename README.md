@@ -18,7 +18,8 @@
   <a href="#Installation">Installation</a> •
   <a href="#Getting-started">Getting started</a> •
   <a href="https://github.com/matiasvlevi/Dann/wiki">Docs</a> •
-  <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Contribute</a> •
+  <a href="https://discord.gg/8yBTnBVf">Contribute</a> •
+  <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Discord</a> •
   <a href="#license">License</a>
 </p>
 <br/>
