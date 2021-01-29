@@ -1,7 +1,16 @@
 # Contributing to Dannjs
 Welcome contributors! Here is the recommended contribution guide for Dannjs. <br/>
 For more info [see the project README](https://github.com/matiasvlevi/Dann/blob/master/README.md)
-<br/><br/><br/>
+<br/>
+## What to contribute?
+
+Testing the library and reporting feedback on what you think about is already enough.
+Adding issues on Github suggesting changes/addons are more than welcome.
+
+If you want to actually make the changes source yourself, nothing is stopping you, just follow the steps below!
+
+<br/><br/>
+
 
 ## Setup
 
