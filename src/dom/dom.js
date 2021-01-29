@@ -14,14 +14,11 @@ function upload(modelname,callback) {
     if (callback !== undefined) {
         funcstr = ','+callback.toString();
     }
-
     let downloadAnchorNode = document.createElement('input');
     downloadAnchorNode.setAttribute("type", "file");
     downloadAnchorNode.setAttribute("id", "upload");
     downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
     document.body.appendChild(downloadAnchorNode);
-
-
 }
 
 // function called when the html element is clicked
