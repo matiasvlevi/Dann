@@ -1,7 +1,6 @@
 // Exporting Functions:
 let activations = {
-    leakySigmoid: leakySigmoid,
-    leakySigmoid_d: leakySigmoid_d,
+    //Basic:
     sigmoid: sigmoid,
     sigmoid_d: sigmoid_d,
     tanH: tanH,
@@ -12,17 +11,23 @@ let activations = {
     reLU_d: reLU_d,
     leakyReLU: leakyReLU,
     leakyReLU_d: leakyReLU_d,
+    //Experimental:
+    leakySigmoid: leakySigmoid,
+    leakySigmoid_d: leakySigmoid_d,
     leakyReLUCapped: leakyReLUCapped,
     leakyReLUCapped_d: leakyReLUCapped_d
 }
 let lossfuncs = {
+    //Basic
     mae: mae,
     bce: bce,
     lcl: lcl,
     mbe: mbe,
     mce: mce,
     mse: mse,
-    rmse: rmse
+    rmse: rmse,
+    //Experimental:
+    mael: mael
 }
 let poolfuncs = {
     max: max,
