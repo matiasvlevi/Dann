@@ -141,25 +141,43 @@ function bce(predictions,target) {
 function lcl(predictions,target) {
     let sum = 0;
     let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
+    let n = target.length;
+    for (let i = 0; i < n;  i++) {
         let y = target[i]
         let yHat = predictions[i];
         sum += log(cosh(yHat - y));
     }
-    ans = sum/l;
+    ans = sum/n;
     return ans;
 }
 function mbe(predictions,target) {
     let sum = 0;
     let ans = 0;
-    let l = target.length;
-    for (let i = 0; i < l; i++) {
+    let n = target.length;
+    for (let i = 0; i < n;  i++) {
         let y = target[i]
         let yHat = predictions[i];
         sum += (y - yHat);
     }
-    ans = sum/this.o;
+    ans = sum/n;
+    return ans;
+}
+//New experimental function: Mean absolute exponential loss
+function mael(predictions,target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n;  i++) {
+        let y = target[i]
+        let yHat = predictions[i];
+        let x = (y - yHat);
+
+        //Mean absolute exponential function
+        let top = -x*(exp(-x)-1);
+        let down = (exp(-x)+1);
+        sum += top/down;
+    }
+    ans = sum/n;
     return ans;
 }
 function rmse(predictions,target) {
@@ -1422,8 +1440,7 @@ function clickedUpload(nn,callback) {
 
 // Exporting Functions:
 let activations = {
-    leakySigmoid: leakySigmoid,
-    leakySigmoid_d: leakySigmoid_d,
+    //Basic:
     sigmoid: sigmoid,
     sigmoid_d: sigmoid_d,
     tanH: tanH,
@@ -1434,17 +1451,23 @@ let activations = {
     reLU_d: reLU_d,
     leakyReLU: leakyReLU,
     leakyReLU_d: leakyReLU_d,
+    //Experimental:
+    leakySigmoid: leakySigmoid,
+    leakySigmoid_d: leakySigmoid_d,
     leakyReLUCapped: leakyReLUCapped,
     leakyReLUCapped_d: leakyReLUCapped_d
 }
 let lossfuncs = {
+    //Basic
     mae: mae,
     bce: bce,
     lcl: lcl,
     mbe: mbe,
     mce: mce,
     mse: mse,
-    rmse: rmse
+    rmse: rmse,
+    //Experimental:
+    mael: mael
 }
 let poolfuncs = {
     max: max,
