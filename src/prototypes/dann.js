@@ -315,31 +315,7 @@ class Dann {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
     }
-    // applyToModel(dataOBJ) {
-    //
-    // }
-    save(name, options) {
-        let path;
-        let overwritten = false;
-        let report = false;
-        let result = 0;
-        let rstr = 'none';
-        //options
-        if (options !== undefined) {
-            if (options.report !== undefined) {
-                report = options.report;
-            }
-            if (options.test !== undefined) {
-                if (typeof options.test == 'function') {
-                    let testfunc = options.test;
-                    result = testfunc()*100;
-                    rstr = result+"%"
-                } else {
-                    console.error("Dann Error: the test option can only be a function.");
-                    console.trace();
-                }
-            }
-        }
+    dataObject() {
         //weights
         let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
@@ -370,7 +346,43 @@ class Dann {
             gdata[i] =  JSON.stringify(this.gradients[i].matrix);
         }
         let g_str = JSON.stringify(gdata);
-        let dataOBJ = {wstr: w_str,lstr:l_str,bstr:b_str,estr:e_str,gstr:g_str,arch:this.arch,lrate:this.lr,lf:this.lossfunc_s,loss:this.loss,e:this.epoch};
+        const data = {
+            wstr: w_str,
+            lstr:l_str,
+            bstr:b_str,
+            estr:e_str,
+            gstr:g_str,
+            arch:this.arch,
+            lrate:this.lr,
+            lf:this.lossfunc_s,
+            loss:this.loss,
+            e:this.epoch
+        };
+        return data;
+    }
+    save(name, options) {
+        let path;
+        let overwritten = false;
+        let report = false;
+        let result = 0;
+        let rstr = 'none';
+        //options
+        if (options !== undefined) {
+            if (options.report !== undefined) {
+                report = options.report;
+            }
+            if (options.test !== undefined) {
+                if (typeof options.test == 'function') {
+                    let testfunc = options.test;
+                    result = testfunc()*100;
+                    rstr = result+"%"
+                } else {
+                    console.error("Dann Error: the test option can only be a function.");
+                    console.trace();
+                }
+            }
+        }
+        let dataOBJ = this.dataObject()
 
         if (isBrowser) {
             downloadSTR(dataOBJ,name);
