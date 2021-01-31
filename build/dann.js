@@ -29,16 +29,29 @@ function downloadSTR(obj, exportName) {
   downloadAnchorNode.remove();
 }
 // create the html element to upload the dannData.json
-function upload(modelname,callback) {
-    let funcstr = '';
-    if (callback !== undefined) {
-        funcstr = ','+callback.toString();
-    }
-    let downloadAnchorNode = document.createElement('input');
-    downloadAnchorNode.setAttribute("type", "file");
-    downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
-    document.body.appendChild(downloadAnchorNode);
+function upload(modelname,targetid,callback) {
+    window.addEventListener('load', function() {
+        let funcstr = '';
+        if (callback !== undefined) {
+            funcstr = ','+callback.toString();
+        }
+        let downloadAnchorNode = document.createElement('input');
+        downloadAnchorNode.setAttribute("type", "file");
+        downloadAnchorNode.setAttribute("id", "upload");
+        downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
+        try {
+            if (targetid !== undefined) {
+                console.log(targetid)
+                document.getElementById(targetid).appendChild(downloadAnchorNode);
+            } else {
+                document.body.appendChild(downloadAnchorNode);
+            }
+        } catch(err) {
+            console.error('Dann Error: the target id specified is not valid');
+        }
+    })
+
+
 }
 
 // function called when the html element is clicked
@@ -1044,7 +1057,6 @@ class Dann {
         }
     }
     mutateRandom(randomFactor,probability) {
-
         if (typeof randomFactor !== 'number') {
             console.error('Dann Error: Dann.mutateRandom(); range argument must be a number.');
             console.trace();
@@ -1074,6 +1086,11 @@ class Dann {
         for (let i = 0; i < this.Layers.length;i++) {
             this.Layers[i].layer.addPrecent(randomFactor);
         }
+    }
+    static createFromObject(data) {
+        const model = new Dann();
+        model.applyToModel(data);
+        return model;
     }
     dataObject() {
         //weights
@@ -1268,9 +1285,9 @@ class Dann {
             });
         }
     }
-    load(name, callback) {
+    load(name,arg2, arg3) {
         if (isBrowser) {
-            upload(name,callback);
+            upload(name,arg2,arg3);
         } else {
             let path = './savedDanns/'+name+'/dannData.json';
             if (fs.existsSync(path)) {
@@ -1279,14 +1296,14 @@ class Dann {
 
                 let newNN = xdata;
                 this.applyToModel(newNN);
-                if (callback !== undefined) {
-                    callback(false);
+                if (arg3 !== undefined) {
+                    arg3(false);
                 }
 
             } else {
 
-                if (callback !== undefined) {
-                    callback(true);
+                if (arg2 !== undefined) {
+                    arg2(true);
                 } else {
                     console.error('Dann Error: file not found');
                     console.trace();
