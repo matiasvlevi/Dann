@@ -42,6 +42,8 @@ if (!isBrowser) {
         matrix: Matrix,
         activations: activations,
         lossfuncs: lossfuncs,
-        poolfuncs: poolfuncs
+        poolfuncs: poolfuncs,
+        xor: XOR,
+        makeBinary: makeBinary
     }
 }
