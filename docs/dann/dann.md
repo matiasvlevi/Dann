@@ -11,50 +11,52 @@ const nn = new Dann(2,2);
 ```
 <br/>
 
-### Object Properties
-- #### arch <br/>
-This value represents the architecture of the model in the form of an array.
+## Object Properties
+- ### arch <br/>
+    This value represents the architecture of the model in the form of an array.
 
 
-- #### lr <br/>
-This defines the learning rate of the model. This value is set to `0.001` by default.
+- ### lr <br/>
+    This defines the learning rate of the model. This value is set to `0.001` by default.
 
-- #### epoch <br/>
-This is an empty value. This is meant for you to increase whenever you have completed one epoch. This serves as a way to save the number of epochs along with the weights in the dannData.json file.
-
-
-- #### loss <br/>
-This is the most recent loss value of the model. If the model has never been trained before, this value will be set to 0.
-<br/><br/>
-
-### Function properties
-<br/>
-
-- #### Model Creation
-[addHiddenLayer]() <br/>
-[outputActivation]() <br/>
-[makeWeights]() <br/>
-[setLossFunction]()
+- ### epoch
+    This is an empty value. This is meant for you to increase whenever you have completed one epoch. This serves as a way to save the number of epochs along with the weights in the dannData.json file.
 
 
-- #### Model Interaction
-[feedForward]()<br/>
-[backpropagate]()
+- ### loss <br/>
+    This is the most recent loss value of the model. If the model has never been trained before, this value will be set to 0.
 
-- #### Weight Mutations
-[mutateAdd]()<br/>
-[mutateRandom]()
-
-- #### Saving & Loading
-[save (Browser) ]()<br/>
-[save (Nodejs)]()<br/>
-[load (Browser)]()<br/>
-[load (Nodejs)]()
+<br/><br/><br/>
 
 
 
-- #### Debug
-[log]()
+# Function properties
+
+### Model Creation
+- [addHiddenLayer](https://github.com/matiasvlevi/Dann/wiki/Dann-addHiddenLayer) <br/>
+- [outputActivation](https://github.com/matiasvlevi/Dann/wiki/Dann-outputActivation) <br/>
+- [makeWeights](https://github.com/matiasvlevi/Dann/wiki/Dann-makeWeights) <br/>
+- [setLossFunction](https://github.com/matiasvlevi/Dann/wiki/Dann-setLossFunction)
+
+
+### Model Interaction
+- [feedForward](https://github.com/matiasvlevi/Dann/wiki/Dann-feedForward)<br/>
+- [backpropagate](https://github.com/matiasvlevi/Dann/wiki/Dann-backpropagate)
+
+### Weight Mutations
+- [mutateAdd](https://github.com/matiasvlevi/Dann/wiki/Dann-mutateAdd)<br/>
+- [mutateRandom](https://github.com/matiasvlevi/Dann/wiki/Dann-mutateRandom)
+
+### Saving & Loading
+- [save (Browser) ](https://github.com/matiasvlevi/Dann/wiki/Dann-save-(Browser))<br/>
+- [save (Nodejs)](https://github.com/matiasvlevi/Dann/wiki/Dann-save-(Node))<br/>
+- [load (Browser)](https://github.com/matiasvlevi/Dann/wiki/Dann-Load-(Browser))<br/>
+- [load (Nodejs)](https://github.com/matiasvlevi/Dann/wiki/Dann-Load-(Node))
+
+
+
+### Debug
+- [log](https://github.com/matiasvlevi/Dann/wiki/Dann-log)
 
 <br/>
 

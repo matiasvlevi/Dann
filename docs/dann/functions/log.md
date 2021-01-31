@@ -3,8 +3,8 @@
 Displays information about the model in the console.
 
 - #### options (optional) <br/>
-An object including specific properties.
-###### Properties
+    An object including specific properties.
+    ###### Properties
 | Property 	| Type 	| Function 	|
 |-	|-	|-	|
 | details 	| Boolean 	| If set to true, the function will log more advanced details about the model. 	|

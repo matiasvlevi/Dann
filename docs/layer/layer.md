@@ -15,22 +15,24 @@ const l1 = new Layer('avgpool',16,2,2);
 ### Object Properties
 
 - #### type <br/>
-A string representing the type of this layer.
+    A string representing the type of this layer.
 
 - #### subtype <br/>
-A string representing the sub type of this layer.
+    A string representing the sub type of this layer.
 
 
 - #### sampleSize <br/>
-The size of the 2d sample iterating trough the array.
+    The size of the 2d sample iterating trough the array.
 
 - #### stride <br/>
-The number of jumps the sample is going to perform for each iteration.
+    The number of jumps the sample is going to perform for each iteration.
 
 - #### poolfunc <br/>
-The function this pooling layer uses to process a sample as an array into a numeric output. ex: avgpool, maxpool. See available pooling functions [Here](https://github.com/matiasvlevi/Dann/wiki/pool-functions).
-<br/>
+    The function this pooling layer uses to process a sample as an array into a numeric output. ex: avgpool, maxpool. See available pooling functions [Here](https://github.com/matiasvlevi/Dann/wiki/pool-functions).
+<br/><br/><br/>
 
 ### Functions
 
-[feed]()
+- [feed](https://github.com/matiasvlevi/Dann/wiki/Layer-feed)
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>

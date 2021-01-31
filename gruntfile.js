@@ -12,6 +12,8 @@ module.exports = function(grunt) {
                     'src/prototypes/matrix.js',
                     'src/prototypes/layer.js',
                     'src/prototypes/dann.js',
+                    // 'src/datasets/XOR.js',
+                    // 'src/datasets/binaryData.js',
                     'src/exports/exports.js'
                 ],
                 dest: 'build/dann.js'
