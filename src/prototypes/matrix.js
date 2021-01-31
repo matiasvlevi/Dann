@@ -1,5 +1,5 @@
 class Matrix {
-    constructor(rows,cols) {
+    constructor(cols,rows) {
         this.rows = rows;
         this.cols = cols;
         this.matrix = Matrix.make(rows,cols);
