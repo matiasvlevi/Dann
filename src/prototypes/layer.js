@@ -43,13 +43,13 @@ class Layer {
             this.layer = new Matrix(this.size,1);
             // picking the pooling function:
             let prefix = Layer.getPrefix(this.type,4);
-            this.pickFunc = poolfuncs[prefix];
+            this.poolfunc = poolfuncs[prefix];
             this.downsample = function (data,f,s) {
                 this.input = Matrix.fromArray(data);
                 let samples = Layer.selectPools(data,f,s,this.sizeX,this.sizeY);
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
-                    output[i] = this.pickFunc(samples[i]);
+                    output[i] = this.poolfunc(samples[i]);
                 }
                 this.layer = Matrix.fromArray(output);
                 return output;

@@ -3,6 +3,6 @@ node_modules
 test.bat
 test.html
 tests
-docs
+#docs
 build.bat
 cmd.cmd
