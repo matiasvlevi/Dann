@@ -44,12 +44,19 @@ function clickedUpload(nn,callback) {
     reader.readAsText(file);
     let newNN;
     reader.onload = function() {
-        let xdata =  JSON.parse(reader.result);
-        newNN = xdata;
-        nn.applyToModel(newNN);
-        if (callfunc !== undefined) {
-            callfunc(false);
+        if (reader.result[0] == '{') {
+            let xdata =  JSON.parse(reader.result);
+            newNN = xdata;
+            nn.applyToModel(newNN);
+            if (callfunc !== undefined) {
+                callfunc(false);
+            }
+        } else {
+            if (callfunc !== undefined) {
+                callfunc(true);
+            }
         }
+
     };
     reader.onerror = function() {
         if (callfunc !== undefined) {
