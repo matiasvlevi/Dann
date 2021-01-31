@@ -49,10 +49,14 @@ function clickedUpload(nn,callback) {
             nn.applyToModel(newNN);
             if (callfunc !== undefined) {
                 callfunc(false);
+            } else {
+                console.log('Succesfully loaded the file.');
             }
         } else {
             if (callfunc !== undefined) {
                 callfunc(true);
+            } else {
+                console.log('Error loading the file.');
             }
         }
 
