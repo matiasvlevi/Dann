@@ -486,14 +486,6 @@ class Dann {
         this.arch = dataOBJ.arch;
         this.epoch = dataOBJ.e;
 
-        if (isBrowser) {
-            console.log("");
-            //console.log("Succesfully loaded the Dann Model");
-        } else {
-            console.log('\x1b[32m',"");
-            //console.log("Succesfully loaded the Dann Model");
-            console.log("\x1b[0m","");
-        }
         return this;
     }
     static createModelFromJSON(model,dataOBJ) {
@@ -501,17 +493,7 @@ class Dann {
         nn.applyToModel(JSON.stringify(dataOBJ));
         return Object.assign(nn,model);;
     }
-    static load(name) {
-        if (isBrowser) {
-            nn.load(name, function () {
-                return this;
-            });
-        } else {
-            nn.load(name, function () {
-                return this;
-            });
-        }
-    }
+
     load(name,arg2, arg3) {
         if (isBrowser) {
             upload(name,arg2,arg3);
@@ -523,14 +505,22 @@ class Dann {
 
                 let newNN = xdata;
                 this.applyToModel(newNN);
-                if (arg3 !== undefined) {
-                    arg3(false);
+                if (typeof arg2 == 'function') {
+                    arg2(false);
+                } else {
+                    let type = (typeof arg2);
+                    console.error('Dann Error: callback specified is not a function, the funtion recieved a '+type+' instead');
+                    console.trace();
                 }
 
             } else {
 
-                if (arg2 !== undefined) {
+                if (typeof arg2 == 'function') {
                     arg2(true);
+                } else if (typeof arg2 !== 'function') {
+                    let type = (typeof arg2);
+                    console.error('Dann Error: callback specified is not a function, the funtion recieved a '+type+' instead');
+                    console.trace();
                 } else {
                     console.error('Dann Error: file not found');
                     console.trace();
