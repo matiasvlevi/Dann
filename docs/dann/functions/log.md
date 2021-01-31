@@ -18,3 +18,21 @@ Displays information about the model in the console.
 | misc 	| Boolean 	| If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function (the learning rate could also be logged as console.log(Dann.lr)). 	|
 
 <br/><br/>
+
+### Example
+
+```js
+const nn = new Dann(16,1);
+nn.addHiddenLayer(8,'sigmoid');
+
+//log the structure
+nn.log({struct:true});
+
+//log the weights in a table
+nn.log({weights:true,table:true});
+
+//log the gradients & round the values to 4 decimals
+nn.log({gradients:true,decimals:4});
+
+// nn.log({other options})
+```
