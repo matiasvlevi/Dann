@@ -9,9 +9,9 @@ set "multiline=@echo off!LF!echo Nodejs Test Environment!LF!echo.!LF!cd tests!LF
 echo !multiline!
 echo !multiline!>test.bat
 
-set "multiline=<htm>!LF!    <head>!LF!        <script src="build/dann.js" type="text/javascript"></script>!LF!        <script src="tests/browserTest.js" type="text/javascript"></script>!LF!        <title>Browser Test Environment</title>!LF!    </head>!LF!    <body>!LF!    </body>!LF!</htm>"
+set "multiline=<html>!LF!    <head>!LF!        <script src="build/dann.js" type="text/javascript"></script>!LF!        <script src="tests/browserTest.js" type="text/javascript"></script>!LF!        <title>Browser Test Environment</title>!LF!    </head>!LF!    <body>!LF!    </body>!LF!</html>"
 echo !multiline!
-echo !multiline!>test.htm
+echo !multiline!>test.html
 
 set "multiline=@echo off!LF!echo.!LF!call grunt concat!LF!echo.!LF!call grunt terser!LF!echo.!LF!echo Dann distribution files successfully built!LF!TIMEOUT 5 >nul"
 echo !multiline!

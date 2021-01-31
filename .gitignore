@@ -1,7 +1,7 @@
 node_modules
 .npmignore
 test.bat
-test.htm
+test.html
 tests
 docs
 build.bat
