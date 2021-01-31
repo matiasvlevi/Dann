@@ -9,16 +9,29 @@ function downloadSTR(obj, exportName) {
   downloadAnchorNode.remove();
 }
 // create the html element to upload the dannData.json
-function upload(modelname,callback) {
-    let funcstr = '';
-    if (callback !== undefined) {
-        funcstr = ','+callback.toString();
-    }
-    let downloadAnchorNode = document.createElement('input');
-    downloadAnchorNode.setAttribute("type", "file");
-    downloadAnchorNode.setAttribute("id", "upload");
-    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
-    document.body.appendChild(downloadAnchorNode);
+function upload(modelname,targetid,callback) {
+    window.addEventListener('load', function() {
+        let funcstr = '';
+        if (callback !== undefined) {
+            funcstr = ','+callback.toString();
+        }
+        let downloadAnchorNode = document.createElement('input');
+        downloadAnchorNode.setAttribute("type", "file");
+        downloadAnchorNode.setAttribute("id", "upload");
+        downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
+        try {
+            if (targetid !== undefined) {
+                console.log(targetid)
+                document.getElementById(targetid).appendChild(downloadAnchorNode);
+            } else {
+                document.body.appendChild(downloadAnchorNode);
+            }
+        } catch(err) {
+            console.error('Dann Error: the target id specified is not valid');
+        }
+    })
+
+
 }
 
 // function called when the html element is clicked
