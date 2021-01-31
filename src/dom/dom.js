@@ -21,7 +21,6 @@ function upload(modelname,targetid,callback) {
         downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
         try {
             if (targetid !== undefined) {
-                console.log(targetid)
                 document.getElementById(targetid).appendChild(downloadAnchorNode);
             } else {
                 document.body.appendChild(downloadAnchorNode);
