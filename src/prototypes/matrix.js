@@ -145,15 +145,17 @@ class Matrix {
         }
     }
     addRandom(magnitude,prob) {
+        let newMatrix = Matrix.make(this.rows,this.cols);
         for (let i = 0; i < this.rows; i++) {
             for(let j = 0; j < this.cols; j++) {
                 let w = this.matrix[i][j];
                 let ran = random(0,1);
                 if (ran < prob) {
-                    this.matrix[i][j] += w*random(-magnitude,magnitude);
+                    newMatrix[i][j] = w + w*random(-magnitude,magnitude);
                 }
             }
         }
+        this.set(newMatrix);
     }
     addPrecent(magnitude) {
         for (let i = 0; i < this.rows; i++) {

@@ -299,8 +299,8 @@ class Dann {
             probability = 1;
         }
 
-        for (let i = 0; i < this.Layers.length;i++) {
-            this.Layers[i].layer.addRandom(randomFactor,probability);
+        for (let i = 0; i < this.weights.length;i++) {
+            this.weights[i].addRandom(randomFactor,probability);
         }
     }
     mutateAdd(randomFactor) {
@@ -310,8 +310,8 @@ class Dann {
             console.trace();
             return;
         }
-        for (let i = 0; i < this.Layers.length;i++) {
-            this.Layers[i].layer.addPrecent(randomFactor);
+        for (let i = 0; i < this.weights.length;i++) {
+            this.weights[i].addPrecent(randomFactor);
         }
     }
     static createFromObject(data) {
