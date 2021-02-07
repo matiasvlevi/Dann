@@ -62,10 +62,7 @@ const poolfuncs = dn.poolfuncs;
 ### Basic model construction
 Setting up a small (4,6,6,2) neural network.
 ```js
-const dn = require('dannjs');
-const Dann = dn.dann;
-
-let nn = new Dann(4,2);
+const nn = new Dann(4,2);
 nn.addHiddenLayer(6,'leakyReLU');
 nn.addHiddenLayer(6,'leakyReLU');
 nn.outputActivation('tanH');
