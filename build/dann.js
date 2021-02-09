@@ -18,7 +18,7 @@ if(isBrowser) {
     w = require('@fast-csv/format');
 }
 
-// Browser Download function:
+// Browser Download function (input element deletion):
 function downloadSTR(obj, exportName) {
   let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
   let downloadAnchorNode = document.createElement('a');
@@ -28,34 +28,42 @@ function downloadSTR(obj, exportName) {
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
 }
+//create the dom element & set attributes
+function domInput(modelname,targetid,callback) {
+    let funcstr = '';
+    if (callback !== undefined) {
+        funcstr = ','+callback.toString();
+    }
+    let downloadAnchorNode = document.createElement('input');
+    downloadAnchorNode.setAttribute("type", "file");
+    downloadAnchorNode.setAttribute("id", "upload");
+    downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
+    try {
+        if (targetid !== undefined) {
+            document.getElementById(targetid).appendChild(downloadAnchorNode);
+        } else {
+            document.body.appendChild(downloadAnchorNode);
+        }
+    } catch(err) {
+        if (err) {
+            window.addEventListener('load', function() {
+                domInput(modelname,targetid,callback);
+            })
+        }
+
+    }
+}
 // create the html element to upload the dannData.json
 function upload(modelname,targetid,callback) {
-    window.addEventListener('load', function() {
-        let funcstr = '';
-        if (callback !== undefined) {
-            funcstr = ','+callback.toString();
-        }
-        let downloadAnchorNode = document.createElement('input');
-        downloadAnchorNode.setAttribute("type", "file");
-        downloadAnchorNode.setAttribute("id", "upload");
-        downloadAnchorNode.setAttribute("onChange", "clickedUpload("+modelname+funcstr+")");
-        try {
-            if (targetid !== undefined) {
-                document.getElementById(targetid).appendChild(downloadAnchorNode);
-            } else {
-                document.body.appendChild(downloadAnchorNode);
-            }
-        } catch(err) {
-            console.error('Dann Error: the target id specified is not valid');
-        }
-    })
-
+    try {
+        domInput(modelname,targetid,callback);
+    } catch(err) {
+        console.log(err)
+    }
 
 }
-
 // function called when the html element is clicked
 function clickedUpload(nn,callback) {
-
     let callfunc = eval(callback);
     let element = document.getElementById('upload');
     let file = element.files[0];
@@ -1384,7 +1392,7 @@ class Dann {
             console.log("Dann NeuralNetwork:");
         }
         if (showBaseSettings) {
-            console.log(" ");
+
             console.log("  Layers:")
             for (let i = 0; i < this.Layers.length;i++) {
                 let layerObj = this.Layers[i];
@@ -1408,7 +1416,7 @@ class Dann {
             }
         }
         if (showErrors) {
-            console.log(" ");
+
             console.log("  Errors:");
             for (let i = 0; i < this.errors.length; i++) {
                 let e = Matrix.toArray(this.errors[i]);
@@ -1421,7 +1429,7 @@ class Dann {
             }
         }
         if (showGradients) {
-            console.log(" ");
+
             console.log("  Gradients:");
             for (let i = 0; i < this.gradients.length; i++) {
                 let g = Matrix.toArray(this.gradients[i]);
@@ -1433,7 +1441,7 @@ class Dann {
             }
         }
         if (showWeights) {
-            console.log(" ");
+
             console.log("  Weights:");
             for (let i = 0; i < this.weights.length; i++) {
                 let w = this.weights[i];
@@ -1441,7 +1449,7 @@ class Dann {
             }
         }
         if (showBiases) {
-            console.log(" ");
+
             console.log("  Biases:");
             for (let i = 0; i < this.biases.length; i++) {
                 let b = Matrix.toArray(this.biases[i]);
@@ -1453,9 +1461,9 @@ class Dann {
             }
         }
         if (showOther) {
-            console.log(" ");
+
             console.log("  Other Values: ");
-            console.log(" ");
+
             console.log("    Learning rate: " + this.lr);
             console.log("    Loss Function: " + this.lossfunc.name);
             console.log("    Current Epoch: " + this.epoch);

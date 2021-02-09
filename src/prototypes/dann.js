@@ -599,7 +599,7 @@ class Dann {
             console.log("Dann NeuralNetwork:");
         }
         if (showBaseSettings) {
-            console.log(" ");
+
             console.log("  Layers:")
             for (let i = 0; i < this.Layers.length;i++) {
                 let layerObj = this.Layers[i];
@@ -623,7 +623,7 @@ class Dann {
             }
         }
         if (showErrors) {
-            console.log(" ");
+
             console.log("  Errors:");
             for (let i = 0; i < this.errors.length; i++) {
                 let e = Matrix.toArray(this.errors[i]);
@@ -636,7 +636,7 @@ class Dann {
             }
         }
         if (showGradients) {
-            console.log(" ");
+
             console.log("  Gradients:");
             for (let i = 0; i < this.gradients.length; i++) {
                 let g = Matrix.toArray(this.gradients[i]);
@@ -648,7 +648,7 @@ class Dann {
             }
         }
         if (showWeights) {
-            console.log(" ");
+
             console.log("  Weights:");
             for (let i = 0; i < this.weights.length; i++) {
                 let w = this.weights[i];
@@ -656,7 +656,7 @@ class Dann {
             }
         }
         if (showBiases) {
-            console.log(" ");
+
             console.log("  Biases:");
             for (let i = 0; i < this.biases.length; i++) {
                 let b = Matrix.toArray(this.biases[i]);
@@ -668,9 +668,9 @@ class Dann {
             }
         }
         if (showOther) {
-            console.log(" ");
+
             console.log("  Other Values: ");
-            console.log(" ");
+
             console.log("    Learning rate: " + this.lr);
             console.log("    Loss Function: " + this.lossfunc.name);
             console.log("    Current Epoch: " + this.epoch);
