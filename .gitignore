@@ -1,8 +1,5 @@
 node_modules
 .npmignore
-test.bat
-test.html
 tests
-#docs
 build.bat
 cmd.cmd
