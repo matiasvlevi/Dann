@@ -615,18 +615,23 @@ class Layer {
     constructor(type,arg1,arg2,arg3,arg4,arg5) {
         this.type = type;
         this.subtype = Layer.getSubtype(type);
-        if (this.type == 'hidden' || this.type == 'output') {
-            this.size = arg1;
-            let obj = Layer.stringTofunc(arg2);
-            this.setFunc(obj);
-            this.layer = new Matrix(this.size,1);
-        } else if (this.type == 'input') {
-            this.size = arg1;
-            this.layer = new Matrix(this.size,1);
+        if (this.subtype !== 'pool') {
+            // Neuron Layers
+            if (this.type == 'hidden' || this.type == 'output') {
+                this.size = arg1;
+                this.setAct(arg2);
+                this.layer = new Matrix(this.size,1);
+            } else if (this.type == 'input') {
+                this.size = arg1;
+                this.layer = new Matrix(this.size,1);
+            }
         } else if (this.subtype == 'pool') {
+            // Pooling Layers
             this.stride = arg3;
             this.sampleSize = arg2;
             this.inputSize = arg1;
+
+            //Optional X&Y size parameters
             if (arg4 !== undefined && arg5 !== undefined) {
                 this.sizeX = arg4;
                 this.sizeY = arg5;
@@ -639,9 +644,12 @@ class Layer {
                     return;
                 }
             }
+            //get the size of output.
             this.size = Layer.getPoolOutputLength(arg1,arg2,arg3,this.sizeX,this.sizeY);
             let divx = this.inputSize/this.sizeX;
             let divy = this.inputSize/this.sizeY;
+
+            // Handle Unvalid Layer Formats
             if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
                 console.error("Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)");
                 console.trace();
@@ -652,13 +660,20 @@ class Layer {
                 console.trace();
                 return;
             }
+
+            //Input values.
             this.input = new Matrix(this.inputSize,1);
+            //Output values.
             this.layer = new Matrix(this.size,1);
+
             // picking the pooling function:
-            let prefix = Layer.getPrefix(this.type,4);
-            this.poolfunc = poolfuncs[prefix];
-            this.downsample = function (data,f,s) {
+            this.prefix = Layer.getPrefix(this.type,4);
+            this.poolfunc = poolfuncs[this.prefix];
+
+            //Downsampling function, appling the pool function to the segmented arrays.
+            this.downsample = function(data,f,s) {
                 this.input = Matrix.fromArray(data);
+                //Split inputs in smaller pool arrays.
                 let samples = Layer.selectPools(data,f,s,this.sizeX,this.sizeY);
                 let output = [];
                 for (let i = 0; i < samples.length; i++) {
@@ -667,7 +682,8 @@ class Layer {
                 this.layer = Matrix.fromArray(output);
                 return output;
             }
-            this.feed = function (data, options) {
+            //Feed information to the Layer to obtain an output.
+            this.feed = function(data, options) {
                 let showLog = false;
                 let table = false;
                 let f = this.sampleSize;
@@ -697,6 +713,7 @@ class Layer {
                 }
             }
         } else {
+            // Handle Unvalid Layer types.
             if (typeof this.type == 'string') {
                 console.error("Dann Error: The Layer type '"+this.type+"' is not valid.");
                 console.trace();
