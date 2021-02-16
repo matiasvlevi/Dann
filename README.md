@@ -127,9 +127,6 @@ for (let i = 0; i < population; i++) {
 
 <br/>
 
-### Documentation
-https://dannjs.org#docs
-
 ### Demo:
 [AI predicts San-francisco Housing prices.](https://dannjs.org/livedemo.html) <br/>
 more examples & demos [here](https://dannjs.org/#exm)
