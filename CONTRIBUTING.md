@@ -31,7 +31,7 @@ npm i grunt -g
 
 #### Step 3
 
-You then need to launch the `devsetup.bat` file, this will create all the files to test your version of the Dannjs library. You wont need to delete them since they are referenced in the `.gitignore` file.
+Launch the `devsetup.bat` file to create the testing files & build shortcut. You wont need to delete them since they are referenced in the `.gitignore` file.
 
 Use these newly created files to test your implementations in both nodejs and browser environments.
 
