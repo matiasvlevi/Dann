@@ -9,7 +9,9 @@ module.exports = function(grunt) {
                     'src/functions/activations.js',
                     'src/functions/lossfuncs.js',
                     'src/functions/poolfuncs.js',
+
                     'src/prototypes/matrix.js',
+                    'src/functions/createKernel.js',
                     'src/prototypes/layer.js',
                     'src/prototypes/dann.js',
                     'src/datasets/XOR.js',

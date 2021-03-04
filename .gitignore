@@ -1,5 +1,5 @@
 node_modules
 .npmignore
-tests
+#tests
 build.bat
 cmd.cmd

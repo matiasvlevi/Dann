@@ -329,10 +329,18 @@ function avg(arr) {
 }
 
 class Matrix {
-    constructor(rows,cols) {
+    constructor(rows,cols,options) {
         this.rows = rows;
         this.cols = cols;
-        this.matrix = Matrix.make(rows,cols);
+        this.matrix;
+        if (options !== undefined) {
+            if (options.make !== undefined && options.make == true) {
+                this.matrix = Matrix.make(rows,cols);
+            }
+        } else {
+            this.matrix = Matrix.make(rows,cols);
+        }
+
     }
     static toArray(m) {
         let ans = [];
@@ -350,13 +358,38 @@ class Matrix {
         }
         return m;
     }
+    swapIndicators() {
+        let temp = this.cols;
+        this.cols = this.rows;
+        this.rows = temp;
+    }
+    from32() {
+        for (let i = 0; i < this.matrix.length;i++) {
+            this.matrix[i] = Array.from(this.matrix[i]);
+        }
+        //this.swapIndicators();
+        //this.transpose();
+    }
+    transpose() {
+        //let result = new Matrix(m.cols,m.rows);
+        let result = Matrix.make(this.cols,this.rows);
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                result[j][i] = this.matrix[i][j];
+            }
+        }
+        this.swapIndicators();
+        this.matrix = result;
+    }
     static transpose(m) {
         let result = new Matrix(m.cols,m.rows);
+
         for (let i = 0; i < m.rows; i++) {
             for(let j = 0; j < m.cols; j++) {
                 result.matrix[j][i] = m.matrix[i][j];
             }
         }
+
         return result;
     }
     static map(m,f) {
@@ -611,6 +644,57 @@ class Matrix {
     }
 }
 
+// function from32(m) {
+//
+//     return m;
+// }
+function dotProductKernel(outx,outy,gpu) {
+
+    // Creating GPU.js kernel.
+    const kernel = gpu.createKernel(function(a, b) {
+        let sum = 0;
+        for (let i = 0; i < outy; i++) {
+            sum += a[this.thread.y][i] * b[i][this.thread.x];
+        }
+        return sum;
+    }).setOutput([outy, outx]);
+
+    //Changing the stringified kernel loop length parameter.
+    let skernel = kernel.source.split("outy");
+    func = skernel[0] + outy + skernel[1];
+    kernel.source = func;
+
+    //Creating a function accepting a Matrix Object instance.
+    function dotProd(a,b) {
+        if (a.cols !== b.rows) {
+            console.error("Dann error: Can't perform gpu dot product because of invalid matrix dimensions.");
+            console.trace();
+            return undefined;
+        } else {
+            const m = new Matrix(a.rows,b.cols,{make:false});
+            console.log(m.matrix);
+            m.matrix = kernel(a.matrix,b.matrix);
+            //Convert float32Arrays to Arrays.
+            //m.from32()
+            return m;
+        }
+
+    }
+
+    return dotProd;
+}
+
+
+
+// function subKernel(outx,outy,gpu) {
+//     const kernel = gpu.createKernel(function(a, b) {
+//         let sum = 0;
+//         ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
+//         return sum;
+//     }).setOutput([outx, outy]);
+//     return kernel;
+// }
+
 class Layer {
     constructor(type,arg1,arg2,arg3,arg4,arg5) {
         this.type = type;
@@ -809,7 +893,7 @@ class Layer {
 }
 
 class Dann {
-    constructor(i=1,o=1) {
+    constructor(i=1,o=1,options) {
 
         this.i = i;
         this.inputs = new Layer('input',i);
@@ -835,6 +919,37 @@ class Dann {
         this.lossfunc = mse;
         this.lossfunc_s = this.lossfunc.name;
 
+        this.mode = 'cpu';
+        if (options !== undefined) {
+            if (options.mode !== undefined) {
+                this.mode = options.mode;
+            }
+        }
+        if (this.mode == 'gpu') {
+            const { GPU } = require('gpu.js');
+            this.gpu = new GPU();
+            this.kernels = {
+                ffw: {
+                    mult:[]
+                },
+                bckp: {
+                    mult:[],
+                    add:[],
+                    sub:[],
+                    map:[],
+                    transpose:[]
+                }
+            };
+        }
+
+    }
+    makeKernels() {
+        //ffw
+        for (let i = 0; i < this.weights.length;i++) {
+            this.kernels.ffw.mult.push(dotProductKernel(this.weights[i].rows,this.Layers[i+1].layer.cols,this.gpu));
+        }
+        //bckp
+        //this.kernels.bckp.sub.push();
     }
     setLossFunction(str) {
         let func = lossfuncs[str];
@@ -946,16 +1061,6 @@ class Dann {
                 table = options.table;
 
             }
-            if (options.mode !== undefined) {
-                mode = options.mode;
-                if (mode == 'gpu') {
-                    console.warn('Gpu support in the works.');
-
-                    mode = 'cpu';
-                }
-            } else {
-                mode = 'cpu';
-            }
         }
 
         if (inputs.length == this.i) {
@@ -977,8 +1082,12 @@ class Dann {
             let pLayer = this.Layers[i];
 
             let layerObj = this.Layers[i+1];
+            if (this.mode == 'gpu') {
+                layerObj.layer = this.kernels.ffw.mult[i](this.weights[i],pLayer.layer);
+            } else {
+                layerObj.layer = Matrix.multiply(this.weights[i],pLayer.layer);
+            }
 
-            layerObj.layer = Matrix.multiply(this.weights[i],pLayer.layer);
             layerObj.layer.add(this.biases[i]);
             layerObj.layer.map(layerObj.actfunc);
         }
@@ -1303,7 +1412,6 @@ class Dann {
         nn.applyToModel(JSON.stringify(dataOBJ));
         return Object.assign(nn,model);;
     }
-
     load(name,arg2, arg3) {
         if (isBrowser) {
             upload(name,arg2,arg3);

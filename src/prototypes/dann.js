@@ -1,5 +1,5 @@
 class Dann {
-    constructor(i=1,o=1) {
+    constructor(i=1,o=1,options) {
 
         this.i = i;
         this.inputs = new Layer('input',i);
@@ -25,6 +25,40 @@ class Dann {
         this.lossfunc = mse;
         this.lossfunc_s = this.lossfunc.name;
 
+        this.mode = 'cpu';
+        if (options !== undefined) {
+            if (options.mode !== undefined) {
+                this.mode = options.mode;
+            }
+        }
+        if (this.mode == 'gpu') {
+            const { GPU } = require('gpu.js');
+            this.gpu = new GPU();
+            this.kernels = {
+                ffw: {
+                    mult:[]
+                },
+                bckp: {
+                    mult:[],
+                    add:[],
+                    sub:[],
+                    map:[],
+                    transpose:[]
+                }
+            };
+            console.warn('GPU Support is a work in progress');
+            console.warn('Only feedForward has GPU Support for now');
+
+        }
+
+    }
+    makeKernels() {
+        //ffw
+        for (let i = 0; i < this.weights.length;i++) {
+            this.kernels.ffw.mult.push(dotProductKernel(this.weights[i].rows,this.Layers[i+1].layer.cols,this.gpu));
+        }
+        //bckp
+        //this.kernels.bckp.sub.push();
     }
     setLossFunction(str) {
         let func = lossfuncs[str];
@@ -136,16 +170,6 @@ class Dann {
                 table = options.table;
 
             }
-            if (options.mode !== undefined) {
-                mode = options.mode;
-                if (mode == 'gpu') {
-                    console.warn('Gpu support in the works.');
-
-                    mode = 'cpu';
-                }
-            } else {
-                mode = 'cpu';
-            }
         }
 
         if (inputs.length == this.i) {
@@ -167,8 +191,12 @@ class Dann {
             let pLayer = this.Layers[i];
 
             let layerObj = this.Layers[i+1];
+            if (this.mode == 'gpu') {
+                layerObj.layer = this.kernels.ffw.mult[i](this.weights[i],pLayer.layer);
+            } else {
+                layerObj.layer = Matrix.multiply(this.weights[i],pLayer.layer);
+            }
 
-            layerObj.layer = Matrix.multiply(this.weights[i],pLayer.layer);
             layerObj.layer.add(this.biases[i]);
             layerObj.layer.map(layerObj.actfunc);
         }
@@ -493,7 +521,6 @@ class Dann {
         nn.applyToModel(JSON.stringify(dataOBJ));
         return Object.assign(nn,model);;
     }
-
     load(name,arg2, arg3) {
         if (isBrowser) {
             upload(name,arg2,arg3);

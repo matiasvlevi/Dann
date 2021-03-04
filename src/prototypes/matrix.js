@@ -1,8 +1,16 @@
 class Matrix {
-    constructor(rows,cols) {
+    constructor(rows,cols,options) {
         this.rows = rows;
         this.cols = cols;
-        this.matrix = Matrix.make(rows,cols);
+        this.matrix;
+        if (options !== undefined) {
+            if (options.make !== undefined && options.make == true) {
+                this.matrix = Matrix.make(rows,cols);
+            }
+        } else {
+            this.matrix = Matrix.make(rows,cols);
+        }
+
     }
     static toArray(m) {
         let ans = [];
@@ -20,13 +28,38 @@ class Matrix {
         }
         return m;
     }
+    swapIndicators() {
+        let temp = this.cols;
+        this.cols = this.rows;
+        this.rows = temp;
+    }
+    from32() {
+        for (let i = 0; i < this.matrix.length;i++) {
+            this.matrix[i] = Array.from(this.matrix[i]);
+        }
+        //this.swapIndicators();
+        //this.transpose();
+    }
+    transpose() {
+        //let result = new Matrix(m.cols,m.rows);
+        let result = Matrix.make(this.cols,this.rows);
+        for (let i = 0; i < this.rows; i++) {
+            for(let j = 0; j < this.cols; j++) {
+                result[j][i] = this.matrix[i][j];
+            }
+        }
+        this.swapIndicators();
+        this.matrix = result;
+    }
     static transpose(m) {
         let result = new Matrix(m.cols,m.rows);
+
         for (let i = 0; i < m.rows; i++) {
             for(let j = 0; j < m.cols; j++) {
                 result.matrix[j][i] = m.matrix[i][j];
             }
         }
+
         return result;
     }
     static map(m,f) {
