@@ -336,6 +336,8 @@ class Matrix {
         if (options !== undefined) {
             if (options.make !== undefined && options.make == true) {
                 this.matrix = Matrix.make(rows,cols);
+            } else {
+                //console.log('skipped make process');
             }
         } else {
             this.matrix = Matrix.make(rows,cols);
@@ -644,10 +646,7 @@ class Matrix {
     }
 }
 
-// function from32(m) {
-//
-//     return m;
-// }
+
 function dotProductKernel(outx,outy,gpu) {
 
     // Creating GPU.js kernel.
@@ -672,10 +671,9 @@ function dotProductKernel(outx,outy,gpu) {
             return undefined;
         } else {
             const m = new Matrix(a.rows,b.cols,{make:false});
-            console.log(m.matrix);
-            m.matrix = kernel(a.matrix,b.matrix);
+            m.set(kernel(a.matrix,b.matrix));
             //Convert float32Arrays to Arrays.
-            //m.from32()
+            m.from32()
             return m;
         }
 
@@ -683,17 +681,6 @@ function dotProductKernel(outx,outy,gpu) {
 
     return dotProd;
 }
-
-
-
-// function subKernel(outx,outy,gpu) {
-//     const kernel = gpu.createKernel(function(a, b) {
-//         let sum = 0;
-//         ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
-//         return sum;
-//     }).setOutput([outx, outy]);
-//     return kernel;
-// }
 
 class Layer {
     constructor(type,arg1,arg2,arg3,arg4,arg5) {
@@ -933,13 +920,13 @@ class Dann {
                     mult:[]
                 },
                 bckp: {
-                    mult:[],
-                    add:[],
-                    sub:[],
-                    map:[],
-                    transpose:[]
+                    multWd:[],
+                    multErr:[]
                 }
             };
+            console.warn('GPU Support is a work in progress');
+
+            console.log('');
         }
 
     }
@@ -949,7 +936,12 @@ class Dann {
             this.kernels.ffw.mult.push(dotProductKernel(this.weights[i].rows,this.Layers[i+1].layer.cols,this.gpu));
         }
         //bckp
-        //this.kernels.bckp.sub.push();
+        for (let i = this.weights.length-1; i > 0;i--) {
+            this.kernels.bckp.multWd[i] = dotProductKernel(this.gradients[i].rows,this.Layers[i].layer.rows,this.gpu);
+            this.kernels.bckp.multErr[i] = dotProductKernel(this.weights[i].cols,this.errors[i].cols,this.gpu);
+        }
+        this.kernels.bckp.multWd[0] = dotProductKernel(this.gradients[0].rows,this.Layers[0].layer.rows,this.gpu);
+
     }
     setLossFunction(str) {
         let func = lossfuncs[str];
@@ -1095,7 +1087,6 @@ class Dann {
         this.outs = Matrix.toArray(this.Layers[this.Layers.length-1].layer);
         let out = this.outs;
         if (showLog == true) {
-
             if (roundData == true) {
                 out = out.map((x) => (round(x*dec)/dec));
             }
@@ -1164,20 +1155,38 @@ class Dann {
         for (let i = this.weights.length-1; i > 0;i--) {
 
             let h_t = Matrix.transpose(this.Layers[i].layer);
-            let weights_deltas = Matrix.multiply(this.gradients[i],h_t);
+            let weights_deltas;
+            if (this.mode == 'gpu') {
+                weights_deltas = this.kernels.bckp.multWd[i](this.gradients[i],h_t);
+            } else {
+                weights_deltas = Matrix.multiply(this.gradients[i],h_t);
+            }
+
 
             this.weights[i].add(weights_deltas);
             this.biases[i].add(this.gradients[i]);
 
             let weights_t = Matrix.transpose(this.weights[i]);
-            this.errors[i-1] = Matrix.multiply(weights_t,this.errors[i]);
+
+            if (this.mode == 'gpu') {
+                this.errors[i-1] = this.kernels.bckp.multErr[i](weights_t,this.errors[i]);
+            } else {
+                this.errors[i-1] = Matrix.multiply(weights_t,this.errors[i]);
+            }
+
+
             this.gradients[i-1] = Matrix.map(this.Layers[i].layer, this.Layers[i].actfunc_d);
             this.gradients[i-1].mult(this.errors[i-1]);
             this.gradients[i-1].mult(this.lr);
         }
 
         let i_t = Matrix.transpose(this.Layers[0].layer);
-        let weights_deltas = Matrix.multiply(this.gradients[0], i_t);
+        let weights_deltas;
+        if (this.mode == 'gpu'){
+            weights_deltas = this.kernels.bckp.multWd[0](this.gradients[0], i_t)
+        } else {
+            weights_deltas = Matrix.multiply(this.gradients[0], i_t);
+        }
 
         this.weights[0].add(weights_deltas);
         this.biases[0].add(this.gradients[0]);

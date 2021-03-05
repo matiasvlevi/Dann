@@ -6,6 +6,8 @@ class Matrix {
         if (options !== undefined) {
             if (options.make !== undefined && options.make == true) {
                 this.matrix = Matrix.make(rows,cols);
+            } else {
+                //console.log('skipped make process');
             }
         } else {
             this.matrix = Matrix.make(rows,cols);

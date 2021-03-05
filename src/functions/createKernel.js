@@ -1,7 +1,4 @@
-// function from32(m) {
-//
-//     return m;
-// }
+
 function dotProductKernel(outx,outy,gpu) {
 
     // Creating GPU.js kernel.
@@ -26,10 +23,9 @@ function dotProductKernel(outx,outy,gpu) {
             return undefined;
         } else {
             const m = new Matrix(a.rows,b.cols,{make:false});
-            console.log(m.matrix);
-            m.matrix = kernel(a.matrix,b.matrix);
+            m.set(kernel(a.matrix,b.matrix));
             //Convert float32Arrays to Arrays.
-            //m.from32()
+            m.from32()
             return m;
         }
 
@@ -37,14 +33,3 @@ function dotProductKernel(outx,outy,gpu) {
 
     return dotProd;
 }
-
-
-
-// function subKernel(outx,outy,gpu) {
-//     const kernel = gpu.createKernel(function(a, b) {
-//         let sum = 0;
-//         ans.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
-//         return sum;
-//     }).setOutput([outx, outy]);
-//     return kernel;
-// }
