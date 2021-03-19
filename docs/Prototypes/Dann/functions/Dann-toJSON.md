@@ -1,10 +1,10 @@
 [Back to Dann](https://github.com/matiasvlevi/Dann/wiki/Dann-Object)
 
-# dataObject( );
+# toJSON( );
 Applies a dannData object.
 
 - #### returns<br/>
-     dannData object, you can apply it to a model with `yourmodel.applyToModel();`.<br/> See docs [here](https://github.com/matiasvlevi/Dann/wiki/Dann-applyToModel).
+     model data json object, you can apply it to a model with `yourmodel.fromJSON();`.<br/> See docs [here](https://github.com/matiasvlevi/Dann/wiki/Dann-fromJSON).
 
 <br/>
 
@@ -16,10 +16,10 @@ const nn = new Dann(24,4);
 nn.addHiddenLayer(12,'sigmoid');
 nn.makeWeights();
 
-const dannData = nn.dataObject();
+const modelData = nn.toJSON();
 
 const newNN = new Dann();
-newNN.applyToModel(dannData);
+newNN.fromJSON(modelData);
 
 newNN.log();
 ```
