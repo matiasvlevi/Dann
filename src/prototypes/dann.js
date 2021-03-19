@@ -314,12 +314,12 @@ class Dann {
             this.weights[i].addPrecent(randomFactor);
         }
     }
-    static createFromObject(data) {
+    static createFromJSON(data) {
         const model = new Dann();
-        model.applyToModel(data);
+        model.fromJSON(data);
         return model;
     }
-    dataObject() {
+    toJSON() {
         //weights
         let wdata = [];
         for (let i = 0; i < this.weights.length;i++) {
@@ -442,7 +442,7 @@ class Dann {
         }
 
     }
-    applyToModel(dataOBJ) {
+    fromJSON(dataOBJ) {
         this.i = dataOBJ.arch[0];
         this.inputs = new Matrix(this.i, 1);
         this.o = dataOBJ.arch[dataOBJ.arch.length-1];
@@ -488,12 +488,6 @@ class Dann {
 
         return this;
     }
-    static createModelFromJSON(model,dataOBJ) {
-        let nn = new Dann(0,0);
-        nn.applyToModel(JSON.stringify(dataOBJ));
-        return Object.assign(nn,model);;
-    }
-
     load(name,arg2, arg3) {
         if (isBrowser) {
             upload(name,arg2,arg3);
