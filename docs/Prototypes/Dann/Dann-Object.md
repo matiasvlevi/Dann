@@ -39,7 +39,6 @@ const nn = new Dann(2,2);
 - [makeWeights](https://github.com/matiasvlevi/Dann/wiki/Dann-makeWeights) <br/>
 - [setLossFunction](https://github.com/matiasvlevi/Dann/wiki/Dann-setLossFunction)
 
-
 ### Model Interaction
 - [feedForward](https://github.com/matiasvlevi/Dann/wiki/Dann-feedForward)<br/>
 - [backpropagate](https://github.com/matiasvlevi/Dann/wiki/Dann-backpropagate)
@@ -55,10 +54,11 @@ const nn = new Dann(2,2);
 - [load (Nodejs)](https://github.com/matiasvlevi/Dann/wiki/Dann-Load-(Node))
 
 ### Save & load JSON
-- [applyToModel](https://github.com/matiasvlevi/Dann/wiki/Dann-applyToModel)<br/>
-- [dataObject](https://github.com/matiasvlevi/Dann/wiki/Dann-dataObject)<br/>
+
+- [toJSON](https://github.com/matiasvlevi/Dann/wiki/Dann-toJSON)<br/>
+- [fromJSON](https://github.com/matiasvlevi/Dann/wiki/Dann-fromJSON)<br/>
   ###### Static
-- [createFromObject](https://github.com/matiasvlevi/Dann/wiki/Dann-createFromObject)<br/>
+- [createFromJSON](https://github.com/matiasvlevi/Dann/wiki/Dann-createFromJSON)<br/>
 
 ### Debug
 - [log](https://github.com/matiasvlevi/Dann/wiki/Dann-log)
