@@ -54,9 +54,12 @@ const nn = new Dann(2,2);
 - [load (Nodejs)](https://github.com/matiasvlevi/Dann/wiki/Dann-Load-(Node))
 
 ### Save & load JSON
-
 - [toJSON](https://github.com/matiasvlevi/Dann/wiki/Dann-toJSON)<br/>
 - [fromJSON](https://github.com/matiasvlevi/Dann/wiki/Dann-fromJSON)<br/>
+
+>  Deprecation warning :
+> dataObject( ) & applyToModel() are deprecated as of v2.2.4f
+
   ###### Static
 - [createFromJSON](https://github.com/matiasvlevi/Dann/wiki/Dann-createFromJSON)<br/>
 
