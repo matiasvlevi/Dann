@@ -109,10 +109,10 @@ for (data of dataset) {
 ### Train by mutation
 For neuroevolution simulations. Works best with small models & large population size.
 ```js
-const population = 1000;
+const populationSize = 1000;
 let newGeneration = [];
 
-for (let i = 0; i < population; i++) {
+for (let i = 0; i < populationSize; i++) {
 
     // parentNN would be the best nn from past generation.
     const childNN = parentNN;
