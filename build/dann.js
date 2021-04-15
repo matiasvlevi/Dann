@@ -994,7 +994,8 @@ class Dann {
                 console.log('Prediction: ');
                 console.table(out);
             } else {
-                console.log('Prediction: ',out);
+                console.log('Prediction: ');
+                console.log(out);
             }
         }
         return out;
