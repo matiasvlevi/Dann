@@ -1,6 +1,6 @@
 # Contributing to Dannjs
 Welcome contributors! Here is the recommended contribution guide for Dannjs. <br/>
-For more info [see the project README](https://github.com/matiasvlevi/Dann/blob/master/README.md)
+For more info [see the project's README](https://github.com/matiasvlevi/Dann/blob/master/README.md)
 <br/>
 ## What to contribute?
 
@@ -14,99 +14,150 @@ If you want to actually make the changes source yourself, nothing is stopping yo
 
 ## Setup
 
-
-#### Step 1
-Create a Dannjs fork & clone the repository on your local computer.
-
-<br/>
-
-#### Step 2
-Install grunt as a global module. Grunt will be used to concatenate and minify the source files later on.
+Create a Dannjs fork & clone the repository on your machine.
 
 ```
-npm i grunt -g
+git clone https://github.com/matiasvlevi/Dann.git
+```
+
+Install dev dependencies with :
+```
+npm ci
 ```
 
 <br/>
 
-#### Step 3
+## Organization
 
-Launch the `devsetup.bat` file to create the testing files & build shortcut. You wont need to delete them since they are referenced in the `.gitignore` file.
+* Source code is located in `/src`
+* Manual Tests are located in `/test/manual-tests`
+* Unit Tests are located in `/test/unit`
+* Built files are located in `/build`
+* Built documentation is located in `/docs/documentation`
+* Custom grunt tasks are located in `/tasks`
 
-Use these newly created files to test your implementations in both nodejs and browser environments.
+<br/>
 
-* run `tests/run/node.bat` to execute the `tests/nodetest.js` file.
-* run `tests/run/browser.html` to execute the `tests/browsertest.js` file.
+## Changing source
 
-Use `build.bat` as a shortcut to compile (run the grunt tasks).
-
-<br/><br/>
-
-## Modify Source Files
-
-#### Step 1
-
-* The source files are located in `/src`. These are the files you can modify. Be sure to test your code with the provided test files.
+If the file you added is located in a new directory in `/src` check if it is referenced in `/src/concatConfig.js`. <br/>
+Be sure to include [inline documentation](#documentation) and [unit tests](#unit-tests) for each feature addition.
 
 
-* Add some simple comments to your code explaining what it does.
+Build the source files with : 
+```
+npm run build
+```
+In the case of lint errors, you can fix them with :
+```
+npm run lint:fix
+```
 
 
-* If you want to add a new `.js` file to the `/src` directory, be sure to include it into the `gruntfile.js` to compile it in the distribution version.
-You can do the following like so:
+<br/>
+
+## Documentation
+
+#### Inline docs
+
+Here is an example of how the inline documentation should be written :
+
 ```js
-// in `gruntfile.js`
-module.exports = function(grunt) {
-    grunt.initConfig({
-        concat: {
-            dist: {
-                //Add your files in the `src` array (order matters):
-                src: [
-                    'src/imports/imports.js',
-                    'src/dom/dom.js',
-                    'src/functions/mathfuncs.js',
-                    'src/functions/activations.js',
-                    'src/functions/lossfuncs.js',
-                    'src/functions/poolfuncs.js',
-                    'src/prototypes/matrix.js',
-                    'src/prototypes/layer.js',
-                    'src/prototypes/dann.js',
-                    'src/datasets/XOR.js',
-                    'src/datasets/binaryData.js',
-                    'src/exports/exports.js'
-                ],
-                dest: 'build/dann.js'
-            },
-        },
-        terser: {
-            src: {
-                files: [{
-                    src: 'build/dann.js',
-                    dest: 'build/dann.min.js'
-                }]
-            }
-        }
-    });
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-terser');
+/**
+ * Describe the method
+ * this text can extend on multiple lines...
+ * @method yourFunc
+ * @param {Number} a describe the argument
+ * @param {Number} [b] square brackets make this argument optional
+ * @example
+ * <code>
+ * example here
+ * </code>
+ */
+function yourFunc(a, b) {
+    //code
 }
 ```
+Inline documentation is made possible with the help of yuidoc, see [their documentation](https://yui.github.io/yuidoc/syntax/index.html) for more examples.
+
+
+#### Compile
+
+Build the inline documentation with :
+```
+npm run doc
+```
+
+Once built, you can open `docs/documentation/index.html` to access the new documentation.
 
 <br/>
 
-#### Step 2
 
-* Use `build.bat` before committing to compile your source files referenced in `gruntfile.js` into `/build/dann.js` and `/build/dann.min.js`.
+
+## Unit Tests
+
+Run the unit tests with this command :
+```
+npm run test
+```
+
+#### Adding Unit Tests
+
+You should probably add unit tests if you are planning on adding a new feature.
+We use mocha & chai for unit tests. Add a unit test in `test/unit/` with a similar path as your added files in `/src`.
+
+Be sure your new unit test is included in `/test/unit/concatConfig.js`
+
+Here is the basic example of a unit test :
+```js
+suite('My series of tests',function(){
+    let x, y;
+    setup(function(){
+        // setup code
+    });
+    test('X Should equal Y ',function(){
+        assert.equal(x, y);
+    });
+    test('other test name',function(){
+        // other test
+    });
+    test('other test name 2',function(){
+        // other test 2
+    });    
+});
+```
+No need to include anything, dannjs & chai methods are taken care of when running `npm run test`.
+
+See [chai documentation](https://www.chaijs.com/) for more information on these methods.
 
 <br/>
 
-#### Step 3
+## Manual Tests
 
-* Create a pull request on GitHub. Wait for it to be reviewed!
+Manual tests are executed by the user manually.
+You can use the manual tests located in `test/manual-tests/` both for the browser & node. Feel free to create & add new ones.
 
-Thank you for contributing!
-<br/><br/><br/><br/><br/><br/><br/>
+These files provide a template for writing a manual example :
 
+* `test/manual-tests/node/empty-example`
+* `test/manual-tests/browser/empty-example`
+
+<br/>
+
+## Pull request
+
+before making a pull request, run this command :
+```
+npm run final
+``` 
+This will run all builds and tests while ensuring there are no lint errors. 
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 ## Questions
 

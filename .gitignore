@@ -1,5 +1,4 @@
 node_modules
-.npmignore
-tests
-build.bat
-cmd.cmd
+docs/documentation
+test/unit.js
+

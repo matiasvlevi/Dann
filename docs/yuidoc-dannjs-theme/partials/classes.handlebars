@@ -1,0 +1,92 @@
+<h1>{{name}} Class</h1>
+
+{{#if deprecated}}
+    <div class="box deprecated">
+        <p>
+        {{#if deprecationMessage}}
+            <strong>Deprecated:</strong> {{deprecationMessage}}
+        {{else}}
+            This class is deprecated.
+        {{/if}}
+        </p>
+    </div>
+{{/if}}
+
+<div class="box intro">
+    {{{classDescription}}}
+</div>
+
+<div class="index">
+
+
+{{#if methods}}
+    <div class="index-section methods">
+        <h3>Methods</h3>
+
+        <ul class="index-list methods{{#if extends}} extends{{/if}}">
+
+            {{#is_constructor}}
+                <li class="index-item method{{#if access}} {{access}}{{/if}}{{#if deprecated}} deprecated{{/if}} constructor">
+                    <a href="#method_{{name}}">{{name}}</a>
+
+                    <span class="flag constructor">constructor</span>
+
+                    {{#if static}}
+                        <span class="flag static">static</span>
+                    {{/if}}
+                    {{#if deprecated}}
+                        <span class="flag deprecated">deprecated</span>
+                    {{/if}}
+                </li>
+            {{/is_constructor}}
+
+            {{#methods}}
+                <li class="index-item method{{#if access}} {{access}}{{/if}}{{#if overwritten_from}}{{#if deprecated}} deprecated{{/if}} inherited{{/if}}{{#if extended_from}} inherited{{/if}}">
+                    <a href="#method_{{name}}">{{name}}</a>
+
+                    {{#if static}}
+                        <span class="flag static">static</span>
+                    {{/if}}
+                    {{#if deprecated}}
+                        <span class="flag deprecated">deprecated</span>
+                    {{/if}}
+                </li>
+            {{/methods}}
+        </ul>
+    </div>
+{{/if}}
+</div>
+
+<br/>
+
+<div class="class-detail">
+
+    {{#is_constructor}}
+        <div class="constructor">
+            <h2>Constructor</h2>
+{{>method}}
+        </div>
+        <br/>
+    {{/is_constructor}}
+
+    {{#if methods}}
+        <div class="methods-detail">
+            <h2>Methods</h2>
+
+            {{#methods}}
+
+            <div class="method-box">
+{{>method}}
+            </div>
+            {{/methods}}
+
+
+
+        </div>
+    {{else}}
+        <div class="no-visible-items-message">
+            <p>There are no methods that match your current filter settings. You can change your filter settings in the index section on this page. <a href="#index" class="index-jump-link">index</a></p>
+        </div>
+    {{/if}}
+
+</div>
