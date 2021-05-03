@@ -884,9 +884,7 @@ Matrix.make = function make(rows = 0, cols = 0) {
  * m.log();
  * // [4, 4]
  * // [4, 4]
- *
  * m.map(x => x*x);
- *
  * m.log();
  * // [16, 16]
  * // [16, 16]
@@ -915,9 +913,7 @@ Matrix.prototype.map = function map(f) {
  * m.log();
  * // [4, 4]
  * // [4, 4]
- *
  * let m1 = Matrix.map(m, x => x*x*x);
- *
  * m1.log();
  * // [64, 64]
  * // [64, 64]

@@ -121,6 +121,22 @@ module.exports = (grunt) => {
         outdir: 'docs/documentation/data.json',
       },
     },
+    replace: {
+      index: {
+        src: ['docs/documentation/*.html'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /\.\.\/index\.html/gm,
+            to: '/',
+          },
+          {
+            from: /<code>/g,
+            to: '<code class="rmcode">',
+          },
+        ],
+      },
+    },
   };
 
   config.eslint.fix.src = Object.keys(config.eslint)
@@ -136,6 +152,7 @@ module.exports = (grunt) => {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-rename');
+  grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadTasks('tasks');
 
@@ -151,6 +168,7 @@ module.exports = (grunt) => {
     'yuidoc:compile',
     'formatExamples',
     'clean:unused',
+    'replace:index',
   ]);
   grunt.registerTask('test', ['build-unit', 'mochaTest:test']);
   grunt.registerTask('prod', ['build-fix', 'doc-compile', 'test']);
