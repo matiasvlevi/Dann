@@ -1760,7 +1760,7 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
  * <tr>
  * <td>mode<br>* for development</td>
  * <td>String</td>
- * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This funtionality is not yet implemented</td>
+ * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This functionality is not yet implemented</td>
  * </tr>
  * </tbody>
  * </table>
@@ -1940,7 +1940,7 @@ Dann.createFromJSON = function createFromJSON(data) {
  * <tr>
  * <td>mode<br>* for development</td>
  * <td>String</td>
- * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This funtionality is not yet implemented</td>
+ * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This functionality is not yet implemented</td>
  * </tr>
  * </tbody>
  * </table>
@@ -2168,7 +2168,7 @@ Dann.prototype.load = function load(name, arg2, arg3) {
       } else {
         let type = typeof arg2;
         DannError.error(
-          "callback specified is not a function, the funtion recieved a '" +
+          "callback specified is not a function, the function recieved a '" +
             type +
             "' instead",
           'Dann.prototype.load'
@@ -2181,7 +2181,7 @@ Dann.prototype.load = function load(name, arg2, arg3) {
       } else if (typeof arg2 !== 'function') {
         let type = typeof arg2;
         DannError.error(
-          'Callback specified is not a function, the funtion recieved a ' +
+          'Callback specified is not a function, the function recieved a ' +
             type +
             ' instead',
           'Dann.prototype.load'

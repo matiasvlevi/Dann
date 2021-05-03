@@ -58,7 +58,7 @@ Dann.prototype.load = function load(name, arg2, arg3) {
       } else {
         let type = typeof arg2;
         DannError.error(
-          "callback specified is not a function, the funtion recieved a '" +
+          "callback specified is not a function, the function recieved a '" +
             type +
             "' instead",
           'Dann.prototype.load'
@@ -71,7 +71,7 @@ Dann.prototype.load = function load(name, arg2, arg3) {
       } else if (typeof arg2 !== 'function') {
         let type = typeof arg2;
         DannError.error(
-          'Callback specified is not a function, the funtion recieved a ' +
+          'Callback specified is not a function, the function recieved a ' +
             type +
             ' instead',
           'Dann.prototype.load'
