@@ -134,22 +134,6 @@ module.exports = (grunt) => {
             from: /<code>/g,
             to: '<code class="rmcode">',
           },
-
-        ],
-      },
-      gtm: {
-        src: ['docs/yuidoc-dannjs-theme/layout/*.html'],
-        overwrite: true,
-        replacements: [
-          {
-            from: /\.\.\/index\.html/gm,
-            to: '/',
-          },
-          {
-            from: /<code>/g,
-            to: '<code class="rmcode">',
-          },
-
         ],
       },
     },
