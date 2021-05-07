@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.2.5",
+  "_id": "dannjs@2.2.5b",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -55,7 +55,7 @@
     "test": "grunt test",
     "final": "grunt prod"
   },
-  "version": "2.2.5",
+  "version": "2.2.5b",
   "keywords": [
     "dann",
     "dannjs",
