@@ -101,7 +101,6 @@ for (data of dataset) {
     nn.backpropagate(data.input,data.output);
     console.log(nn.loss);
 }
-
 ```
 
 <br/>
@@ -120,7 +119,23 @@ for (let i = 0; i < populationSize; i++) {
 
     newGeneration.push(childNN);
 }
+```
 
+<br/>
+
+### Standalone function
+Convert a Neural Network to a JS function that can output predictions without the library.
+```js
+let strfunc = nn.toFunction();
+console.log(strfunc);
+```
+
+<br/>
+
+### Save JSON
+```js
+let json = nn.toJSON();
+console.log(json);
 ```
 
 <br/>
