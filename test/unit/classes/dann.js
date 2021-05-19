@@ -359,13 +359,13 @@ suite('Dann Object', function () {
     });
   });
   suite('toFunction', function () {
-    suite('', function () {
+    suite('Test with 4 layer nn', function () {
       let nn;
       let funcstr;
       setup(function () {
         nn = new Dann(4, 4);
-        nn.addHiddenLayer(16, 'sigmoid');
-        nn.addHiddenLayer(16, 'tanH');
+        nn.addHiddenLayer(256, 'sigmoid');
+        nn.addHiddenLayer(64, 'tanH');
         nn.makeWeights();
         funcstr = nn.toFunction();
       });
@@ -377,7 +377,28 @@ suite('Dann Object', function () {
         }
       });
     });
-    suite('', function () {
+    suite('Test with deep nn', function () {
+      let nn;
+      let funcstr;
+      setup(function () {
+        nn = new Dann(8, 12);
+        nn.addHiddenLayer(256, 'sigmoid');
+        nn.addHiddenLayer(128, 'tanH');
+        nn.addHiddenLayer(64, 'leakyReLU');
+        nn.addHiddenLayer(32, 'siLU');
+        nn.outputActivation('tanH');
+        nn.makeWeights(-1, 1);
+        funcstr = nn.toFunction();
+      });
+      test('Should have the same output prediction as the original model', function () {
+        let ans = nn.feedForward([1, 1, 1, 1, 0, 1, 0, 1]);
+        let ansfunc = eval('(' + funcstr + ')([1,1,1,1,0,1,0,1])');
+        for (let i = 0; i < ans.length; i++) {
+          assert.equal(ans[i], ansfunc[i]);
+        }
+      });
+    });
+    suite('Naming', function () {
       let nn;
       let funcstr;
       setup(function () {

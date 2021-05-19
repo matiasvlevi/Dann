@@ -56,10 +56,10 @@ let dataset = [
     target: [1, 1, 0, 1],
   },
   //Comenting out one test sample:
-       {
-      input:[1,1,0,1],
-      target:[1,1,1,0]
-  }, 
+  {
+    input: [1, 1, 0, 1],
+    target: [1, 1, 1, 0],
+  },
   {
     input: [1, 1, 1, 0],
     target: [1, 1, 1, 1],

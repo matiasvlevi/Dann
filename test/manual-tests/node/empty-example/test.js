@@ -6,4 +6,3 @@ const activations = dn.activations;
 const lossfuncs = dn.lossfuncs;
 const poolfuncs = dn.poolfuncs;
 //__________________________ // NODEJS TEST BELOW // __________________________//
-
