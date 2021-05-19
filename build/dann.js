@@ -2744,11 +2744,24 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
       'w[' + i + '] = ' + JSON.stringify(this.weights[i].matrix) + ';';
   }
   stringfunc += 'let l = [];';
+  stringfunc += 'let c = ' + JSON.stringify(this.arch) + ';';
+  stringfunc +=
+    'l[0] = [];' +
+    'for (let i = 0; i < ' +
+    this.i +
+    '; i++) {' +
+    'l[0][i] = [input[i]];' +
+    '};';
+  stringfunc +=
+    'for (let i = 1; i < ' +
+    this.Layers.length +
+    '; i++) {' +
+    'l[i] = [];' +
+    'for (let j = 0; j < c[i]; j++) {' +
+    'l[i][j] = [0];' +
+    '}' +
+    '};';
   stringfunc += 'let a = [];';
-  for (let i = 0; i < this.Layers.length; i++) {
-    stringfunc +=
-      'l[' + i + '] = ' + JSON.stringify(this.Layers[i].layer.matrix) + ';';
-  }
   for (let i = 0; i < this.Layers.length; i++) {
     let actname = this.Layers[i].actname;
     if (i !== 0) {
@@ -2757,7 +2770,12 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
       for (let u = 0; u < actfunc.length; u++) {
         minfunction += actfunc[u];
       }
-      stringfunc += 'a[' + i + '] = ' + minfunction + ';';
+      actfunc = minfunction.split('\t');
+      let minfunction_notabs = '';
+      for (let u = 0; u < actfunc.length; u++) {
+        minfunction_notabs += actfunc[u];
+      }
+      stringfunc += 'a[' + i + '] = ' + minfunction_notabs + ';';
     } else {
       stringfunc += 'a[' + i + '] = undefined;';
     }
@@ -2767,15 +2785,8 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
     stringfunc +=
       'b[' + i + '] = ' + JSON.stringify(this.biases[i].matrix) + ';';
   }
-  // Set inputs
+  // ffw
   stringfunc +=
-    'l[0] = [];' +
-    'for (let i = 0; i < ' +
-    this.i +
-    '; i++) {' +
-    'l[0][i] = [input[i]];' +
-    '};' +
-    // Feedforward
     'for (let m = 0; m < ' +
     this.weights.length +
     '; m++) {' +
@@ -2787,20 +2798,20 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
     'sum += w[m][i][k] * l[m][k][j];' +
     '};' +
     'l[m+1][i][j] = sum;' +
-    '};' +
+    '}' +
     '};' +
     // add biases
     'for (let i = 0; i < l[m+1].length; i++) {' +
     'for (let j = 0; j < l[m+1][0].length; j++) {' +
     'l[m+1][i][j] = l[m+1][i][j] + b[m][i][j];' +
-    '};' +
+    '}' +
     '};' +
     // map layer to activation function
     'for (let i = 0; i < l[m+1].length; i++) {' +
     'for (let j = 0; j < l[m+1][0].length; j++) {' +
     'l[m+1][i][j] = a[m+1](l[m+1][i][j]);' +
-    '};' +
-    '};' +
+    '}' +
+    '}' +
     '};' +
     // return output
     'let o = [];' +
@@ -2816,6 +2827,7 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   //minify
   stringfunc = stringfunc.replace(/ = /g, '=');
   stringfunc = stringfunc.replace(/ \+ /g, '+');
+  stringfunc = stringfunc.replace(/ - /g, '-');
   stringfunc = stringfunc.replace(/ \* /g, '*');
   stringfunc = stringfunc.replace(/ \/ /g, '/');
   stringfunc = stringfunc.replace(/for \(/g, 'for(');
@@ -2823,6 +2835,16 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   stringfunc = stringfunc.replace(/\) {/g, '){');
   stringfunc = stringfunc.replace(/ < /g, '<');
   stringfunc = stringfunc.replace(/ > /g, '>');
+  stringfunc = stringfunc.replace(/ \+= /g, '+=');
+  stringfunc = stringfunc.replace(/;\}/g, '}');
+  for (let i = 0; i < 5; i++) {
+    stringfunc = stringfunc.replace(/\{ /g, '{');
+    stringfunc = stringfunc.replace(/ \{/g, '{');
+    stringfunc = stringfunc.replace(/\} /g, '}');
+  }
+  for (let i = 0; i < 5; i++) {
+    stringfunc = stringfunc.replace(/; /g, ';');
+  }
   return stringfunc;
 };
 

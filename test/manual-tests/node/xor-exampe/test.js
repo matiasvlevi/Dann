@@ -23,7 +23,7 @@ const dataset = [
 
 //Creating the Neural Network:
 const xorNN = new Dann(2, 1);
-xorNN.addHiddenLayer(6, 'tanH');
+xorNN.addHiddenLayer(6, 'leakyReLU');
 xorNN.outputActivation('sigmoid');
 xorNN.makeWeights();
 xorNN.lr = 0.1;

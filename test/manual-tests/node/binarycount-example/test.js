@@ -56,10 +56,10 @@ let dataset = [
     target: [1, 1, 0, 1],
   },
   //Comenting out one test sample:
-  /*     {
+       {
       input:[1,1,0,1],
       target:[1,1,1,0]
-  }, */
+  }, 
   {
     input: [1, 1, 1, 0],
     target: [1, 1, 1, 1],
@@ -69,10 +69,10 @@ let dataset = [
 //Creating the Neural Network:
 
 let nn = new Dann(4, 4);
-nn.addHiddenLayer(16, 'tanH');
+nn.addHiddenLayer(12, 'leakyReLU');
 nn.outputActivation('sigmoid');
 nn.makeWeights();
-nn.lr = 0.1;
+nn.lr = 0.01;
 nn.log();
 
 //Testing before training:
@@ -83,7 +83,7 @@ console.log(' ');
 
 //Training for 500 epochs:
 
-let epoch = 500;
+let epoch = 5000;
 for (nn.epoch = 0; nn.epoch < epoch; nn.epoch++) {
   let sum = 0;
   for (data of dataset) {
