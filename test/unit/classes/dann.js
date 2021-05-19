@@ -130,6 +130,21 @@ suite('Dann Object', function () {
         assert.typeOf(nn.epoch, 'Number');
       });
     });
+    suite('mapping weights', function () {
+      let nn;
+      let w0;
+      setup(function () {
+        nn = new Dann(2, 2);
+        nn.makeWeights(-1, 1);
+        w0 = nn.weights[0].matrix[0][0];
+      });
+      test('should not be the same weight as before', function () {
+        nn.mapWeights((x) => {
+          return 2 * x;
+        });
+        assert.notEqual(w0, nn.weights[0].matrix[0][0]);
+      });
+    });
     suite('With bigger model', function () {
       let nn;
       setup(function () {
@@ -340,6 +355,39 @@ suite('Dann Object', function () {
           assert.equal(act[name], nn.Layers[i].actfunc);
           assert.equal(act[derivative], nn.Layers[i].actfunc_d);
         }
+      });
+    });
+  });
+  suite('toFunction', function () {
+    suite('', function () {
+      let nn;
+      let funcstr;
+      setup(function () {
+        nn = new Dann(4, 4);
+        nn.addHiddenLayer(16, 'sigmoid');
+        nn.addHiddenLayer(16, 'tanH');
+        nn.makeWeights();
+        funcstr = nn.toFunction();
+      });
+      test('Should have the same output prediction as the original model', function () {
+        let ans = nn.feedForward([1, 1, 1, 1]);
+        let ansfunc = eval('(' + funcstr + ')([1,1,1,1])');
+        for (let i = 0; i < ans.length; i++) {
+          assert.equal(ans[i], ansfunc[i]);
+        }
+      });
+    });
+    suite('', function () {
+      let nn;
+      let funcstr;
+      setup(function () {
+        nn = new Dann(1, 1);
+        nn.makeWeights();
+        funcstr = nn.toFunction('functionName');
+      });
+      test('Should have set the function name', function () {
+        let name = eval('(' + funcstr + ').name');
+        assert.equal(name, 'functionName');
       });
     });
   });

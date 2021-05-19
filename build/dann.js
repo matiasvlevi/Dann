@@ -259,34 +259,34 @@ DannError.error = function (error, method) {
 
 //Activation functions:
 function sigmoid(x) {
-  return 1 / (1 + exp(-x));
+  return 1 / (1 + Math.exp(-x));
 }
 function sigmoid_d(x) {
   let x1 = sigmoid(x);
   return x1 * (1 - x1);
 }
 function leakySigmoid(x) {
-  return 1 / (1 + exp(-x)) + x / 100;
+  return 1 / (1 + Math.exp(-x)) + x / 100;
 }
 function leakySigmoid_d(x) {
   let x1 = leakySigmoid(x);
   return x1 * (1 - x1);
 }
 function siLU(x) {
-  return x / (1 + exp(-x));
+  return x / (1 + Math.exp(-x));
 }
 function siLU_d(x) {
-  let top = 1 + exp(-x) + x * exp(-x);
-  let down = pow(1 + exp(-x), 2);
+  let top = 1 + Math.exp(-x) + x * Math.exp(-x);
+  let down = Math.pow(1 + Math.exp(-x), 2);
   return top / down;
 }
 function tanH(x) {
-  let top = exp(x) - exp(-x);
-  let down = exp(x) + exp(-x);
+  let top = Math.exp(x) - Math.exp(-x);
+  let down = Math.exp(x) + Math.exp(-x);
   return top / down;
 }
 function tanH_d(x) {
-  return 1 - pow(tanH(x), 2);
+  return 1 - Math.pow(tanH(x), 2);
 }
 function leakyReLUCapped(x) {
   if (x >= 0 && x <= 6) {
@@ -2099,7 +2099,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * When this function is called, an input tag requesting a file appears on screen. When clicked, it opens a local file dialogue. Once the appropriate file is selected the dann data automatically uploads. The filename argument is not required for this version since the browser dialog takes care of it.
  * @method load
  * @for Dann
- * @deprecated Use fromJSON or createFromJSON
+ * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
  * @param {String} name The name of the variable that holds the dann model.
  * @param {String} arg2 The ID of the HTML element in which to place the input dom element. If left undefined, the input dom element is appended to the body element.
  * @param {Function} arg3 A function to be called when the model finished loading.
@@ -2122,7 +2122,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * Load a previously saved json file from ./savedDanns/. If the network's architechture is not the same, it is going to overwrite the Dann object.
  * @method load
  * @for Dann
- * @deprecated Use fromJSON or createFromJSON
+ * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
  * @example
@@ -2138,48 +2138,48 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * });
  * </code>
  */
-Dann.prototype.load = function load(name, arg2, arg3) {
-  if (isBrowser) {
-    upload(name, arg2, arg3);
-  } else {
-    let path = './savedDanns/' + name + '/dannData.json';
-    if (fs.existsSync(path)) {
-      let text = fs.readFileSync(path, 'utf8');
-      let xdata = JSON.parse(text);
+// Dann.prototype.load = function load(name, arg2, arg3) {
+//   if (isBrowser) {
+//     upload(name, arg2, arg3);
+//   } else {
+//     let path = './savedDanns/' + name + '/dannData.json';
+//     if (fs.existsSync(path)) {
+//       let text = fs.readFileSync(path, 'utf8');
+//       let xdata = JSON.parse(text);
 
-      let newNN = xdata;
-      this.applyToModel(newNN);
-      if (typeof arg2 === 'function') {
-        arg2(false);
-      } else {
-        let type = typeof arg2;
-        DannError.error(
-          "callback specified is not a function, the function recieved a '" +
-            type +
-            "' instead",
-          'Dann.prototype.load'
-        );
-        return;
-      }
-    } else {
-      if (typeof arg2 === 'function') {
-        arg2(true);
-      } else if (typeof arg2 !== 'function') {
-        let type = typeof arg2;
-        DannError.error(
-          'Callback specified is not a function, the function recieved a ' +
-            type +
-            ' instead',
-          'Dann.prototype.load'
-        );
-        return;
-      } else {
-        DannError.error('File not found', 'Dann.prototype.load');
-        return;
-      }
-    }
-  }
-};
+//       let newNN = xdata;
+//       this.applyToModel(newNN);
+//       if (typeof arg2 === 'function') {
+//         arg2(false);
+//       } else {
+//         let type = typeof arg2;
+//         DannError.error(
+//           "callback specified is not a function, the function recieved a '" +
+//             type +
+//             "' instead",
+//           'Dann.prototype.load'
+//         );
+//         return;
+//       }
+//     } else {
+//       if (typeof arg2 === 'function') {
+//         arg2(true);
+//       } else if (typeof arg2 !== 'function') {
+//         let type = typeof arg2;
+//         DannError.error(
+//           'Callback specified is not a function, the function recieved a ' +
+//             type +
+//             ' instead',
+//           'Dann.prototype.load'
+//         );
+//         return;
+//       } else {
+//         DannError.error('File not found', 'Dann.prototype.load');
+//         return;
+//       }
+//     }
+//   }
+// };
 
 /**
  * Displays information about the model in the console.
@@ -2445,6 +2445,31 @@ Dann.prototype.makeWeights = function makeWeights(arg1, arg2) {
 };
 
 /**
+ * This method maps the weights of a Dann model. It is usefull for neuroevolution simulations where you would map the weights with an equation containing a random factor.
+ * @method mapWeights
+ * @param {Function} f the function to map the weights with.
+ * @example
+ * <code>
+ * const nn = new Dann(2, 2);
+ * nn.makeWeights(-1, 1);
+ * nn.log({weights:true});
+ * nn.mapWeights((x)=>{
+ *   return (Math.random()*0.1)+x;
+ * });
+ * nn.log({weights:true})
+ * </code>
+ */
+Dann.prototype.mapWeights = function mapWeights(f) {
+  if (typeof f === 'function') {
+    for (let i = 0; i < this.weights.length; i++) {
+      this.weights[i].map(f);
+    }
+  } else {
+    DannError.error('Argument must be a function', 'Dann.prototype.mapWeights');
+  }
+};
+
+/**
  * This function mutates the weights by taking a percentage of the weight & adding it to the weight. This is for Neuroevolution tasks.
  * @method mutateAdd
  * @for Dann
@@ -2556,7 +2581,7 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  * saves a json file containing information about the network and its current state. When the function is called, a local file dialogue is opened by the browser.
  * @method save
  * @for Dann
- * @deprecated Use toJSON
+ * @deprecated Use toJSON, Removed in 2.2.6
  * @param {String} name The name of the json file.
  */
 /**
@@ -2564,98 +2589,98 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  * saves a json file containing information about the network and its current state in ./savedDanns/name/dannData.json.
  * @method save
  * @for Dann
- * @deprecated Use toJSON
+ * @deprecated Use toJSON, Removed in 2.2.6
  * @param {String} name The name of the json file.
  * @param {Object} [options] An object containing options on the save process.
  */
-Dann.prototype.save = function save(name, options) {
-  let path;
-  let overwritten = false;
-  let report = false;
-  let result = 0;
-  let rstr = 'none';
-  //options
-  if (options !== undefined) {
-    if (options.report !== undefined) {
-      report = options.report;
-    }
-    if (options.test !== undefined) {
-      if (typeof options.test === 'function') {
-        let testfunc = options.test;
-        result = testfunc() * 100;
-        rstr = result + '%';
-      } else {
-        console.error('Dann Error: the test option can only be a function.');
-        console.trace();
-      }
-    }
-  }
-  let dataOBJ = this.dataObject();
+// Dann.prototype.save = function save(name, options) {
+//   let path;
+//   let overwritten = false;
+//   let report = false;
+//   let result = 0;
+//   let rstr = 'none';
+//   //options
+//   if (options !== undefined) {
+//     if (options.report !== undefined) {
+//       report = options.report;
+//     }
+//     if (options.test !== undefined) {
+//       if (typeof options.test === 'function') {
+//         let testfunc = options.test;
+//         result = testfunc() * 100;
+//         rstr = result + '%';
+//       } else {
+//         console.error('Dann Error: the test option can only be a function.');
+//         console.trace();
+//       }
+//     }
+//   }
+//   let dataOBJ = this.dataObject();
 
-  if (isBrowser) {
-    downloadSTR(dataOBJ, name);
-  } else {
-    path = './savedDanns/' + name + '/dannData.json';
-    if (fs.existsSync(path)) {
-      overwritten = true;
-    }
-    if (!fs.existsSync('./savedDanns')) {
-      fs.mkdirSync('./savedDanns');
-    }
-    if (!fs.existsSync('./savedDanns/' + name)) {
-      fs.mkdirSync('./savedDanns/' + name);
-    }
-    if (report === true) {
-      let acts = [];
-      for (let i = 1; i < this.arch.length; i++) {
-        acts[i - 1] = this.Layers[i].actname;
-      }
-      let csvFile = [];
-      csvFile.push(['Dann', 'train report']);
-      csvFile.push(['Arch: ', this.arch]);
-      csvFile.push(['Acts: ', acts]);
-      csvFile.push(['Lr: ', this.lr]);
-      csvFile.push(['Epoch:', this.epoch]);
+//   if (isBrowser) {
+//     downloadSTR(dataOBJ, name);
+//   } else {
+//     path = './savedDanns/' + name + '/dannData.json';
+//     if (fs.existsSync(path)) {
+//       overwritten = true;
+//     }
+//     if (!fs.existsSync('./savedDanns')) {
+//       fs.mkdirSync('./savedDanns');
+//     }
+//     if (!fs.existsSync('./savedDanns/' + name)) {
+//       fs.mkdirSync('./savedDanns/' + name);
+//     }
+//     if (report === true) {
+//       let acts = [];
+//       for (let i = 1; i < this.arch.length; i++) {
+//         acts[i - 1] = this.Layers[i].actname;
+//       }
+//       let csvFile = [];
+//       csvFile.push(['Dann', 'train report']);
+//       csvFile.push(['Arch: ', this.arch]);
+//       csvFile.push(['Acts: ', acts]);
+//       csvFile.push(['Lr: ', this.lr]);
+//       csvFile.push(['Epoch:', this.epoch]);
 
-      if (typeof options.test === 'function') {
-        csvFile.push(['Accuracy:', rstr]);
-      }
-      csvFile.push(['Index', 'AvgLoss']);
-      for (let i = 0; i < this.losses.length; i++) {
-        csvFile.push([i + 1, this.losses[i]]);
-      }
+//       if (typeof options.test === 'function') {
+//         csvFile.push(['Accuracy:', rstr]);
+//       }
+//       csvFile.push(['Index', 'AvgLoss']);
+//       for (let i = 0; i < this.losses.length; i++) {
+//         csvFile.push([i + 1, this.losses[i]]);
+//       }
 
-      w.writeToPath('./savedDanns/' + name + '/report.csv', csvFile)
-        .on('error', (err) => console.error(err))
-        .on('finish', () =>
-          console.log(
-            'saved training report at ' + './savedDanns/' + name + '/report.csv'
-          )
-        );
-    }
+//       w.writeToPath('./savedDanns/' + name + '/report.csv', csvFile)
+//         .on('error', (err) => console.error(err))
+//         .on('finish', () =>
+//           console.log(
+//             'saved training report at ' + './savedDanns/' + name + '/report.csv'
+//           )
+//         );
+//     }
 
-    fs.writeFileSync(path, JSON.stringify(dataOBJ));
-    if (overwritten === true) {
-      console.log('\x1b[32m', '');
-      this.log();
-      console.log(
-        'Succesfully overwritten the Dann Model at ./savedDanns/' +
-          name +
-          '/dannData.json '
-      );
-      console.log('\x1b[0m', '');
-    } else {
-      console.log('\x1b[32m', '');
-      this.log();
-      console.log(
-        'Succesfully saved the Dann Model at ./savedDanns/' +
-          name +
-          '/dannData.json '
-      );
-      console.log('\x1b[0m', '');
-    }
-  }
-};
+//     fs.writeFileSync(path, JSON.stringify(dataOBJ));
+//     if (overwritten === true) {
+//       console.log('\x1b[32m', '');
+//       this.log();
+//       console.log(
+//         'Succesfully overwritten the Dann Model at ./savedDanns/' +
+//           name +
+//           '/dannData.json '
+//       );
+//       console.log('\x1b[0m', '');
+//     } else {
+//       console.log('\x1b[32m', '');
+//       this.log();
+//       console.log(
+//         'Succesfully saved the Dann Model at ./savedDanns/' +
+//           name +
+//           '/dannData.json '
+//       );
+//       console.log('\x1b[0m', '');
+//     }
+//   }
+// };
 
 /**
  * Set the loss function of a Dann model
@@ -2694,6 +2719,111 @@ Dann.prototype.setLossFunction = function setLossFunction(name) {
   }
   this.lossfunc_s = name;
   this.lossfunc = func;
+};
+
+/**
+ * This method allows for a Dann model to be converted into a minified javascript function that can run independently, which means you don't need to import the library for it to work. The function generated acts as a Dann.feedForward().
+ * @method toFunction
+ * @param {String} [name] the name of the function, set to 'myDannFunction' by default.
+ * @return {String} The function as a string.
+ * @example
+ * <code>
+ * const nn = new Dann(4, 4);
+ * nn.addHiddenLayer(8);
+ * nn.makeWeights();
+ * let stringFunction = nn.toFunction();
+ * // Copy & paste the string function!
+ * console.log(stringFunction);
+ * </code>
+ */
+Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
+  let stringfunc = 'function ' + name + '(input) {';
+  stringfunc += 'let w = [];';
+  for (let i = 0; i < this.weights.length; i++) {
+    stringfunc +=
+      'w[' + i + '] = ' + JSON.stringify(this.weights[i].matrix) + ';';
+  }
+  stringfunc += 'let l = [];';
+  stringfunc += 'let a = [];';
+  for (let i = 0; i < this.Layers.length; i++) {
+    stringfunc +=
+      'l[' + i + '] = ' + JSON.stringify(this.Layers[i].layer.matrix) + ';';
+  }
+  for (let i = 0; i < this.Layers.length; i++) {
+    let actname = this.Layers[i].actname;
+    if (i !== 0) {
+      let actfunc = activations[actname].toString().split('\n');
+      let minfunction = '';
+      for (let u = 0; u < actfunc.length; u++) {
+        minfunction += actfunc[u];
+      }
+      stringfunc += 'a[' + i + '] = ' + minfunction + ';';
+    } else {
+      stringfunc += 'a[' + i + '] = undefined;';
+    }
+  }
+  stringfunc += 'let b = [];';
+  for (let i = 0; i < this.biases.length; i++) {
+    stringfunc +=
+      'b[' + i + '] = ' + JSON.stringify(this.biases[i].matrix) + ';';
+  }
+  // Set inputs
+  stringfunc +=
+    'l[0] = [];' +
+    'for (let i = 0; i < ' +
+    this.i +
+    '; i++) {' +
+    'l[0][i] = [input[i]];' +
+    '};' +
+    // Feedforward
+    'for (let m = 0; m < ' +
+    this.weights.length +
+    '; m++) {' +
+    // mult
+    'for (let i = 0; i < w[m].length; i++) {' +
+    'for (let j = 0; j < l[m][0].length; j++) {' +
+    'let sum = 0;' +
+    'for (let k = 0; k < w[m][0].length; k++) {' +
+    'sum += w[m][i][k] * l[m][k][j];' +
+    '};' +
+    'l[m+1][i][j] = sum;' +
+    '};' +
+    '};' +
+    // add biases
+    'for (let i = 0; i < l[m+1].length; i++) {' +
+    'for (let j = 0; j < l[m+1][0].length; j++) {' +
+    'l[m+1][i][j] = l[m+1][i][j] + b[m][i][j];' +
+    '};' +
+    '};' +
+    // map layer to activation function
+    'for (let i = 0; i < l[m+1].length; i++) {' +
+    'for (let j = 0; j < l[m+1][0].length; j++) {' +
+    'l[m+1][i][j] = a[m+1](l[m+1][i][j]);' +
+    '};' +
+    '};' +
+    '};' +
+    // return output
+    'let o = [];' +
+    'for (let i = 0; i < ' +
+    this.o +
+    '; i++) {' +
+    'o[i] = l[' +
+    (this.Layers.length - 1) +
+    '][i][0];' +
+    '};' +
+    'return o' +
+    '}';
+  //minify
+  stringfunc = stringfunc.replace(/ = /g, '=');
+  stringfunc = stringfunc.replace(/ \+ /g, '+');
+  stringfunc = stringfunc.replace(/ \* /g, '*');
+  stringfunc = stringfunc.replace(/ \/ /g, '/');
+  stringfunc = stringfunc.replace(/for \(/g, 'for(');
+  stringfunc = stringfunc.replace(/; /g, ';');
+  stringfunc = stringfunc.replace(/\) {/g, '){');
+  stringfunc = stringfunc.replace(/ < /g, '<');
+  stringfunc = stringfunc.replace(/ > /g, '>');
+  return stringfunc;
 };
 
 /**

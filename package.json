@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.2.5b",
+  "_id": "dannjs@2.2.6",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -32,8 +32,6 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "fast-csv": "^4.3.5",
-    "fs": "0.0.1-security",
     "mathjs": "^8.0.1"
   },
   "deprecated": false,
@@ -53,9 +51,10 @@
     "lint:fix": "grunt lint-fix",
     "doc": "grunt doc-compile",
     "test": "grunt test",
-    "final": "grunt prod"
+    "final": "grunt prod",
+    "nodetest": "cd test/manual-tests/node/empty-example & start run.cmd"
   },
-  "version": "2.2.5b",
+  "version": "2.2.6",
   "keywords": [
     "dann",
     "dannjs",
