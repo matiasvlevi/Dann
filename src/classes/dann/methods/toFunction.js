@@ -15,29 +15,20 @@
  */
 Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   let stringfunc = 'function ' + name + '(input) {';
+  // Setting weights
   stringfunc += 'let w = [];';
   for (let i = 0; i < this.weights.length; i++) {
     stringfunc +=
       'w[' + i + '] = ' + JSON.stringify(this.weights[i].matrix) + ';';
   }
-  stringfunc += 'let l = [];';
+  // Setting biases
+  stringfunc += 'let b = [];';
+  for (let i = 0; i < this.biases.length; i++) {
+    stringfunc +=
+      'b[' + i + '] = ' + JSON.stringify(this.biases[i].matrix) + ';';
+  }
   stringfunc += 'let c = ' + JSON.stringify(this.arch) + ';';
-  stringfunc +=
-    'l[0] = [];' +
-    'for (let i = 0; i < ' +
-    this.i +
-    '; i++) {' +
-    'l[0][i] = [input[i]];' +
-    '};';
-  stringfunc +=
-    'for (let i = 1; i < ' +
-    this.Layers.length +
-    '; i++) {' +
-    'l[i] = [];' +
-    'for (let j = 0; j < c[i]; j++) {' +
-    'l[i][j] = [0];' +
-    '}' +
-    '};';
+  // Setting activations
   stringfunc += 'let a = [];';
   for (let i = 0; i < this.Layers.length; i++) {
     let actname = this.Layers[i].actname;
@@ -57,11 +48,24 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
       stringfunc += 'a[' + i + '] = undefined;';
     }
   }
-  stringfunc += 'let b = [];';
-  for (let i = 0; i < this.biases.length; i++) {
-    stringfunc +=
-      'b[' + i + '] = ' + JSON.stringify(this.biases[i].matrix) + ';';
-  }
+  // Setting layers
+  stringfunc += 'let l = [];';
+  stringfunc +=
+    'l[0] = [];' +
+    'for (let i = 0; i < ' +
+    this.i +
+    '; i++) {' +
+    'l[0][i] = [input[i]];' +
+    '};';
+  stringfunc +=
+    'for (let i = 1; i < ' +
+    this.Layers.length +
+    '; i++) {' +
+    'l[i] = [];' +
+    'for (let j = 0; j < c[i]; j++) {' +
+    'l[i][j] = [0];' +
+    '}' +
+    '};';
   // ffw
   stringfunc +=
     'for (let m = 0; m < ' +
