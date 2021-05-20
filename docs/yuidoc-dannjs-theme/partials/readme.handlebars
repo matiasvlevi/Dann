@@ -27,7 +27,7 @@
 
 <h2 id="installation">Installation</h2>
 <h3 id="cdn-">CDN :</h3>
-<pre><code class="rmcode html">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@v2.2.6c/build/dann.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<pre><code class="rmcode html">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@v2.2.6d/build/dann.min.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h3 id="node-">Node :</h3>
 <pre><code>npm i dannjs</code></pre><p><a href="https://www.npmjs.com/package/dannjs">dannjs on npmjs.com</a>
 <br/><br/></p>
@@ -83,8 +83,7 @@ const dataset = [
 for (data of dataset) {
     nn.backpropagate(data.input,data.output);
     console.log(nn.loss);
-}
-</code></pre>
+}</code></pre>
 <br/>
 
 <h3 id="train-by-mutation">Train by mutation</h3>
@@ -99,8 +98,18 @@ for (let i = 0; i &lt; populationSize; i++) {
     childNN.mutateRandom(0.01,0.65);
 
     newGeneration.push(childNN);
-}
-</code></pre>
+}</code></pre>
+<br/>
+
+<h3 id="standalone-function">Standalone function</h3>
+<p>Convert a Neural Network to a JS function that can output predictions without the library.</p>
+<pre><code class="rmcode js">let strfunc = nn.toFunction();
+console.log(strfunc);</code></pre>
+<br/>
+
+<h3 id="save-json">Save JSON</h3>
+<pre><code class="rmcode js">let json = nn.toJSON();
+console.log(json);</code></pre>
 <br/>
 
 <br/>
