@@ -4,7 +4,7 @@ test
 tasks
 src
 docs
-.eslintr
+.eslintrc
 .prettierrc
 gruntfile.js
 CONTRIBUTING.md
