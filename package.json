@@ -32,7 +32,7 @@
   },
   "bundleDependencies": false,
   "deprecated": false,
-  "description": "A simple neural network library.",
+  "description": "Deep Neural Network Library for JavaScript.",
   "homepage": "https://github.com/matiasvlevi/Dann#readme",
   "license": "ISC",
   "main": "build/dann.js",
