@@ -136,9 +136,43 @@ module.exports = (grunt) => {
           },
         ],
       },
+      version: {
+        src: ['package.json'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /"_id": "dannjs@.*"/gm,
+            to: '"_id": "dannjs@<%= grunt.option("ver") %>"',
+          },
+          {
+            from: /"version": ".*"/gm,
+            to: '"version": "<%= grunt.option("ver") %>"',
+          },
+        ],
+      },
+      testversion: {
+        src: ['test/manual-tests/browser/*/*.html'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /<span class="project-version">.*<\/span>/gm,
+            to:
+              '<span class="project-version"><%= grunt.option("ver")%></span>',
+          },
+        ],
+      },
+      readmeversion: {
+        src: ['README.md'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /dann@v.*\/build/gm,
+            to: 'dann@v<%= grunt.option("ver") %>/build',
+          },
+        ],
+      },
     },
   };
-
   config.eslint.fix.src = Object.keys(config.eslint)
     .map((s) => config.eslint[s].src)
     .reduce((a, b) => a.concat(b), [])
@@ -169,6 +203,11 @@ module.exports = (grunt) => {
     'formatExamples',
     'clean:unused',
     'replace:index',
+  ]);
+  grunt.registerTask('tag', [
+    'replace:version',
+    'replace:testversion',
+    'replace:readmeversion',
   ]);
   grunt.registerTask('test', ['build-unit', 'mochaTest:test']);
   grunt.registerTask('prod', ['build-fix', 'doc-compile', 'test']);
