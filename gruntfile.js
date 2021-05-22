@@ -115,6 +115,12 @@ module.exports = (grunt) => {
         ],
       },
     },
+    sampleTest: {
+      samples: {
+        path: 'docs/documentation/data.json',
+        outdir: 'docs/documentation/data.json',
+      },
+    },
     formatExamples: {
       samples: {
         path: 'docs/documentation/data.json',
@@ -209,6 +215,10 @@ module.exports = (grunt) => {
     'replace:testversion',
     'replace:readmeversion',
   ]);
-  grunt.registerTask('test', ['build-unit', 'mochaTest:test']);
+  grunt.registerTask('test', [
+    'build-unit',
+    'sampleTest:samples',
+    'mochaTest:test',
+  ]);
   grunt.registerTask('prod', ['build-fix', 'doc-compile', 'test']);
 };
