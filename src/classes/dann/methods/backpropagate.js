@@ -41,7 +41,7 @@
  * const nn = new Dann(2, 1);
  * nn.addHiddenLayer(8);
  * nn.makeWeights();
- * // Train 1 epoch
+ * // Train 1000 epoch
  * for (let i = 0; i < 1000; i++) {
  *    nn.backpropagate([0,0],[0]);
  *    nn.backpropagate([1,0],[1]);
