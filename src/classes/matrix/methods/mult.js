@@ -37,7 +37,7 @@ Matrix.prototype.mult = function mult(n) {
   if (n instanceof Matrix) {
     if (this.rows !== n.rows || this.cols !== n.cols) {
       DannError.error(
-        'The matrix dimensions should match in order to multiply their values. If you are looking for dot product, try Matrix.multiplication',
+        'The matrix dimensions should match in order to multiply their values. If you are looking for dot product, try Matrix.mult',
         'Matrix.prototype.mult'
       );
       return;
@@ -82,13 +82,12 @@ Matrix.prototype.mult = function mult(n) {
  *    [0, 1, 1],
  *    [1, 0, 0]
  * ]);
- * let c = a.mult(b);
+ * let c = Matrix.mult(a,b);
  * c.log();
  * // c.matrix is
- * // [1, 0, 1]
+ * // [1, 1, 2]
  * // [0, 1, 0]
- * // [0, 1, 1]
- * // [1, 0, 0]
+ * // [1, 2, 1]
  * </code>
  */
 Matrix.mult = function mult(a, b, options = { mode: 'cpu' }) {
