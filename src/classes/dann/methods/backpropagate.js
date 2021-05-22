@@ -39,8 +39,10 @@
  * @example
  * <code>
  * const nn = new Dann(2, 1);
+ * nn.addHiddenLayer(8);
+ * nn.makeWeights();
  * // Train 1 epoch
- * for (data of dataset) {
+ * for (let i = 0; i < 1000; i++) {
  *    nn.backpropagate([0,0],[0]);
  *    nn.backpropagate([1,0],[1]);
  *    nn.backpropagate([0,1],[1]);

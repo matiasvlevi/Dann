@@ -42,7 +42,7 @@ Matrix.prototype.insert = function insert(value, x, y) {
     );
     return;
   }
-  if (x < this.cols && y < this.rows) {
+  if (x < this.rows && y < this.cols) {
     this.matrix[x][y] = value;
     return this;
   } else {

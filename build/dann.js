@@ -773,7 +773,7 @@ Matrix.prototype.insert = function insert(value, x, y) {
     );
     return;
   }
-  if (x < this.cols && y < this.rows) {
+  if (x < this.rows && y < this.cols) {
     this.matrix[x][y] = value;
     return this;
   } else {
@@ -941,7 +941,7 @@ Matrix.prototype.mult = function mult(n) {
   if (n instanceof Matrix) {
     if (this.rows !== n.rows || this.cols !== n.cols) {
       DannError.error(
-        'The matrix dimensions should match in order to multiply their values. If you are looking for dot product, try Matrix.multiplication',
+        'The matrix dimensions should match in order to multiply their values. If you are looking for dot product, try Matrix.mult',
         'Matrix.prototype.mult'
       );
       return;
@@ -986,13 +986,12 @@ Matrix.prototype.mult = function mult(n) {
  *    [0, 1, 1],
  *    [1, 0, 0]
  * ]);
- * let c = a.mult(b);
+ * let c = Matrix.mult(a,b);
  * c.log();
  * // c.matrix is
- * // [1, 0, 1]
+ * // [1, 1, 2]
  * // [0, 1, 0]
- * // [0, 1, 1]
- * // [1, 0, 0]
+ * // [1, 2, 1]
  * </code>
  */
 Matrix.mult = function mult(a, b, options = { mode: 'cpu' }) {
@@ -1732,8 +1731,10 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
  * @example
  * <code>
  * const nn = new Dann(2, 1);
+ * nn.addHiddenLayer(8);
+ * nn.makeWeights();
  * // Train 1 epoch
- * for (data of dataset) {
+ * for (let i = 0; i < 1000; i++) {
  *    nn.backpropagate([0,0],[0]);
  *    nn.backpropagate([1,0],[1]);
  *    nn.backpropagate([0,1],[1]);
@@ -2082,19 +2083,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * @param {String} name The name of the variable that holds the dann model.
  * @param {String} arg2 The ID of the HTML element in which to place the input dom element. If left undefined, the input dom element is appended to the body element.
  * @param {Function} arg3 A function to be called when the model finished loading.
- * @example
- * <code>
- * const nn = new Dann();
- * //opens a DOM file selector
- * nn.load('nn', undefined, function(err) {
- *     if (err) {
- *         console.log('Error loading the Dann model');
- *     } else {
- *         console.log('Successfully loaded the Dann model');
- *         nn.log();
- *     }
- * });
- * </code>
  */
 /**
  * (Nodejs)
@@ -2104,18 +2092,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
- * @example
- * <code>
- * const nn = new Dann();
- * nn.load('savedname',function(err) {
- *     if (err) {
- *         console.log('Error loading the Dann model');
- *     } else {
- *         console.log('Successfully loaded the Dann model');
- *         nn.log();
- *     }
- * });
- * </code>
  */
 // Dann.prototype.load = function load(name, arg2, arg3) {
 //   if (isBrowser) {
@@ -2472,7 +2448,7 @@ Dann.prototype.mutateAdd = function mutateAdd(randomFactor) {
     return;
   } else {
     for (let i = 0; i < this.weights.length; i++) {
-      this.weights[i].addPrecent(randomFactor);
+      this.weights[i].addPercent(randomFactor);
     }
   }
 };

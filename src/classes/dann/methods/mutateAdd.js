@@ -22,7 +22,7 @@ Dann.prototype.mutateAdd = function mutateAdd(randomFactor) {
     return;
   } else {
     for (let i = 0; i < this.weights.length; i++) {
-      this.weights[i].addPrecent(randomFactor);
+      this.weights[i].addPercent(randomFactor);
     }
   }
 };

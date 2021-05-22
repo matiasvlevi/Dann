@@ -7,19 +7,6 @@
  * @param {String} name The name of the variable that holds the dann model.
  * @param {String} arg2 The ID of the HTML element in which to place the input dom element. If left undefined, the input dom element is appended to the body element.
  * @param {Function} arg3 A function to be called when the model finished loading.
- * @example
- * <code>
- * const nn = new Dann();
- * //opens a DOM file selector
- * nn.load('nn', undefined, function(err) {
- *     if (err) {
- *         console.log('Error loading the Dann model');
- *     } else {
- *         console.log('Successfully loaded the Dann model');
- *         nn.log();
- *     }
- * });
- * </code>
  */
 /**
  * (Nodejs)
@@ -29,18 +16,6 @@
  * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
- * @example
- * <code>
- * const nn = new Dann();
- * nn.load('savedname',function(err) {
- *     if (err) {
- *         console.log('Error loading the Dann model');
- *     } else {
- *         console.log('Successfully loaded the Dann model');
- *         nn.log();
- *     }
- * });
- * </code>
  */
 // Dann.prototype.load = function load(name, arg2, arg3) {
 //   if (isBrowser) {
