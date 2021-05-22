@@ -28,7 +28,7 @@
 ## Installation
 ### CDN :
 ```html
-<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@v2.2.6d/build/dann.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@v2.2.6e/build/dann.min.js"></script>
 ```
 ### Node :
 ```
