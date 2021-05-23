@@ -93,7 +93,7 @@ Matrix.prototype.add = function add(n) {
 Matrix.add = function add(a, b) {
   let ans = new Matrix(a.rows, a.cols);
   if (a.rows !== b.rows || a.cols !== b.cols) {
-    DannError.error('Matrix dimensions should match', 'Matrix.addition');
+    DannError.error('Matrix dimensions should match', 'Matrix.add');
     return;
   } else {
     for (let i = 0; i < ans.rows; i++) {

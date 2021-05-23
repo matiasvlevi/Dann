@@ -10,7 +10,16 @@ module.exports = function (grunt) {
     let file = grunt.file.read(this.data.path);
     let data = JSON.parse(file);
     let items = data.classitems;
+    let olddannlog = Dann.prototype.log;
     Dann.prototype.log = function() {
+      return;
+    }
+    let oldmatrixlog = Matrix.prototype.log;
+    Matrix.prototype.log = function () {
+      return;
+    }
+    let oldlayerlog = Layer.prototype.log;
+    Layer.prototype.log = function() {
       return;
     }
     let oldconsolelog = console.log;
@@ -63,6 +72,14 @@ module.exports = function (grunt) {
                 title +
                 '\x1b[0m'
             );
+            grunt.log.writeln(
+              '\x1b[37m' +
+                '    ' +
+                '\x1b[31m' +
+                ` ^ ${err}` +
+                '\x1b[0m'
+            );
+            grunt.log.writeln('    ' + items[i].description);
             failurecount++;
           }
         }
@@ -80,6 +97,9 @@ module.exports = function (grunt) {
         '\x1b[0m' +
         ` tests passed`
     );
+    Dann.prototype.log = olddannlog;
+    Matrix.prototype.log = oldmatrixlog;
+    Layer.prototype.log = oldlayerlog;
     console.log = oldconsolelog;
   });
 };
