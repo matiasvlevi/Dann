@@ -1591,7 +1591,37 @@ Dann = function Dann(i = 1, o = 1) {
  * @method addHiddenLayer
  * @for Dann
  * @param {Number} size Layer size, the number of neurons in the layer.
- * @param {String} [act] Takes a string of the activation function's name. If left empty, the activation function will be set to 'sigmoid' by default. See available activation functions <a href="https://dannjs.org">Here</a>.
+ * @param {String} [act] Takes a string of the activation function's name. If left empty, the activation function will be set to 'sigmoid' by default. See available activation functions <a target="_blank" href="https://dannjs.org">Here</a>.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>Sigmoid</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/so8eiigug4">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>leakyReLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ktqjycao5q">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>reLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/k0owjvxs7p">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>siLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/f4nhtck5dr">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>tanH</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/yeujr5mykx">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
  * @example
  * <code>
  * const nn = new Dann(10, 2);
@@ -2435,7 +2465,37 @@ Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
  * Sets the activation function of the output.
  * @method outputActivation
  * @for Dann
- * @param {String} act Takes a string of the activation function's name. If this function is not called, the activation function will be set to 'sigmoid' by default. See available activation functions <a href="https://dannjs.org">here</a>.
+ * @param {String} act Takes a string of the activation function's name. If this function is not called, the activation function will be set to 'sigmoid' by default. See available activation functions <a target="_blank" href="https://dannjs.org">here</a>.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>Sigmoid</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/so8eiigug4">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>leakyReLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ktqjycao5q">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>reLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/k0owjvxs7p">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>siLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/f4nhtck5dr">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>tanH</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/yeujr5mykx">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
@@ -2578,7 +2638,49 @@ Dann.prototype.outputActivation = function outputActivation(act) {
 /**
  * Set the loss function of a Dann model
  * @method setLossFunction
- * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a href="dannjs.org">Here</a>.
+ * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>mse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/msg3bebyhe">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mae</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/sqyudacjzb">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>lcl</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ropuc3y6sa">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mbe</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/xzp1hr0vin">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mael</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/dimqieesut">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>rmse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/x7efwdfada">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/bzlqe7bafx">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>bce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/wznjx4qsm2">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
