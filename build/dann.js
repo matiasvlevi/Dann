@@ -251,6 +251,27 @@ function reLU_d(x) {
     return 0;
   }
 }
+function sinc(x) {
+  if (x === 0) {
+    return 1;
+  } else {
+    return Math.sin(x) / x;
+  }
+}
+function sinc_d(x) {
+  if (x === 0) {
+    return 0;
+  } else {
+    return Math.cos(x) / x - Math.sin(x) / (x * x);
+  }
+}
+function softsign(x) {
+  return x / (1 + Math.abs(x));
+}
+function softsign_d(x) {
+  let down = 1 + Math.abs(x);
+  return 1 / (down * down);
+}
 // Exporting Functions:
 let activations = {
   //Basic:
@@ -264,6 +285,10 @@ let activations = {
   reLU_d: reLU_d,
   leakyReLU: leakyReLU,
   leakyReLU_d: leakyReLU_d,
+  sinc: sinc,
+  sinc_d: sinc_d,
+  softsign: softsign,
+  softsign_d: softsign_d,
   //Experimental:
   leakySigmoid: leakySigmoid,
   leakySigmoid_d: leakySigmoid_d,
@@ -1620,6 +1645,14 @@ Dann = function Dann(i = 1, o = 1) {
  *     <td>tanH</td>
  *     <td><a target="_blank" href="https://www.desmos.com/calculator/yeujr5mykx">See graph</a></td>
  *   </tr>
+ *   <tr>
+ *     <td>softsign</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/kpt0rvcsf2">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>sinc</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/uslhi2re1x">See graph</a></td>
+ *   </tr>
  * </tbody>
  * </table>
  * @example
@@ -2493,6 +2526,14 @@ Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
  *   <tr>
  *     <td>tanH</td>
  *     <td><a target="_blank" href="https://www.desmos.com/calculator/yeujr5mykx">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softsign</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/kpt0rvcsf2">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>sinc</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/uslhi2re1x">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>

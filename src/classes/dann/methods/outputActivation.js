@@ -31,6 +31,14 @@
  *     <td>tanH</td>
  *     <td><a target="_blank" href="https://www.desmos.com/calculator/yeujr5mykx">See graph</a></td>
  *   </tr>
+ *   <tr>
+ *     <td>softsign</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/kpt0rvcsf2">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>sinc</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/uslhi2re1x">See graph</a></td>
+ *   </tr>
  * </tbody>
  * </table>
  * @example
