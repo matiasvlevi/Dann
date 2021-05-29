@@ -1647,11 +1647,11 @@ Dann = function Dann(i = 1, o = 1) {
  *   </tr>
  *   <tr>
  *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/kpt0rvcsf2">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/2yq9slhv4g">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>sinc</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/uslhi2re1x">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/68oi4qfw1q">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>
@@ -2529,11 +2529,11 @@ Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
  *   </tr>
  *   <tr>
  *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/kpt0rvcsf2">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/2yq9slhv4g">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>sinc</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/uslhi2re1x">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/68oi4qfw1q">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>
