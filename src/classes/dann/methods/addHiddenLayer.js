@@ -34,7 +34,7 @@
  *   </tr>
  *   <tr>
  *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/2yq9slhv4g">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/o6a2dchde1">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>sinc</td>
