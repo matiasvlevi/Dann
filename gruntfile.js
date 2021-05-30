@@ -142,6 +142,16 @@ module.exports = (grunt) => {
           },
         ],
       },
+      constant: {
+        src: ['src/io/head.js'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /VERSION = '.*'/gm,
+            to: "VERSION = 'v<%= grunt.option('ver') %>'",
+          },
+        ],
+      },
       version: {
         src: ['package.json'],
         overwrite: true,
@@ -214,6 +224,8 @@ module.exports = (grunt) => {
     'replace:version',
     'replace:testversion',
     'replace:readmeversion',
+    'replace:constant',
+    'build-fix',
   ]);
   grunt.registerTask('test', [
     'build-unit',

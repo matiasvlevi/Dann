@@ -1,7 +1,7 @@
 // Source file concat configuration
 module.exports = [
   // Import dependencies
-  'src/io/imports.js',
+  'src/io/head.js',
   // Core
   'src/core/**/*.js',
   // Matrix
