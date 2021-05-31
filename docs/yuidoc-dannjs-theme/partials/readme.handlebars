@@ -9,7 +9,7 @@
 </p>
 <h4 align="center">Deep Neural Network Library for Javascript</h4>
 <p align="center">
-    Train a neural network with your data & save it's trained state!
+    Train a neural network with your data & save its trained state!
 
 </p>
 
