@@ -187,6 +187,16 @@ module.exports = (grunt) => {
           },
         ],
       },
+      hljsdocs: {
+        src: ['docs/documentation/classes/*.html'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /\.\.\/highlight\/hljs\.min\.js/gm,
+            to: '../../highlight/hljs.min.js',
+          },
+        ],
+      },
     },
   };
   config.eslint.fix.src = Object.keys(config.eslint)
@@ -219,6 +229,7 @@ module.exports = (grunt) => {
     'formatExamples',
     'clean:unused',
     'replace:index',
+    'replace:hljsdocs',
   ]);
   grunt.registerTask('tag', [
     'replace:version',
