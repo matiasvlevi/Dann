@@ -17,9 +17,9 @@
   <a href="#Demo">Demo</a> •
   <a href="#Installation">Installation</a> •
   <a href="#Getting-started">Getting started</a> •
-  <a href="https://dannjs.org/docs/">Docs</a> •
+  <a href="https://dannjs.org/docs/">Documentation</a> •
   <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Contribute</a> •
-  <a href="https://discord.gg/8yBTnBVf">Discord</a> •
+  <a href="https://discord.gg/yeAqHsGdtU">Discord</a> •
   <a href="#license">License</a>
 </p>
 <br/>
@@ -42,13 +42,14 @@ npm i dannjs
 
 ### Node Imports
 
- Object types from the library can be imported like this
+Object types from the library can be imported like this
 ```js
 const dn = require('dannjs');
 const Dann = dn.dann;
 const Layer = dn.layer;
 const Matrix = dn.matrix;
  ```
+
 The objects containing functions can be imported this way
 ```js
 const dn = require('dannjs');
@@ -62,9 +63,9 @@ const poolfuncs = dn.poolfuncs;
 ### Basic model construction
 Setting up a small (4,6,6,2) neural network.
 ```js
-const nn = new Dann(4,2);
-nn.addHiddenLayer(6,'leakyReLU');
-nn.addHiddenLayer(6,'leakyReLU');
+const nn = new Dann(4, 2);
+nn.addHiddenLayer(6, 'leakyReLU');
+nn.addHiddenLayer(6, 'leakyReLU');
 nn.outputActivation('tanH');
 nn.makeWeights();
 nn.lr = 0.0001;
@@ -79,26 +80,26 @@ Training with a dataset.
 //XOR 2 inputs, 1 output
 const dataset = [
     {
-        input: [0,0],
+        input: [0, 0],
         output: [0]
     },
     {
-        input: [1,0],
+        input: [1, 0],
         output: [1]
     },
     {
-        input: [0,1],
+        input: [0, 1],
         output: [1]
     },
     {
-        input: [1,1],
+        input: [1, 1],
         output: [0]
     }
 ];
 
 //train 1 epoch
 for (data of dataset) {
-    nn.backpropagate(data.input,data.output);
+    nn.backpropagate(data.input, data.output);
     console.log(nn.loss);
 }
 ```
@@ -115,7 +116,7 @@ for (let i = 0; i < populationSize; i++) {
 
     // parentNN would be the best nn from past generation.
     const childNN = parentNN;
-    childNN.mutateRandom(0.01,0.65);
+    childNN.mutateRandom(0.01, 0.65);
 
     newGeneration.push(childNN);
 }
