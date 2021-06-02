@@ -169,10 +169,8 @@ Try out the new Dannjs Sandbox! <br/>
 <br/>
 <br/>
 <br/>
-
-#### Contact
-matias@dannjs.org
-
+<br/>
+  
 ## License
 
 MIT
