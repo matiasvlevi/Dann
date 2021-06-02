@@ -8,3 +8,4 @@ docs
 .prettierrc
 gruntfile.js
 CONTRIBUTING.md
+.github
