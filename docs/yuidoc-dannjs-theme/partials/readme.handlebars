@@ -17,9 +17,9 @@
   <a href="#Demo">Demo</a> •
   <a href="#Installation">Installation</a> •
   <a href="#Getting-started">Getting started</a> •
-  <a href="https://dannjs.org/docs/">Docs</a> •
+  <a href="https://dannjs.org/docs/">Documentation</a> •
   <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Contribute</a> •
-  <a href="https://discord.gg/8yBTnBVf">Discord</a> •
+  <a href="https://discord.gg/yeAqHsGdtU">Discord</a> •
   <a href="#license">License</a>
 </p>
 <br/>
@@ -33,7 +33,7 @@
 <br/><br/></p>
 <h2 id="getting-started">Getting started</h2>
 <h3 id="node-imports">Node Imports</h3>
-<p> Object types from the library can be imported like this</p>
+<p>Object types from the library can be imported like this</p>
 <pre><code class="rmcode js">const dn = require(&#39;dannjs&#39;);
 const Dann = dn.dann;
 const Layer = dn.layer;
@@ -47,9 +47,9 @@ const poolfuncs = dn.poolfuncs;</code></pre>
 
 <h3 id="basic-model-construction">Basic model construction</h3>
 <p>Setting up a small (4,6,6,2) neural network.</p>
-<pre><code class="rmcode js">const nn = new Dann(4,2);
-nn.addHiddenLayer(6,&#39;leakyReLU&#39;);
-nn.addHiddenLayer(6,&#39;leakyReLU&#39;);
+<pre><code class="rmcode js">const nn = new Dann(4, 2);
+nn.addHiddenLayer(6, &#39;leakyReLU&#39;);
+nn.addHiddenLayer(6, &#39;leakyReLU&#39;);
 nn.outputActivation(&#39;tanH&#39;);
 nn.makeWeights();
 nn.lr = 0.0001;
@@ -62,26 +62,26 @@ nn.log({details:true});</code></pre>
 <pre><code class="rmcode js">//XOR 2 inputs, 1 output
 const dataset = [
     {
-        input: [0,0],
+        input: [0, 0],
         output: [0]
     },
     {
-        input: [1,0],
+        input: [1, 0],
         output: [1]
     },
     {
-        input: [0,1],
+        input: [0, 1],
         output: [1]
     },
     {
-        input: [1,1],
+        input: [1, 1],
         output: [0]
     }
 ];
 
 //train 1 epoch
 for (data of dataset) {
-    nn.backpropagate(data.input,data.output);
+    nn.backpropagate(data.input, data.output);
     console.log(nn.loss);
 }</code></pre>
 <br/>
@@ -95,7 +95,7 @@ for (let i = 0; i &lt; populationSize; i++) {
 
     // parentNN would be the best nn from past generation.
     const childNN = parentNN;
-    childNN.mutateRandom(0.01,0.65);
+    childNN.mutateRandom(0.01, 0.65);
 
     newGeneration.push(childNN);
 }</code></pre>
@@ -135,8 +135,7 @@ more examples &amp; demos <a href="https://dannjs.org/#exm">here</a>
 <br/>
 <br/>
 <br/>
+<br/>
 
-<h4 id="contact">Contact</h4>
-<p><a href="mailto:matias@dannjs.org">matias@dannjs.org</a></p>
 <h2 id="license">License</h2>
 <p>MIT</p>
