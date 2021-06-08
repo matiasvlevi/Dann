@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.2.7",
+  "_id": "dannjs@2.2.8",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -49,9 +49,11 @@
     "doc": "grunt doc-compile",
     "test": "grunt test",
     "final": "grunt prod",
-    "nodetest": "cd test/manual-tests/node/empty-example & start run.cmd"
+    "nodetest": "cd test/manual-tests/node/empty-example & start run.cmd",
+    "browser": "start test/manual-tests/browser/empty-example/browser.html",
+    "doc:show": "start docs/documentation/index.html"
   },
-  "version": "2.2.7",
+  "version": "2.2.8",
   "keywords": [
     "dann",
     "dannjs",
