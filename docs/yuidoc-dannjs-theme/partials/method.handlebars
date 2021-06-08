@@ -27,7 +27,14 @@
     {{/if}}
 
     {{#if deprecated}}
-        <span class="flag deprecated"{{#if deprecationMessage}} title="{{deprecationMessage}}"{{/if}}>deprecated</span>
+        <span class="flag deprecated">deprecated</span>
+        {{#if deprecationMessage}}
+            <br/>
+            <span class="flag deprecated">
+               {{deprecationMessage}}
+            </span>
+        {{/if}}
+
     {{/if}}
 
     {{#if access}}
