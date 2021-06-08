@@ -17,11 +17,11 @@
  *   </tr>
  *   <tr>
  *     <td>leakyReLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/ktqjycao5q">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>reLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/k0owjvxs7p">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>siLU</td>
@@ -29,15 +29,23 @@
  *   </tr>
  *   <tr>
  *     <td>tanH</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/nwgi2dyii4">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>binary</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/o6a2dchde1">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>sinc</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/68oi4qfw1q">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softplus</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>

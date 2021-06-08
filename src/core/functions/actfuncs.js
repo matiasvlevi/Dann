@@ -96,6 +96,23 @@ function softsign_d(x) {
   let down = 1 + Math.abs(x);
   return 1 / (down * down);
 }
+function binary(x) {
+  if (x <= 0) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+function binary_d(x) {
+  return 0;
+}
+function softplus(x) {
+  return Math.log(1 + Math.exp(x));
+}
+function softplus_d(x) {
+  return sigmoid(x);
+}
+
 // Exporting Functions:
 let activations = {
   //Basic:
@@ -113,6 +130,10 @@ let activations = {
   sinc_d: sinc_d,
   softsign: softsign,
   softsign_d: softsign_d,
+  binary: binary,
+  binary_d: binary_d,
+  softplus: softplus,
+  softplus_d: softplus_d,
   //Experimental:
   leakySigmoid: leakySigmoid,
   leakySigmoid_d: leakySigmoid_d,

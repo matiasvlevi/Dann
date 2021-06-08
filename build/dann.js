@@ -1,5 +1,5 @@
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.2.7';
+const VERSION = 'v2.2.8';
 
 /*
  * Undisplayed documentation
@@ -273,6 +273,23 @@ function softsign_d(x) {
   let down = 1 + Math.abs(x);
   return 1 / (down * down);
 }
+function binary(x) {
+  if (x <= 0) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+function binary_d(x) {
+  return 0;
+}
+function softplus(x) {
+  return Math.log(1 + Math.exp(x));
+}
+function softplus_d(x) {
+  return sigmoid(x);
+}
+
 // Exporting Functions:
 let activations = {
   //Basic:
@@ -290,6 +307,10 @@ let activations = {
   sinc_d: sinc_d,
   softsign: softsign,
   softsign_d: softsign_d,
+  binary: binary,
+  binary_d: binary_d,
+  softplus: softplus,
+  softplus_d: softplus_d,
   //Experimental:
   leakySigmoid: leakySigmoid,
   leakySigmoid_d: leakySigmoid_d,
@@ -1632,11 +1653,11 @@ Dann = function Dann(i = 1, o = 1) {
  *   </tr>
  *   <tr>
  *     <td>leakyReLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/ktqjycao5q">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>reLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/k0owjvxs7p">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>siLU</td>
@@ -1644,15 +1665,23 @@ Dann = function Dann(i = 1, o = 1) {
  *   </tr>
  *   <tr>
  *     <td>tanH</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/yeujr5mykx">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>binary</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/o6a2dchde1">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>sinc</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/68oi4qfw1q">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softplus</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>
@@ -1719,15 +1748,6 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
  * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
  * </tr>
  * <tr>
- * <td>saveLoss</td>
- * <td>Boolean</td>
- * <td>Whether or not to save the losses in the neural network object. After a lot of training, carrying loss data in the neural network object gets heavy, this is why it is set to false by default.</td>
- * </tr>
- * <tr>
- * <td>mode<br>* for development</td>
- * <td>String</td>
- * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This functionality is not yet implemented</td>
- * </tr>
  * </tbody>
  * </table>
  * @example
@@ -1904,11 +1924,6 @@ Dann.createFromJSON = function createFromJSON(data) {
  * <td>decimals</td>
  * <td>Integer</td>
  * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
- * </tr>
- * <tr>
- * <td>mode<br>* for development</td>
- * <td>String</td>
- * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This functionality is not yet implemented</td>
  * </tr>
  * </tbody>
  * </table>
@@ -2091,7 +2106,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * Load a previously saved json file from ./savedDanns/. If the network's architechture is not the same, it is going to overwrite the Dann object.
  * @method load
  * @for Dann
- * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
+ * @deprecated Use Use fromJSON or createFromJSON. Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
  */
@@ -2195,7 +2210,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * <tr>
  * <td>misc</td>
  * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function (the learning rate could also be logged as console.log(Dann.lr)).</td>
+ * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function.</td>
  * </tr>
  * </tbody>
  * </table>
@@ -2514,11 +2529,11 @@ Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
  *   </tr>
  *   <tr>
  *     <td>leakyReLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/ktqjycao5q">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>reLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/k0owjvxs7p">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>siLU</td>
@@ -2526,15 +2541,23 @@ Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
  *   </tr>
  *   <tr>
  *     <td>tanH</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/nwgi2dyii4">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>binary</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/o6a2dchde1">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
  *   </tr>
  *   <tr>
  *     <td>sinc</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/68oi4qfw1q">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softplus</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>
