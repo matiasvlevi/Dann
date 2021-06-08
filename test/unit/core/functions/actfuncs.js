@@ -112,5 +112,37 @@ suite('', function () {
         }
       });
     });
+    suite('binary', function () {
+      test("Testing 'binary' activation function", function () {
+        let pointsX = [-4, -2, 0, 2, 4];
+        let ans_hardcoded = [0, 0, 0, 1, 1];
+        for (let i = 0; i < pointsX.length; i++) {
+          assert.closeTo(act.binary(pointsX[i]), ans_hardcoded[i], 0.01);
+        }
+      });
+      test("Testing 'binary_d' activation function", function () {
+        let pointsX = [-4, -2, 0, 2, 4];
+        let ans_hardcoded = [0, 0, 0, 0, 0];
+        for (let i = 0; i < pointsX.length; i++) {
+          assert.closeTo(act.binary_d(pointsX[i]), ans_hardcoded[i], 0.01);
+        }
+      });
+    });
+    suite('softplus', function () {
+      test("Testing 'softplus' activation function", function () {
+        let pointsX = [-4, -2, 0, 2, 4];
+        let ans_hardcoded = [0.018, 0.127, 0.693, 2.127, 4.018];
+        for (let i = 0; i < pointsX.length; i++) {
+          assert.closeTo(act.softplus(pointsX[i]), ans_hardcoded[i], 0.01);
+        }
+      });
+      test("Testing 'softplus_d' activation function", function () {
+        let pointsX = [-4, -2, 0, 2, 4];
+        let ans_hardcoded = [0.018, 0.119, 0.5, 0.881, 0.982];
+        for (let i = 0; i < pointsX.length; i++) {
+          assert.closeTo(act.softplus_d(pointsX[i]), ans_hardcoded[i], 0.01);
+        }
+      });
+    });
   });
 });
