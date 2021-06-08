@@ -25,15 +25,6 @@
  * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
  * </tr>
  * <tr>
- * <td>saveLoss</td>
- * <td>Boolean</td>
- * <td>Whether or not to save the losses in the neural network object. After a lot of training, carrying loss data in the neural network object gets heavy, this is why it is set to false by default.</td>
- * </tr>
- * <tr>
- * <td>mode<br>* for development</td>
- * <td>String</td>
- * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This functionality is not yet implemented</td>
- * </tr>
  * </tbody>
  * </table>
  * @example

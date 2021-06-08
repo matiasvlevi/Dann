@@ -28,11 +28,6 @@
  * <td>Integer</td>
  * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
  * </tr>
- * <tr>
- * <td>mode<br>* for development</td>
- * <td>String</td>
- * <td>When gpu support will be implemented, specifing the string &#39;gpu&#39; as opposed to &#39;cpu&#39; will run the function on a kernel. This functionality is not yet implemented</td>
- * </tr>
  * </tbody>
  * </table>
  *

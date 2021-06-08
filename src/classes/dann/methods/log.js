@@ -55,7 +55,7 @@
  * <tr>
  * <td>misc</td>
  * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function (the learning rate could also be logged as console.log(Dann.lr)).</td>
+ * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function.</td>
  * </tr>
  * </tbody>
  * </table>

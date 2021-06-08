@@ -13,7 +13,7 @@
  * Load a previously saved json file from ./savedDanns/. If the network's architechture is not the same, it is going to overwrite the Dann object.
  * @method load
  * @for Dann
- * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
+ * @deprecated Use Use fromJSON or createFromJSON. Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
  */
