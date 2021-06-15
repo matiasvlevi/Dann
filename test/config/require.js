@@ -7,6 +7,7 @@ const XOR = Dannjs.xor;
 const act = Dannjs.activations;
 const lossfuncs = Dannjs.lossfuncs;
 const poolfuncs = Dannjs.poolfuncs;
+const Add = Dannjs.add;
 //Chai imports
 const assert = require('chai').assert;
 const expect = require('chai').expect;
