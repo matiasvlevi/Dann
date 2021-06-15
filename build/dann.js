@@ -1,5 +1,96 @@
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.2.8';
+const VERSION = 'v2.2.9';
+
+/**
+ * Add a new custom function to Dannjs.
+ * @class Add
+ */
+Add = function Add() {};
+
+/**
+ * Add a custom activation function.
+ * @method activation
+ * @param {string} name the name of the new activation function.
+ * @param {function} activation the activation function.
+ * @param {function} derivative the derivative of this activation function.
+ * @example
+ * <code>
+ * Add.activation('myfunc',
+ *    (x) => {
+ *		if (x <= 0) {
+ *    		return 0;
+ *    	} else {
+ *    		return 1;
+ *    	}
+ *	},
+ *	(x) => {
+ *		return 0;
+ *	}
+ * );
+ * let nn = new Dann();
+ * nn.outputActivation('myfunc');
+ * nn.log();
+ * </code>
+ */
+Add.activation = function (name, activation, derivative) {
+  if (typeof name !== 'string') {
+    DannError.error('The name argument is not a string.', 'Add.activation');
+    return;
+  }
+  if (activation.length !== 1 || derivative.length !== 1) {
+    DannError.error(
+      'One of the functions specified does not have only 1 argument.',
+      'Add.activation'
+    );
+    return;
+  } else {
+    activations[name] = activation;
+    activations[name + '_d'] = derivative;
+    return;
+  }
+};
+
+/**
+ * Add a custom loss function.
+ * @method loss
+ * @param {string} name the name of the new loss function.
+ * @param {function} loss the loss function.
+ * @example
+ * <code>
+ * Add.loss('myfunc',
+ * (predictions, target) => {
+ *   let sum = 0;
+ *   let ans = 0;
+ *   let n = target.length;
+ *   for (let i = 0; i < n; i++) {
+ *     let y = target[i];
+ *     let yHat = predictions[i];
+ *     sum += abs(y - yHat);
+ *   }
+ *   ans = sum / n;
+ *   return ans;
+ * }
+ * );
+ * let nn = new Dann();
+ * nn.setLossFunction('myfunc');
+ * nn.log();
+ * </code>
+ */
+Add.loss = function (name, loss) {
+  if (typeof name !== 'string') {
+    DannError.error('The name argument is not a string.', 'Add.loss');
+    return;
+  }
+  if (loss.length === 2) {
+    lossfuncs[name] = loss;
+  } else {
+    DannError.error(
+      'The loss function specified can only have 2 argument.',
+      'newActivation'
+    );
+    return;
+  }
+};
 
 /*
  * Undisplayed documentation
@@ -1685,6 +1776,8 @@ Dann = function Dann(i = 1, o = 1) {
  *   </tr>
  * </tbody>
  * </table>
+ * <br/>
+ * See how to add more <a href="./Add.html#method_activation">Here</a>
  * @example
  * <code>
  * const nn = new Dann(10, 2);
@@ -2096,7 +2189,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * When this function is called, an input tag requesting a file appears on screen. When clicked, it opens a local file dialogue. Once the appropriate file is selected the dann data automatically uploads. The filename argument is not required for this version since the browser dialog takes care of it.
  * @method load
  * @for Dann
- * @deprecated Use fromJSON or createFromJSON. Removed in 2.2.6
+ * @deprecated Use fromJSON or createFromJSON, Removed in 2.2.6
  * @param {String} name The name of the variable that holds the dann model.
  * @param {String} arg2 The ID of the HTML element in which to place the input dom element. If left undefined, the input dom element is appended to the body element.
  * @param {Function} arg3 A function to be called when the model finished loading.
@@ -2106,7 +2199,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * Load a previously saved json file from ./savedDanns/. If the network's architechture is not the same, it is going to overwrite the Dann object.
  * @method load
  * @for Dann
- * @deprecated Use Use fromJSON or createFromJSON. Removed in 2.2.6
+ * @deprecated Use Use fromJSON or createFromJSON, Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
  */
@@ -2355,7 +2448,7 @@ Dann.prototype.log = function log(options) {
     console.log('Other Values: ');
 
     console.log('\t' + 'Learning rate: ' + this.lr);
-    console.log('\t' + 'Loss Function: ' + this.lossfunc.name);
+    console.log('\t' + 'Loss Function: ' + this.lossfunc_s);
     console.log('\t' + 'Current Epoch: ' + this.epoch);
     console.log('\t' + 'Latest Loss: ' + this.loss);
   }
@@ -2561,6 +2654,8 @@ Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
  *   </tr>
  * </tbody>
  * </table>
+ * <br/>
+ * See how to add more <a href="./Add.html#method_activation">Here</a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
@@ -2746,6 +2841,8 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  *   </tr>
  * </tbody>
  * </table>
+ * <br/>
+ * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
@@ -2987,5 +3084,6 @@ if (!isBrowser) {
     poolfuncs: poolfuncs,
     xor: XOR,
     makeBinary: makeBinary,
+    add: Add,
   };
 }
