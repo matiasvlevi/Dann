@@ -49,6 +49,8 @@
  *   </tr>
  * </tbody>
  * </table>
+ * <br/>
+ * See how to add more <a href="./Add.html#method_activation">Here</a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);

@@ -44,6 +44,8 @@
  *   </tr>
  * </tbody>
  * </table>
+ * <br/>
+ * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
