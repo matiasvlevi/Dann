@@ -200,7 +200,7 @@ Dann.prototype.log = function log(options) {
     console.log('Other Values: ');
 
     console.log('\t' + 'Learning rate: ' + this.lr);
-    console.log('\t' + 'Loss Function: ' + this.lossfunc.name);
+    console.log('\t' + 'Loss Function: ' + this.lossfunc_s);
     console.log('\t' + 'Current Epoch: ' + this.epoch);
     console.log('\t' + 'Latest Loss: ' + this.loss);
   }
