@@ -128,6 +128,19 @@ module.exports = (grunt) => {
       },
     },
     replace: {
+      addClass: {
+        src: [
+          'docs/documentation/index.html',
+          'docs/documentation/classes/*.html',
+        ],
+        overwrite: true,
+        replacements: [
+          {
+            from: /<li><a class="type" href="\.*\/classes\/Add\.html">Add<\/a><\/li>/gm,
+            to: '',
+          },
+        ],
+      },
       index: {
         src: ['docs/documentation/*.html'],
         overwrite: true,
@@ -229,6 +242,7 @@ module.exports = (grunt) => {
     'formatExamples',
     'clean:unused',
     'replace:index',
+    'replace:addClass',
     'replace:hljsdocs',
   ]);
   grunt.registerTask('tag', [
