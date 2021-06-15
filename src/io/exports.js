@@ -9,5 +9,6 @@ if (!isBrowser) {
     poolfuncs: poolfuncs,
     xor: XOR,
     makeBinary: makeBinary,
+    add: Add,
   };
 }
