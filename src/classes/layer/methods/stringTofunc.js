@@ -10,13 +10,9 @@ Layer.stringTofunc = function stringTofunc(str) {
   let der = act + '_d';
   let func;
   let func_d;
-  if (isBrowser) {
-    func = window[act];
-    func_d = window[der];
-  } else {
-    func = activations[act];
-    func_d = activations[der];
-  }
+  func = activations[act];
+  func_d = activations[der];
+
   if (func !== undefined) {
     if (func_d !== undefined) {
       return { name: act, name_d: der, func: func, func_d: func_d };
