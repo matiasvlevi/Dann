@@ -2906,10 +2906,10 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   stringfunc += 'let c = ' + JSON.stringify(this.arch) + ';';
   // Setting activations
   stringfunc += 'let a = [];';
-  for (let i = 0; i < this.Layers.length; i++) {
+  for (let i = 1; i < this.Layers.length; i++) {
     let actname = this.Layers[i].actname;
     if (i !== 0) {
-      let actfunc = activations[actname].toString().split('\n');
+      let actfunc = toEs6(activations[actname]).toString().split('\n');
       let minfunction = '';
       for (let u = 0; u < actfunc.length; u++) {
         minfunction += actfunc[u];
@@ -2982,28 +2982,58 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
     'return o' +
     '}';
   //minify
-  stringfunc = stringfunc.replace(/ = /g, '=');
-  stringfunc = stringfunc.replace(/ \+ /g, '+');
-  stringfunc = stringfunc.replace(/ - /g, '-');
-  stringfunc = stringfunc.replace(/ \* /g, '*');
-  stringfunc = stringfunc.replace(/ \/ /g, '/');
-  stringfunc = stringfunc.replace(/for \(/g, 'for(');
-  stringfunc = stringfunc.replace(/; /g, ';');
-  stringfunc = stringfunc.replace(/\) {/g, '){');
-  stringfunc = stringfunc.replace(/ < /g, '<');
-  stringfunc = stringfunc.replace(/ > /g, '>');
-  stringfunc = stringfunc.replace(/ \+= /g, '+=');
-  stringfunc = stringfunc.replace(/;\}/g, '}');
-  for (let i = 0; i < 5; i++) {
-    stringfunc = stringfunc.replace(/\{ /g, '{');
-    stringfunc = stringfunc.replace(/ \{/g, '{');
-    stringfunc = stringfunc.replace(/\} /g, '}');
-  }
-  for (let i = 0; i < 5; i++) {
-    stringfunc = stringfunc.replace(/; /g, ';');
-  }
-  return stringfunc;
+  return minify(stringfunc);
 };
+/*
+ * minify code
+ */
+function minify(string) {
+  string = string.replace(/ = /g, '=');
+  string = string.replace(/ \+ /g, '+');
+  string = string.replace(/ - /g, '-');
+  string = string.replace(/ \* /g, '*');
+  string = string.replace(/ \/ /g, '/');
+  string = string.replace(/for \(/g, 'for(');
+  string = string.replace(/; /g, ';');
+  string = string.replace(/\) {/g, '){');
+  string = string.replace(/ < /g, '<');
+  string = string.replace(/ > /g, '>');
+  string = string.replace(/ \+= /g, '+=');
+  string = string.replace(/;\}/g, '}');
+  for (let i = 0; i < 5; i++) {
+    string = string.replace(/\{ /g, '{');
+    string = string.replace(/ \{/g, '{');
+    string = string.replace(/\} /g, '}');
+    string = string.replace(/\t/g, '');
+    string = string.replace(/\n/g, '');
+  }
+  for (let i = 0; i < 5; i++) {
+    string = string.replace(/; /g, ';');
+  }
+  return string;
+}
+/*
+ * Slice string by index but keep both segments.
+ */
+function slicestring(str, index) {
+  return [str.slice(0, index + 1), str.slice(index + 1, str.length)];
+}
+/*
+ * Transform a stringified function to a stringified es6 syntax in order to save space.
+ */
+function toEs6(func) {
+  let str = func.toString();
+  let index = str.indexOf('(');
+  let rstr = slicestring(str, index)[1];
+  index = rstr.indexOf(')');
+  let funcarr = slicestring(rstr, index - 1);
+  let args = funcarr[0];
+  index = funcarr[1].indexOf(')');
+  let content = slicestring(funcarr[1], index)[1];
+  let funcstr = '(' + args + ')=>' + content;
+  let minfuncstr = minify(funcstr);
+  return minfuncstr;
+}
 
 /**
  * Gets a dannData object.
