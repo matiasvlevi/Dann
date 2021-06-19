@@ -24,7 +24,7 @@ assignees: ''
 
 ### Description
 <!---
-Describe in details why & how this feature would be usefull for this library.
+Describe in details why & how this feature would be useful for this library.
 --->
 
 ### Examples
