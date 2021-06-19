@@ -460,7 +460,7 @@ suite('Dann Object', function () {
           let pred = nn.feedForward(data.input);
           assert.typeOf(pred[0], 'Number');
           assert.instanceOf(pred, Array);
-          assert.closeTo(pred[0], data.output[0], 0.01);
+          assert.closeTo(pred[0], data.output[0], 0.03);
         }
       });
     });
