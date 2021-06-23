@@ -40,7 +40,7 @@
  *   </tr>
  *   <tr>
  *     <td>bce</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/wznjx4qsm2">See graph</a></td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
  *   </tr>
  * </tbody>
  * </table>
