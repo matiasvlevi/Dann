@@ -52,7 +52,7 @@
     "nodetest": "cd test/manual-tests/node/empty-example & start run.cmd",
     "browser": "start test/manual-tests/browser/empty-example/browser.html",
     "doc:show": "start docs/documentation/index.html",
-    "contrib": "npx all-contributors generate",
+    "contrib": "npx all-contributors generate"
   },
   "version": "2.2.9",
   "keywords": [
