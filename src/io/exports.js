@@ -2,6 +2,7 @@
 if (!isBrowser) {
   module.exports = {
     dann: Dann,
+    rann: Rann,
     layer: Layer,
     matrix: Matrix,
     activations: activations,

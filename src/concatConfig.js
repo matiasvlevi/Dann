@@ -13,6 +13,9 @@ module.exports = [
   // Dann
   'src/classes/dann/constructor.js',
   'src/classes/dann/methods/*.js',
+  // Rann
+  'src/classes/rann/constructor.js',
+  'src/classes/rann/methods/*.js',
   // Export
   'src/io/exports.js',
 ];

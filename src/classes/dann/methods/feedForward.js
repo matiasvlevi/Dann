@@ -49,13 +49,29 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
   let table = false;
   let roundData = false;
   let dec = 1000;
+  let pull = undefined;
+  let insert = undefined;
   //optional parameters:
   if (options !== undefined) {
+    // Log results in console
     if (options.log !== undefined) {
       showLog = options.log;
     } else {
       showLog = false;
     }
+    // Log in a table
+    if (options.table !== undefined) {
+      table = options.table;
+    }
+    // Pull from specific hidden layer
+    if (options.pull !== undefined) {
+      pull = options.pull;
+    }
+    // Insert values in the hidden layer before activation function (By addition)
+    if (options.insert !== undefined) {
+      insert = options.insert;
+    }
+    // Round the output
     if (options.decimals !== undefined) {
       if (options.decimals > 21) {
         DannError.warn(
@@ -67,9 +83,7 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
       dec = pow(10, options.decimals);
       roundData = true;
     }
-    if (options.table !== undefined) {
-      table = options.table;
-    }
+    // Compute mode gpu/cpu. (Gpu support is still not fully implemented)
     if (options.mode !== undefined) {
       mode = options.mode;
       if (mode === 'gpu') {
@@ -106,29 +120,36 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
 
   for (let i = 0; i < this.weights.length; i++) {
     let pLayer = this.Layers[i];
-
     let layerObj = this.Layers[i + 1];
-
     layerObj.layer = Matrix.mult(this.weights[i], pLayer.layer);
+    if (insert !== undefined) {
+      if (i + 1 === insert.layer) {
+        layerObj.layer.add(Matrix.fromArray(insert.value));
+      }
+    }
     layerObj.layer.add(this.biases[i]);
     layerObj.layer.map(layerObj.actfunc);
   }
 
-  this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
-  let out = this.outs;
-  if (showLog === true) {
-    if (roundData === true) {
-      out = out.map((x) => round(x * dec) / dec);
+  if (pull === undefined) {
+    this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
+    let out = this.outs;
+    if (showLog === true) {
+      if (roundData === true) {
+        out = out.map((x) => round(x * dec) / dec);
+      }
+      if (table === true) {
+        console.log('Prediction: ');
+        console.table(out);
+      } else {
+        console.log('Prediction: ');
+        console.log(out);
+      }
     }
-    if (table === true) {
-      console.log('Prediction: ');
-      console.table(out);
-    } else {
-      console.log('Prediction: ');
-      console.log(out);
-    }
+    return out;
+  } else {
+    return this.Layers[pull].layer.toArray();
   }
-  return out;
 };
 Dann.prototype.feed = function feed(inputs, options) {
   return this.feedForward(inputs, options);
