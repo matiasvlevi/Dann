@@ -6,18 +6,18 @@
  * @example
  * <code>
  * Add.loss('myfunc',
- * (predictions, target) => {
- *   let sum = 0;
- *   let ans = 0;
- *   let n = target.length;
- *   for (let i = 0; i < n; i++) {
- *     let y = target[i];
- *     let yHat = predictions[i];
- *     sum += abs(y - yHat);
+ *   (predictions, target) => {
+ *     let sum = 0;
+ *     let ans = 0;
+ *     let n = target.length;
+ *     for (let i = 0; i < n; i++) {
+ *       let y = target[i];
+ *       let yHat = predictions[i];
+ *       sum += abs(y - yHat);
+ *     }
+ *     ans = sum / n;
+ *     return ans;
  *   }
- *   ans = sum / n;
- *   return ans;
- * }
  * );
  * let nn = new Dann();
  * nn.setLossFunction('myfunc');

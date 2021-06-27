@@ -7,16 +7,16 @@
  * @example
  * <code>
  * Add.activation('myfunc',
- *    (x) => {
- *		if (x <= 0) {
- *    		return 0;
- *    	} else {
- *    		return 1;
- *    	}
- *	},
- *	(x) => {
- *		return 0;
- *	}
+ *   (x) => {
+ *     if (x <= 0) {
+ *       return 0;
+ *     } else {
+ *       return 1;
+ *     }
+ *   },
+ *   (x) => {
+ *     return 0;
+ *   }
  * );
  * let nn = new Dann();
  * nn.outputActivation('myfunc');
