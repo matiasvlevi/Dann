@@ -1958,6 +1958,9 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
     console.log('Loss: ', this.loss);
   }
 };
+Dann.prototype.train = function train(inputs, target, options) {
+  return this.backpropagate(inputs, target, options);
+};
 
 /**
  * Creates a Dann model from a json object.
@@ -2025,6 +2028,7 @@ Dann.createFromJSON = function createFromJSON(data) {
  * console.log(prediction);
  * </code>
  */
+
 Dann.prototype.feedForward = function feedForward(inputs, options) {
   //optional parameter values:
   let showLog = false;
@@ -2112,6 +2116,9 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
     }
   }
   return out;
+};
+Dann.prototype.feed = function feed(inputs, options) {
+  return this.feedForward(inputs, options);
 };
 
 /**
