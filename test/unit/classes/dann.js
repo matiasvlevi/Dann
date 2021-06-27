@@ -432,6 +432,20 @@ suite('Dann Object', function () {
     });
   });
   suite('feedForward & backpropagate', function () {
+    suite('Aliases', function () {
+      let nn;
+      setup(function () {
+        nn = new Dann();
+      });
+      test('feedForward should have alias feed', function () {
+        let output = nn.feed([1]);
+        assert.typeOf(output, 'Array');
+      });
+      test('backpropagate should have alias train', function () {
+        nn.train([1], [0]);
+        assert.typeOf(nn.loss, 'Number');
+      });
+    });
     suite('XOR Training', function () {
       let nn;
       let dataset;
