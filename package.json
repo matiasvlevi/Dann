@@ -65,6 +65,7 @@
     "ai"
   ],
   "devDependencies": {
+    "@babel/core": "^7.14.6",
     "@babel/register": "^7.7.7",
     "all-contributors-cli": "^6.20.0",
     "chai": "^4.3.4",
