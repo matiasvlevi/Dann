@@ -63,6 +63,7 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
       if (mode === 'gpu') {
         console.log('gpu version coming soon');
       }
+      mode = 'cpu';
     } else {
       mode = 'cpu';
     }
