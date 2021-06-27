@@ -253,6 +253,7 @@ module.exports = (grunt) => {
     'build-fix',
   ]);
   grunt.registerTask('test', [
+    'doc-compile',
     'build-unit',
     'sampleTest:samples',
     'mochaTest:test',
