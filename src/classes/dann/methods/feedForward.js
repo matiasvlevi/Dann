@@ -41,6 +41,7 @@
  * console.log(prediction);
  * </code>
  */
+
 Dann.prototype.feedForward = function feedForward(inputs, options) {
   //optional parameter values:
   let showLog = false;
@@ -129,3 +130,6 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
   }
   return out;
 };
+Dann.prototype.feed = function feed(inputs, options) {
+return this.feedForward(inputs, options);
+}
