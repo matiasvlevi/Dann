@@ -149,5 +149,5 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
   }
 };
 Dann.prototype.train = function train(inputs, target, options) {
-return this.backpropagate(inputs, target, options);
-}
+  return this.backpropagate(inputs, target, options);
+};

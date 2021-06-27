@@ -131,5 +131,5 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
   return out;
 };
 Dann.prototype.feed = function feed(inputs, options) {
-return this.feedForward(inputs, options);
-}
+  return this.feedForward(inputs, options);
+};
