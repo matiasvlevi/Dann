@@ -185,8 +185,7 @@ module.exports = (grunt) => {
         replacements: [
           {
             from: /<span class="project-version">.*<\/span>/gm,
-            to:
-              '<span class="project-version"><%= grunt.option("ver")%></span>',
+            to: '<span class="project-version"><%= grunt.option("ver")%></span>',
           },
         ],
       },
