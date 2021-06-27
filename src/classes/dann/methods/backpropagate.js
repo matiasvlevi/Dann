@@ -148,3 +148,6 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
     console.log('Loss: ', this.loss);
   }
 };
+Dann.prototype.train = function train(inputs, target, options) {
+return this.backpropagate(inputs, target, options);
+}
