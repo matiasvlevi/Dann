@@ -184,6 +184,7 @@ MIT
     <td align="center"><a href="https://www.linkedin.com/in/matias-vazquez-levi-846a991a6/"><img src="https://avatars.githubusercontent.com/u/50473168?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matias Vazquez-Levi</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/commits?author=matiasvlevi" title="Code">💻</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=matiasvlevi" title="Documentation">📖</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=matiasvlevi" title="Tests">⚠️</a> <a href="#tutorial-matiasvlevi" title="Tutorials">✅</a></td>
     <td align="center"><a href="https://github.com/FrancescoXX"><img src="https://avatars.githubusercontent.com/u/18360871?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Francesco Ciulla</b></sub></a><br /><a href="#talk-FrancescoXX" title="Talks">📢</a></td>
     <td align="center"><a href="https://github.com/Labnann"><img src="https://avatars.githubusercontent.com/u/55809005?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Labnan</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/issues?q=author%3ALabnann" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/SharkAce"><img src="https://avatars.githubusercontent.com/u/85720638?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sharkAce</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/commits?author=SharkAce" title="Code">💻</a></td>
   </tr>
 </table>
 
