@@ -1,9 +1,7 @@
-/**
- * @module Datasets
- */
 /*
  * XOR dataset made for testing & example purposes.
  */
+
 const XOR = [
   {
     input: [1, 0],
