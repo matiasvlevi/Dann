@@ -48,11 +48,18 @@ Build the source files with :
 ```
 npm run build
 ```
+
+
+<br/>
+
 In the case of lint errors, you can fix them with :
 ```
 npm run lint:fix
 ```
-
+or
+```
+npm run build:fix
+```
 
 <br/>
 
