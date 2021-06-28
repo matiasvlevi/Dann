@@ -26,6 +26,7 @@
  * </code>
  */
 function makeXOR(number) {
+  if(number<2) return  [];
   let data = makeBinary(number);
   let lastElement = { input: data[data.length - 1].target, target: [] };
   data.push(lastElement);
