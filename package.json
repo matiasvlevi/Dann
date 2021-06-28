@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.2.9",
+  "_id": "dannjs@2.2.10",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -53,7 +53,7 @@
     "doc:show": "start docs/documentation/index.html",
     "contrib": "npx all-contributors generate"
   },
-  "version": "2.2.9",
+  "version": "2.2.10",
   "keywords": [
     "dann",
     "dannjs",
