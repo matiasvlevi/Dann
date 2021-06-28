@@ -26,7 +26,7 @@
  * </code>
  */
 function makeXOR(number) {
-  if(number<2) return  [];
+  if (number < 2) return [];
   let data = makeBinary(number);
   let lastElement = { input: data[data.length - 1].target, target: [] };
   data.push(lastElement);
@@ -37,25 +37,4 @@ function makeXOR(number) {
   return data;
 }
 
-/*
- * XOR dataset made for testing & example purposes.
- */
-
-const XOR = [
-  {
-    input: [1, 0],
-    output: [1],
-  },
-  {
-    input: [0, 1],
-    output: [1],
-  },
-  {
-    input: [0, 0],
-    output: [0],
-  },
-  {
-    input: [1, 1],
-    output: [0],
-  },
-];
+const XOR = makeXOR(2);
