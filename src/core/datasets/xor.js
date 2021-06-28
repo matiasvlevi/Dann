@@ -2,7 +2,6 @@
  * XOR dataset made for testing & example purposes.
  */
 
-
 /*
  * Undisplayed documentation
  * Make a dataset consisting of binary values represented as arrays and XOR result of the binary values
@@ -28,20 +27,18 @@
  */
 function makeXOR(number) {
   let data = makeBinary(number);
-  let lastElement = {input: data[data.length-1].target, target: []};
+  let lastElement = { input: data[data.length - 1].target, target: [] };
   data.push(lastElement);
-  data.forEach((element)=>{
-      delete element["target"];
-      element.output = [element.input.reduce((a,b)=>a+b,0)%2];
+  data.forEach((element) => {
+    delete element['target'];
+    element.output = [element.input.reduce((a, b) => a + b, 0) % 2];
   });
   return data;
 }
 
-
 /*
  * XOR dataset made for testing & example purposes.
  */
-
 
 const XOR = [
   {

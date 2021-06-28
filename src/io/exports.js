@@ -8,6 +8,7 @@ if (!isBrowser) {
     lossfuncs: lossfuncs,
     poolfuncs: poolfuncs,
     xor: XOR,
+    makeXOR: makeXOR,
     makeBinary: makeBinary,
     add: Add,
   };
