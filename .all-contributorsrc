@@ -34,7 +34,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/55809005?v=4",
       "profile": "https://github.com/Labnann",
       "contributions": [
-        "bug"
+        "bug",
+        "code",
+        "test"
       ]
     },
     {
@@ -44,6 +46,16 @@
       "profile": "https://github.com/SharkAce",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "shirsho1106",
+      "name": "Hasnain Iqbal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60136067?v=4",
+      "profile": "https://github.com/shirsho1106",
+      "contributions": [
+        "code",
+        "test"
       ]
     }
   ],
