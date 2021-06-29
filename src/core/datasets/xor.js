@@ -28,10 +28,10 @@
 function makeXOR(number) {
   if (number < 2) return [];
   let data = makeBinary(number);
-  let lastElement = { input: data[data.length - 1].target, target: [] };
+  let lastElement = { input: data[data.length - 1].output, output: [] };
   data.push(lastElement);
   data.forEach((element) => {
-    delete element['target'];
+    delete element['output'];
     element.output = [element.input.reduce((a, b) => a + b, 0) % 2];
   });
   return data;

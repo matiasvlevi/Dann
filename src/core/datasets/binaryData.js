@@ -90,7 +90,7 @@ function makeBinary(size, func) {
     if (bitLength(targetNum) <= size) {
       let obj = {
         input: numberToBinary(i, size),
-        target: numberToBinary(targetNum, size),
+        output: numberToBinary(targetNum, size),
       };
       data.push(obj);
     }
