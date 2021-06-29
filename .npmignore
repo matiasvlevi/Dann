@@ -6,6 +6,7 @@ src
 docs
 .eslintrc
 .prettierrc
+.all-contributorsrc
 gruntfile.js
 CONTRIBUTING.md
 .github
