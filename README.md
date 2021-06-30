@@ -14,7 +14,12 @@
 Feed sequence data
 ```js
 let rnn = new Rann(8, 20, 2);
-rnn.feed([[1,2],[3,4],[5,6],[7,8]]);
+rnn.feed([
+  [1,2],
+  [3,4],
+  [5,6],
+  [7,8]
+]);
 // [X, X] Output is random since rnn is not trained
 ```
 Train sequence data
