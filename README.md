@@ -13,9 +13,9 @@
 ## Examples 
 Feed sequence data
 ```js
-let rnn = new Rann(10, 1);
-rnn.feed([0,1,1,0,1,1,0,1,1,0]);
-// Output is random since rnn is not trained
+let rnn = new Rann(8, 20, 2);
+rnn.feed([[1,2],[3,4],[5,6],[7,8]]);
+// [X, X] Output is random since rnn is not trained
 ```
 Train sequence data
 ```js
