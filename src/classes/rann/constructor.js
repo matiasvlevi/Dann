@@ -7,14 +7,41 @@
  * @class Rann
  * @constructor
  */
-Rann = function Rann(i = 1, o = 1) {
+Rann = function Rann(i = 1, h = 2, o = 1) {
+  // Structure Values
   this.i = i;
   this.o = o;
+  this.h = h;
   this.lr = 0.001;
-  this.nn = new Dann(i, o);
-  this.nn.addHiddenLayer(i * 2);
-  this.nn.makeWeights();
-  this.nn.lr = this.lr;
-  this.previous = [];
-  this.input = [];
+  this.arch = [this.i, this.h, this.o];
+
+  this.bias = new Matrix(this.h, 1);
+  this.bias.randomize(-0.1, 0.1);
+
+  // Weights
+  this.U = new Matrix(this.h, this.i);
+  this.V = new Matrix(this.o, this.h);
+  this.W = new Matrix(this.h, this.h);
+
+  // Randomize
+  this.U.randomize(-1, 1);
+  this.V.randomize(-1, 1);
+  this.W.randomize(-1, 1);
+
+  // Mult values (dev only)
+  this.mulv;
+  this.mulw;
+  this.mulu;
+  this.mapped;
+
+  // Set activation
+  this.actname = 'sigmoid';
+  let funcData = Layer.stringTofunc(this.actname);
+  this.actfunc = funcData['func'];
+  this.actfunc_d = funcData['func_d'];
+
+  // Other values
+  this.previous;
+  this.input;
+  this.output;
 };

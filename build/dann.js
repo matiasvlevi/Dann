@@ -726,6 +726,19 @@ Matrix.add = function add(a, b) {
   return ans;
 };
 
+Matrix.addGrid = function addGrid(m1, m2) {
+  let a = m1.matrix;
+  let b = m2.matrix;
+  let ans = [];
+  for (let i = 0; i < a[0].length; i++) {
+    ans[i] = [];
+    for (let j = 0; j < a[0].length; j++) {
+      ans[i].push(a[0][i] + b[j][0]);
+    }
+  }
+  return new Matrix().set(ans);
+};
+
 /*
  * Undisplayed documentation
  *
@@ -774,6 +787,7 @@ Matrix.prototype.addRandom = function addRandom(magnitude, prob) {
  * @method fromArray
  * @static
  * @param {Array} array The array to convert into a Matrix.
+ * @param {Object} options Options to specify. As of now, only the 'flip' property is supported which flips the output matrix removing the need of a transpose method.
  * @return {Matrix} 1 row, n col Matrix Object
  * @example
  * <code>
@@ -782,10 +796,18 @@ Matrix.prototype.addRandom = function addRandom(magnitude, prob) {
  * m.log();
  * </code>
  */
-Matrix.fromArray = function fromArray(array) {
+Matrix.fromArray = function fromArray(array, options) {
+  let flip = false;
+  if (options !== undefined) {
+    flip = options.flip;
+  }
   let m = new Matrix(array.length, 1);
   for (let i = 0; i < array.length; i++) {
-    m.matrix[i][0] = array[i];
+    if (flip === false) {
+      m.matrix[i][0] = array[i];
+    } else if (flip === true) {
+      m.matrix[0][i] = array[i];
+    }
   }
   return m;
 };
@@ -1148,6 +1170,7 @@ Matrix.prototype.randomize = function randomize(min, max) {
  * Set a Matrix object.
  * @method set
  * @param { Number[][] } matrix A matrix with which to set the current Matrix object with.
+ * @chainable
  * @example
  * <code>
  * const a = new Matrix(0,0);
@@ -1168,6 +1191,7 @@ Matrix.prototype.set = function set(matrix) {
     this.matrix = matrix;
     this.rows = matrix.length;
     this.cols = matrix[0].length;
+    return this;
   } else {
     DannError.error(
       'the argument of set(); must be an array within an array. Here is an example: [[1,0],[0,1]]',
@@ -3151,47 +3175,107 @@ Dann.prototype.toJSON = function toJSON() {
  */
 
 /**
- * Recurrent Neural Network object.
+ * Recurrent Neural Network object. Feature still in development.
  * @class Rann
  * @constructor
  */
-Rann = function Rann(i = 1, o = 1) {
+Rann = function Rann(i = 1, h = 2, o = 1) {
+  // Structure Values
   this.i = i;
   this.o = o;
+  this.h = h;
   this.lr = 0.001;
-  this.nn = new Dann(i, o);
-  this.nn.addHiddenLayer(i * 2);
-  this.nn.makeWeights();
-  this.nn.lr = this.lr;
-  this.previous = [];
-  this.input = [];
-};
+  this.arch = [this.i, this.h, this.o];
 
-Rann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
-  this.nn.addHiddenLayer(size, act);
-  this.nn.makeWeights();
+  this.bias = new Matrix(this.h, 1);
+  this.bias.randomize(-0.1, 0.1);
+
+  // Weights
+  this.U = new Matrix(this.h, this.i);
+  this.V = new Matrix(this.o, this.h);
+  this.W = new Matrix(this.h, this.h);
+
+  // Randomize
+  this.U.randomize(-1, 1);
+  this.V.randomize(-1, 1);
+  this.W.randomize(-1, 1);
+
+  // Mult values (dev only)
+  this.mulv;
+  this.mulw;
+  this.mulu;
+  this.mapped;
+
+  // Set activation
+  this.actname = 'sigmoid';
+  let funcData = Layer.stringTofunc(this.actname);
+  this.actfunc = funcData['func'];
+  this.actfunc_d = funcData['func_d'];
+
+  // Other values
+  this.previous;
+  this.input;
+  this.output;
 };
 
 Rann.prototype.feed = function feed(input, options) {
-  let output = this.nn.feedForward(input, options);
-  return output;
+  let log = false;
+  if (options !== undefined) {
+    if (options.log !== undefined) {
+      log = options.log;
+    }
+  }
+  for (let d = 0; d < input.length; d++) {
+    this.previous = new Matrix(this.h, 1);
+    let input_s = input[d];
+    for (let t = 0; t < input[d].length; t++) {
+      // New input
+      new_input = new Matrix(this.i, 1);
+      new_input.matrix[t][0] = input_s[t];
+
+      // Mult input to hidden
+      this.mulu = Matrix.mult(this.U, new_input);
+
+      // Add bias
+      this.mulu.add(this.bias);
+
+      // Mult previous hidden to current hidden
+      this.mulw = Matrix.mult(this.W, this.previous);
+
+      // Add two matrices as a grid.
+      let sum = Matrix.addGrid(Matrix.transpose(this.mulw), this.mulu);
+
+      // Matrix.map not working in this case for some reason.
+      let mapped = new Matrix(sum.rows, sum.cols);
+      for (let i = 0; i < sum.rows; i++) {
+        for (let j = 0; j < sum.cols; j++) {
+          let v = sum.matrix[i][j];
+          mapped.matrix[i][j] = this.actfunc(v);
+        }
+      }
+      this.mapped = mapped;
+
+      this.mulv = Matrix.mult(mapped, Matrix.transpose(this.V));
+      if (log === true) {
+        console.log('Time: ' + t);
+        console.log(this.mulv);
+      }
+      this.previous = mapped;
+      this.output = this.mulv;
+    }
+  }
+  return this.output;
+};
+
+Rann.prototype.setActivation = function setActivation(act) {
+  this.actname = act;
+  let funcData = Layer.stringTofunc(this.actname);
+  this.actfunc = funcData['func'];
+  this.actfunc_d = funcData['func_d'];
 };
 
 Rann.prototype.train = function train(input, target) {
-  this.previous = new Array(this.nn.arch[1]).fill(0);
-  for (let t = 0; t < input.length; t++) {
-    this.input = new Array(this.i).fill(0);
-    this.input[t] = input[t];
-    let output = this.feed(this.input, {
-      pull: 1,
-      insert: { layer: 1, value: this.previous },
-    });
-    this.previous = output;
-    this.output = this.feed(this.input, {
-      insert: { layer: 1, value: this.previous },
-    });
-  }
-  return this.output;
+  //
 };
 
 //Node Module Exports:
