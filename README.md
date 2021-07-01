@@ -11,6 +11,13 @@
 <br/>
 
 ## Examples 
+
+import
+```js
+const Dannjs = require('dannjs');
+const Rann = Dannjs.rann;
+```
+
 Feed sequence data
 ```js
 let rnn = new Rann(2, 20, 2);
