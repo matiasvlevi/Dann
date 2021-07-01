@@ -972,13 +972,18 @@ Matrix.make = function make(rows = 0, cols = 0) {
  * </code>
  */
 Matrix.prototype.map = function map(f) {
-  for (let i = 0; i < this.rows; i++) {
-    for (let j = 0; j < this.cols; j++) {
-      let v = this.matrix[i][j];
-      this.matrix[i][j] = f(v);
+  if (typeof f !== 'function') {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        let v = this.matrix[i][j];
+        this.matrix[i][j] = f(v);
+      }
     }
+    return this;
+  } else {
+    DannError.error('Argument must be a function', 'Matrix.prototype.add');
+    return;
   }
-  return this;
 };
 
 /**
@@ -1002,13 +1007,14 @@ Matrix.prototype.map = function map(f) {
  */
 Matrix.map = function map(m, f) {
   if (m instanceof Matrix) {
+    let ans = new Matrix(m.rows, m.cols);
     for (let i = 0; i < m.rows; i++) {
       for (let j = 0; j < m.cols; j++) {
         let v = m.matrix[i][j];
-        m.matrix[i][j] = f(v);
+        ans.matrix[i][j] = f(v);
       }
     }
-    return m;
+    return ans;
   } else {
     DannError.error(
       'First argument must be an instance of Matrix',
@@ -3205,12 +3211,19 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
   this.mulw;
   this.mulu;
   this.mapped;
+  this.sum;
 
-  // Set activation
+  // Set hidden activation
   this.actname = 'sigmoid';
   let funcData = Layer.stringTofunc(this.actname);
   this.actfunc = funcData['func'];
   this.actfunc_d = funcData['func_d'];
+
+  // Set output activation
+  this.o_actname = 'linear';
+  funcData = Layer.stringTofunc(this.actname);
+  this.o_actfunc = (x) => x;
+  this.o_actfunc_d = (x) => 1;
 
   // Other values
   this.previous;
@@ -3218,53 +3231,86 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
   this.output;
 };
 
+Rann.checkSequences = function checkSequences(input, sequence) {
+  for (let i = 0; i < input.length; i++) {
+    if (input[i].length !== sequence) {
+      return false;
+    }
+  }
+  return true;
+};
+
 Rann.prototype.feed = function feed(input, options) {
-  let log = false;
-  if (options !== undefined) {
-    if (options.log !== undefined) {
-      log = options.log;
+  if (Rann.checkSequences(input, this.i)) {
+    let log = false;
+    if (options !== undefined) {
+      if (options.log !== undefined) {
+        log = options.log;
+      }
     }
-  }
-  for (let d = 0; d < input.length; d++) {
-    this.previous = new Matrix(this.h, 1);
-    let input_s = input[d];
-    for (let t = 0; t < input[d].length; t++) {
-      // New input
-      new_input = new Matrix(this.i, 1);
-      new_input.matrix[t][0] = input_s[t];
+    for (let d = 0; d < input.length; d++) {
+      // First previous values
+      this.previous = new Matrix(this.h, 1);
+      // Input sequence
+      let input_s = input[d];
+      // Sequence length
+      let sequence = input[d].length;
+      for (let t = 0; t < sequence; t++) {
+        // New input for sequence
+        new_input = new Matrix(sequence, 1);
+        new_input.matrix[t][0] = input_s[t];
 
-      // Mult input to hidden
-      this.mulu = Matrix.mult(this.U, new_input);
+        // Mult input to hidden
+        this.mulu = Matrix.mult(this.U, new_input);
 
-      // Add bias
-      this.mulu.add(this.bias);
+        // Mult previous hidden to current hidden
+        this.mulw = Matrix.mult(this.W, this.previous);
 
-      // Mult previous hidden to current hidden
-      this.mulw = Matrix.mult(this.W, this.previous);
+        // Add two matrices as a grid
+        let sum = Matrix.add(this.mulw, this.mulu);
 
-      // Add two matrices as a grid.
-      let sum = Matrix.addGrid(Matrix.transpose(this.mulw), this.mulu);
+        // Map to activation function
+        let mapped = Matrix.map(sum, this.actfunc);
 
-      // Matrix.map not working in this case for some reason.
-      let mapped = new Matrix(sum.rows, sum.cols);
-      for (let i = 0; i < sum.rows; i++) {
-        for (let j = 0; j < sum.cols; j++) {
-          let v = sum.matrix[i][j];
-          mapped.matrix[i][j] = this.actfunc(v);
+        this.mulv = Matrix.mult(this.V, mapped);
+        if (log === true) {
+          console.log('Time: ' + t);
+          console.log(this.mulv);
         }
+        this.previous = mapped;
+        this.output = this.mulv;
       }
-      this.mapped = mapped;
-
-      this.mulv = Matrix.mult(mapped, Matrix.transpose(this.V));
-      if (log === true) {
-        console.log('Time: ' + t);
-        console.log(this.mulv);
-      }
-      this.previous = mapped;
-      this.output = this.mulv;
     }
+    let out = Matrix.map(this.output, this.o_actfunc);
+    return Matrix.toArray(out);
+  } else {
+    DannError.error(
+      'Input sequences length must equal the number of input neurons the Rann model has',
+      'Rann.prototype.feed'
+    );
+    return undefined;
   }
-  return this.output;
+};
+
+Rann.prototype.makeWeights = function makeWeights(min, max) {
+  if (min !== undefined || max !== undefined) {
+    this.U.randomize(min, max);
+    this.V.randomize(min, max);
+    this.W.randomize(min, max);
+    return;
+  } else {
+    DannError.error(
+      'Must specify minimum and maximum values for weights',
+      'Rann.prototype.makeWeights'
+    );
+  }
+};
+
+Rann.prototype.outputActivation = function outputActivation(act) {
+  this.o_actname = act;
+  let funcData = Layer.stringTofunc(this.actname);
+  this.o_actfunc = funcData['func'];
+  this.o_actfunc_d = funcData['func_d'];
 };
 
 Rann.prototype.setActivation = function setActivation(act) {
