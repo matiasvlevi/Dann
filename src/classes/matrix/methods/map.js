@@ -17,13 +17,18 @@
  * </code>
  */
 Matrix.prototype.map = function map(f) {
-  for (let i = 0; i < this.rows; i++) {
-    for (let j = 0; j < this.cols; j++) {
-      let v = this.matrix[i][j];
-      this.matrix[i][j] = f(v);
+  if (typeof f !== 'function') {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        let v = this.matrix[i][j];
+        this.matrix[i][j] = f(v);
+      }
     }
+    return this;
+  } else {
+    DannError.error('Argument must be a function', 'Matrix.prototype.add');
+    return;
   }
-  return this;
 };
 
 /**
@@ -47,13 +52,14 @@ Matrix.prototype.map = function map(f) {
  */
 Matrix.map = function map(m, f) {
   if (m instanceof Matrix) {
+    let ans = new Matrix(m.rows, m.cols);
     for (let i = 0; i < m.rows; i++) {
       for (let j = 0; j < m.cols; j++) {
         let v = m.matrix[i][j];
-        m.matrix[i][j] = f(v);
+        ans.matrix[i][j] = f(v);
       }
     }
-    return m;
+    return ans;
   } else {
     DannError.error(
       'First argument must be an instance of Matrix',
