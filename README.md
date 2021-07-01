@@ -13,7 +13,7 @@
 ## Examples 
 Feed sequence data
 ```js
-let rnn = new Rann(8, 20, 2);
+let rnn = new Rann(2, 20, 2);
 rnn.feed([
   [1,2],
   [3,4],
