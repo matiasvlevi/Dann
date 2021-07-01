@@ -972,7 +972,7 @@ Matrix.make = function make(rows = 0, cols = 0) {
  * </code>
  */
 Matrix.prototype.map = function map(f) {
-  if (typeof f !== 'function') {
+  if (typeof f === 'function') {
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let v = this.matrix[i][j];
@@ -981,7 +981,7 @@ Matrix.prototype.map = function map(f) {
     }
     return this;
   } else {
-    DannError.error('Argument must be a function', 'Matrix.prototype.add');
+    DannError.error('Argument must be a function', 'Matrix.prototype.map');
     return;
   }
 };
