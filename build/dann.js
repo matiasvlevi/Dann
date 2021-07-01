@@ -3241,6 +3241,13 @@ Rann.checkSequences = function checkSequences(input, sequence) {
 };
 
 Rann.prototype.feed = function feed(input, options) {
+  if (typeof input[0] === 'string') {
+    let input_temp = [];
+    for (let i = 0; i < input.length; i++) {
+      input_temp.push(Rann.stringToNum(input[i]));
+    }
+    input = input_temp;
+  }
   if (Rann.checkSequences(input, this.i)) {
     let log = false;
     if (options !== undefined) {
@@ -3318,6 +3325,19 @@ Rann.prototype.setActivation = function setActivation(act) {
   let funcData = Layer.stringTofunc(this.actname);
   this.actfunc = funcData['func'];
   this.actfunc_d = funcData['func_d'];
+};
+
+Rann.stringToNum = function stringToNum(str) {
+  let supported =
+    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  let letters = str.split('');
+  let numbers = [];
+  for (letter of letters) {
+    let ascii_value = supported.indexOf(letter);
+    let value = (ascii_value + 1) / (supported.length + 1);
+    numbers.push(value);
+  }
+  return numbers;
 };
 
 Rann.prototype.train = function train(input, target) {
