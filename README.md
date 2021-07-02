@@ -11,8 +11,12 @@
 <br/>
 
 ## Examples 
+CDN
+```js
+<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/dann.js"></script>
+```
 
-import
+imports with nodejs
 ```js
 const Dannjs = require('dannjs');
 const Rann = Dannjs.rann;
