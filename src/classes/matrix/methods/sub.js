@@ -83,7 +83,7 @@ Matrix.sub = function sub(a, b) {
       return result;
     }
   } else {
-    DannError.error('The arguments should be p5.MatrixTensors', 'Matrix.sub');
+    DannError.error('The arguments should be Matrices', 'Matrix.sub');
     return undefined;
   }
 };
