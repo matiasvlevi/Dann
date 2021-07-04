@@ -26,16 +26,27 @@ Feed sequence data
 ```js
 let rnn = new Rann(2, 20, 2);
 rnn.feed([
-  [1,2],
-  [3,4],
-  [5,6],
-  [7,8]
+  [1, 2],
+  [3, 4],
+  [5, 6],
+  [7, 8]
 ]);
-// [X, X] Output is random since rnn is not trained
+
 ```
 Train sequence data
 ```js
-// Not implemented yet
+rnn.train(
+  [
+    [1, 2],
+    [3, 4],
+    [5, 6],
+    [7, 8]
+  ],
+  [9, 10]
+)
+rnn.feed([[7,8]]);
+// Outputs close to [9, 10] if well trained 
+// (Call train more than once)
 ```
 
 
