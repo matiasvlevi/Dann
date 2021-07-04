@@ -740,6 +740,25 @@ Matrix.addGrid = function addGrid(m1, m2) {
   return new Matrix().set(ans);
 };
 
+Matrix.addColumn = function addColumn(m1, m2) {
+  let a;
+  let b;
+  if (m1.cols === 1) {
+    a = m1;
+    b = m2;
+  } else if (m2.cols === 1) {
+    a = m2;
+    b = m1;
+  }
+  let ans = new Matrix(b.rows, b.cols);
+  for (let i = 0; i < b.rows; i++) {
+    for (let j = 0; j < b.cols; j++) {
+      ans.matrix[i][j] = b.matrix[i][j] + a.matrix[i][0];
+    }
+  }
+  return ans;
+};
+
 /*
  * Undisplayed documentation
  *
@@ -1031,6 +1050,42 @@ Matrix.map = function map(m, f) {
 };
 
 /**
+ * Finds the largest value in a matrix.
+ * @method max
+ * @return {Number} the largest value
+ */
+Matrix.prototype.max = function max() {
+  let max = 0;
+  for (let i = 0; i < this.rows; i++) {
+    for (let j = 0; j < this.cols; j++) {
+      let v = this.matrix[i][j];
+      if (max < v) {
+        max = v;
+      }
+    }
+  }
+  return max;
+};
+
+/**
+ * Finds the smallest value in a matrix.
+ * @method min
+ * @return {Number} the smallest value
+ */
+Matrix.prototype.min = function min() {
+  let min = 10000000000;
+  for (let i = 0; i < this.rows; i++) {
+    for (let j = 0; j < this.cols; j++) {
+      let v = this.matrix[i][j];
+      if (min > v) {
+        min = v;
+      }
+    }
+  }
+  return min;
+};
+
+/**
  * Multiply a Matrix object by an other matrix or a scalar
  * @method mult
  * @param {Matrix|Number} n Scalar or Matrix to multiply to the Matrix object.
@@ -1299,7 +1354,7 @@ Matrix.sub = function sub(a, b) {
       return result;
     }
   } else {
-    DannError.error('The arguments should be p5.MatrixTensors', 'Matrix.sub');
+    DannError.error('The arguments should be Matrices', 'Matrix.sub');
     return undefined;
   }
 };
@@ -3234,17 +3289,22 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
   let funcData = Layer.stringTofunc(this.actname);
   this.actfunc = funcData['func'];
   this.actfunc_d = funcData['func_d'];
+  // this.actname = 'linear';
+  // this.actfunc = (x) => x;
+  // this.actfunc_d = (x) => 1;
 
   // Set output activation
   this.o_actname = 'linear';
-  funcData = Layer.stringTofunc(this.actname);
   this.o_actfunc = (x) => x;
   this.o_actfunc_d = (x) => 1;
 
-  // Other values
+  // Data values
   this.previous;
   this.input;
   this.output;
+
+  // Other values
+  this.truncate = 5;
 };
 
 Rann.checkSequences = function checkSequences(input, sequence) {
@@ -3254,6 +3314,43 @@ Rann.checkSequences = function checkSequences(input, sequence) {
     }
   }
   return true;
+};
+
+Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
+  // Clip maximum
+  let dUmax = this.dU.max();
+  if (dUmax > max_clip) {
+    let s = max_clip / dUmax;
+    this.dU.map((x) => x * s);
+  }
+  let dVmax = this.dV.max();
+  if (dVmax > max_clip) {
+    let s = max_clip / dVmax;
+    this.dV.map((x) => x * s);
+  }
+  let dWmax = this.dW.max();
+  if (dWmax > max_clip) {
+    let s = max_clip / dWmax;
+    this.dW.map((x) => x * s);
+  }
+  // Clip minimum
+  let dUmin = this.dU.min();
+  if (dUmin < min_clip) {
+    let s = min_clip / dUmin;
+    this.dU.map((x) => x * s);
+  }
+  let dVmin = this.dV.min();
+  if (dVmin < min_clip) {
+    let s = min_clip / dVmin;
+    this.dV.map((x) => x * s);
+  }
+  let dWmin = this.dW.min();
+  if (dWmin < min_clip) {
+    let s = min_clip / dWmin;
+    this.dW.map((x) => x * s);
+  }
+
+  return;
 };
 
 Rann.prototype.feed = function feed(input, options) {
@@ -3351,11 +3448,13 @@ Rann.stringToNum = function stringToNum(str) {
 
 Rann.prototype.train = function train(input, target) {
   let y = Matrix.fromArray(target);
+  let sequence;
+  let input_s;
   for (let d = 0; d < input.length; d++) {
     this.previous = new Matrix(this.h, 1);
 
-    let input_s = input[d];
-    let sequence = input_s.length;
+    input_s = input[d];
+    sequence = input_s.length;
 
     this.layers = [];
 
@@ -3393,37 +3492,61 @@ Rann.prototype.train = function train(input, target) {
     }
     // Error difference
     this.dmulv = Matrix.sub(this.mulv, y);
+  }
+  for (let t = 0; t < sequence; t++) {
+    // Derivative of V
+    this.dV_t = Matrix.mult(
+      this.dmulv,
+      Matrix.transpose(this.layers[t]['current'])
+    );
+    // Derivative of mulv
+    let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
+    // Copy previous forward sums
+    let sum = this.sum;
+    let sum_ = this.sum;
+    // Create all 1 matrix
+    let submatrix = new Matrix(sum.rows, sum.cols);
+    submatrix.initiate(1);
 
-    for (let t = 0; t < sequence; t++) {
-      // Derivative of V
-      this.dV_t = Matrix.mult(
-        this.dmulv,
-        Matrix.transpose(this.layers[t]['current'])
-      );
-      // Derivative of mulv
-      let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
-      // Copy previous forward sums
-      let sum = this.sum;
-      let sum_ = this.sum;
-      // Create all 1 matrix
-      let submatrix = new Matrix(sum.rows, sum.cols);
-      submatrix.initiate(1);
+    // Find dadd
+    let sumsub = Matrix.sub(submatrix, sum_);
+    let summult = sum.mult(dsv);
+    let dadd = sumsub.mult(summult);
 
-      // Find dadd
-      let sumsub = Matrix.sub(submatrix, sum_);
-      let summult = sum.mult(dsv);
-      let dadd = sumsub.mult(summult);
+    // Derivative of mulw
+    let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
+    ones_mulw.initiate(1);
+    this.dmulw = dadd.mult(ones_mulw);
+    let max_ = Math.max(-1, t - this.truncate - 1);
 
-      // Derivative of mulw
-      let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
-      ones_mulw.initiate(1);
-      this.dmulw = dadd.mult(ones_mulw);
+    for (let i = t - 1; i > max_; i -= 1) {
       // Derivative of mulu
       let ones_mulu = new Matrix(this.mulu.rows, this.mulu.cols);
       ones_mulu.initiate(1);
       this.dmulu = dadd.mult(ones_mulu);
+
+      this.dW_i = Matrix.mult(this.W, this.layers[t]['previous']);
+
+      let new_input = new Matrix(sequence, 1);
+      new_input.matrix[t][0] = input_s[t];
+
+      this.dU_i = Matrix.mult(this.U, new_input);
+
+      this.dU_t = Matrix.addColumn(this.dU_t, this.dU_i);
+      this.dW_t = Matrix.addColumn(this.dW_t, this.dW_i);
     }
+    this.dV.add(this.dV_t);
+    this.dU.add(this.dU_t);
+    this.dW.add(this.dW_t);
   }
+
+  this.clipGradients(-10, 10);
+
+  this.U.sub(this.dU.mult(this.lr));
+  this.V.sub(this.dV.mult(this.lr));
+  this.W.sub(this.dW.mult(this.lr));
+
+  return undefined;
 };
 
 //Node Module Exports:
