@@ -1,10 +1,12 @@
 Rann.prototype.train = function train(input, target) {
   let y = Matrix.fromArray(target);
+  let sequence;
+  let input_s;
   for (let d = 0; d < input.length; d++) {
     this.previous = new Matrix(this.h, 1);
 
-    let input_s = input[d];
-    let sequence = input_s.length;
+    input_s = input[d];
+    sequence = input_s.length;
 
     this.layers = [];
 
@@ -42,35 +44,59 @@ Rann.prototype.train = function train(input, target) {
     }
     // Error difference
     this.dmulv = Matrix.sub(this.mulv, y);
+  }
+  for (let t = 0; t < sequence; t++) {
+    // Derivative of V
+    this.dV_t = Matrix.mult(
+      this.dmulv,
+      Matrix.transpose(this.layers[t]['current'])
+    );
+    // Derivative of mulv
+    let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
+    // Copy previous forward sums
+    let sum = this.sum;
+    let sum_ = this.sum;
+    // Create all 1 matrix
+    let submatrix = new Matrix(sum.rows, sum.cols);
+    submatrix.initiate(1);
 
-    for (let t = 0; t < sequence; t++) {
-      // Derivative of V
-      this.dV_t = Matrix.mult(
-        this.dmulv,
-        Matrix.transpose(this.layers[t]['current'])
-      );
-      // Derivative of mulv
-      let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
-      // Copy previous forward sums
-      let sum = this.sum;
-      let sum_ = this.sum;
-      // Create all 1 matrix
-      let submatrix = new Matrix(sum.rows, sum.cols);
-      submatrix.initiate(1);
+    // Find dadd
+    let sumsub = Matrix.sub(submatrix, sum_);
+    let summult = sum.mult(dsv);
+    let dadd = sumsub.mult(summult);
 
-      // Find dadd
-      let sumsub = Matrix.sub(submatrix, sum_);
-      let summult = sum.mult(dsv);
-      let dadd = sumsub.mult(summult);
+    // Derivative of mulw
+    let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
+    ones_mulw.initiate(1);
+    this.dmulw = dadd.mult(ones_mulw);
+    let max_ = Math.max(-1, t - this.truncate - 1);
 
-      // Derivative of mulw
-      let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
-      ones_mulw.initiate(1);
-      this.dmulw = dadd.mult(ones_mulw);
+    for (let i = t - 1; i > max_; i -= 1) {
       // Derivative of mulu
       let ones_mulu = new Matrix(this.mulu.rows, this.mulu.cols);
       ones_mulu.initiate(1);
       this.dmulu = dadd.mult(ones_mulu);
+
+      this.dW_i = Matrix.mult(this.W, this.layers[t]['previous']);
+
+      let new_input = new Matrix(sequence, 1);
+      new_input.matrix[t][0] = input_s[t];
+
+      this.dU_i = Matrix.mult(this.U, new_input);
+
+      this.dU_t = Matrix.addColumn(this.dU_t, this.dU_i);
+      this.dW_t = Matrix.addColumn(this.dW_t, this.dW_i);
     }
+    this.dV.add(this.dV_t);
+    this.dU.add(this.dU_t);
+    this.dW.add(this.dW_t);
   }
+
+  this.clipGradients(-10, 10);
+
+  this.U.sub(this.dU.mult(this.lr));
+  this.V.sub(this.dV.mult(this.lr));
+  this.W.sub(this.dW.mult(this.lr));
+
+  return undefined;
 };
