@@ -23,6 +23,7 @@ Matrix.prototype.set = function set(matrix) {
     this.matrix = matrix;
     this.rows = matrix.length;
     this.cols = matrix[0].length;
+    this.shape = this.makeShape();
     return this;
   } else {
     DannError.error(
