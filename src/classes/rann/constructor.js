@@ -49,15 +49,20 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
   let funcData = Layer.stringTofunc(this.actname);
   this.actfunc = funcData['func'];
   this.actfunc_d = funcData['func_d'];
+  // this.actname = 'linear';
+  // this.actfunc = (x) => x;
+  // this.actfunc_d = (x) => 1;
 
   // Set output activation
   this.o_actname = 'linear';
-  funcData = Layer.stringTofunc(this.actname);
   this.o_actfunc = (x) => x;
   this.o_actfunc_d = (x) => 1;
 
-  // Other values
+  // Data values
   this.previous;
   this.input;
   this.output;
+
+  // Other values
+  this.truncate = 5;
 };
