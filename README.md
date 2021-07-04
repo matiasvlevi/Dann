@@ -1,22 +1,26 @@
-<p align="center">
+<div align="center">
   <a href="https://dannjs.org/">
     <img src="https://dannjs.org/transparentlogo.png" alt="Dannjs" height="150" />
   </a>
-</p>
+  <h4>RNN development Branch</h4>
+  <a href="https://github.com/matiasvlevi/Dann">Back to master branch</a>
+</div>
 
-<h4 align="center">RNN development Branch</h4>
-
-[Back to master branch](https://github.com/matiasvlevi/Dann)
 
 <br/>
 
-## Examples 
+#### CDN
+```js
+<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/dann.js"></script>
+```
 
-import
+#### Nodejs
 ```js
 const Dannjs = require('dannjs');
 const Rann = Dannjs.rann;
 ```
+
+## Examples 
 
 Feed sequence data
 ```js
