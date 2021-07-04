@@ -17,6 +17,7 @@
 Matrix = function Matrix(rows = 0, cols = 0) {
   this.rows = rows;
   this.cols = cols;
+  this.shape = '( ' + this.rows + ' , ' + this.cols + ' )';
   let m = [[]];
   for (let i = 0; i < rows; i++) {
     m[i] = [];
