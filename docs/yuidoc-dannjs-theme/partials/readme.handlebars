@@ -1,18 +1,20 @@
-<p align="center">
+<div align="center">
   <a href="https://dannjs.org/">
     <img src="https://dannjs.org/transparentlogo.png" alt="Dannjs" height="150" />
   </a>
-</p>
+  <h4>RNN development Branch</h4>
+  <a href="https://github.com/matiasvlevi/Dann">Back to master branch</a>
+</div>
 
-<h4 align="center">RNN development Branch</h4>
 
-<p><a href="https://github.com/matiasvlevi/Dann">Back to master branch</a></p>
 <br/>
 
-<h2 id="examples">Examples</h2>
-<p>import</p>
+<h4 id="cdn">CDN</h4>
+<pre><code class="rmcode js">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/dann.js&quot;&gt;&lt;/script&gt;</code></pre>
+<h4 id="nodejs">Nodejs</h4>
 <pre><code class="rmcode js">const Dannjs = require(&#39;dannjs&#39;);
 const Rann = Dannjs.rann;</code></pre>
+<h2 id="examples">Examples</h2>
 <p>Feed sequence data</p>
 <pre><code class="rmcode js">let rnn = new Rann(2, 20, 2);
 rnn.feed([
