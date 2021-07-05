@@ -18,14 +18,26 @@ const Rann = Dannjs.rann;</code></pre>
 <p>Feed sequence data</p>
 <pre><code class="rmcode js">let rnn = new Rann(2, 20, 2);
 rnn.feed([
-  [1,2],
-  [3,4],
+  [1, 2],
+  [3, 4],
+  [5, 6],
+  [7, 8]
+]);
+</code></pre>
+<p>Train sequence data</p>
+<pre><code class="rmcode js">rnn.train([
+    [1, 2],
+    [3, 4],
+    [5, 6],
+    [7, 8],
+    [9, 10]  
+])
+rnn.feed([
   [5,6],
   [7,8]
 ]);
-// [X, X] Output is random since rnn is not trained</code></pre>
-<p>Train sequence data</p>
-<pre><code class="rmcode js">// Not implemented yet</code></pre>
+// Outputs close to [9, 10] if well trained 
+// (Call train more than once)</code></pre>
 <p><br/><br/><br/></p>
 <h2 id="license">License</h2>
 <p>MIT</p>

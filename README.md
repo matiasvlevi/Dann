@@ -35,16 +35,17 @@ rnn.feed([
 ```
 Train sequence data
 ```js
-rnn.train(
-  [
+rnn.train([
     [1, 2],
     [3, 4],
     [5, 6],
-    [7, 8]
-  ],
-  [9, 10]
-)
-rnn.feed([[7,8]]);
+    [7, 8],
+    [9, 10]  
+])
+rnn.feed([
+  [5,6],
+  [7,8]
+]);
 // Outputs close to [9, 10] if well trained 
 // (Call train more than once)
 ```
