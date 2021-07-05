@@ -36,9 +36,7 @@
  * <code>
  * const nn = new Dann(4, 2);
  * nn.makeWeights();
- * let prediction = nn.feedForward([0,0,0,1], {log:true});
- * //outputs an array of length 2
- * console.log(prediction);
+ * nn.feedForward([0,0,0,1], {log:true});
  * </code>
  */
 
@@ -136,7 +134,7 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
     let out = this.outs;
     if (showLog === true) {
       if (roundData === true) {
-        out = out.map((x) => round(x * dec) / dec);
+        out = out.map((x) => Math.round(x * dec) / dec);
       }
       if (table === true) {
         console.log('Prediction: ');
