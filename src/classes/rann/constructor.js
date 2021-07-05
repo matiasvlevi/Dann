@@ -6,6 +6,14 @@
  * Recurrent Neural Network object. Feature still in development.
  * @class Rann
  * @constructor
+ * @param {Number} i The number of input neurons, must be the same length as the sequences to input.
+ * @param {Number} h The number of hidden neurons
+ * @param {Number} o The number of output neurons
+ * @example
+ * <code>
+ * const rnn = new Rann(10, 32, 10);
+ * rnn.log();
+ * </code>
  */
 Rann = function Rann(i = 1, h = 2, o = 1) {
   // Structure Values
@@ -39,7 +47,7 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
   this.V.randomize(-1, 1);
   this.W.randomize(-1, 1);
 
-  // Mult values (dev only)
+  // Mult values
   this.mulv;
   this.mulw;
   this.mulu;
@@ -62,4 +70,8 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
 
   // Other values
   this.truncate = 5;
+  this.loss = 0;
+  this.epoch = 0;
+  this.lossfunc_s = 'mse';
+  this.lossfunc = lossfuncs[this.lossfunc_s];
 };

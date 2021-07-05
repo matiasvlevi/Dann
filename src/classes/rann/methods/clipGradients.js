@@ -1,3 +1,11 @@
+/*
+ * Undisplaed documentation,
+ * This method allows for the gradients to keep a certan threshold value in order to avoid 'gradient explosion'
+ * @method clipGradients
+ * @param {Number} min_clip
+ * @param {Number} max_clip
+ * @returns
+ */
 Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
   // Clip maximum
   let dUmax = this.dU.max();
