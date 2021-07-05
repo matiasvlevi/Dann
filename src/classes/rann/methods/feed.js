@@ -1,9 +1,69 @@
+/**
+ * Feed data to the Reccurent Neural Network.
+ * @method feed
+ * @param {Array} input An array of input sequences
+ * @param {Object} [options] An object setting optional parameters.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>log</td>
+ * <td>Boolean</td>
+ * <td>If set to true, it will log a report in the console.</td>
+ * </tr>
+ * <tr>
+ * <td>table</td>
+ * <td>Boolean</td>
+ * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
+ * </tr>
+ * <tr>
+ * <td>decimals</td>
+ * <td>Integer</td>
+ * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * @return {Array} The output sequence
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * rnn.feed([
+ *  [1,2],
+ *  [2,3],
+ *  [4,5]
+ * ]);
+ * </code>
+ */
 Rann.prototype.feed = function feed(input, options) {
-  if (Rann.checkSequences(input, this.i)) {
+  if (this.validateSequences(input)) {
     let log = false;
+    let roundData = false;
+    let table = false;
+    let dec = 21;
     if (options !== undefined) {
       if (options.log !== undefined) {
         log = options.log;
+      }
+      if (options.table !== undefined) {
+        table = options.table;
+      }
+      if (options.decimals !== undefined) {
+        if (options.decimals > 21) {
+          DannError.warn(
+            'Maximum number of decimals is 21, was set to 21 by default.',
+            'Rann.prototype.feed'
+          );
+          options.decimals = 21;
+        } else {
+          dec = Math.pow(10, options.decimals);
+          roundData = true;
+        }
       }
     }
     for (let d = 0; d < input.length; d++) {
@@ -40,7 +100,22 @@ Rann.prototype.feed = function feed(input, options) {
       }
     }
     let out = Matrix.map(this.output, this.o_actfunc);
-    return Matrix.toArray(out);
+    if (roundData) {
+      out = Matrix.map(out, (x) => {
+        return Math.round(x * dec) / dec;
+      });
+    }
+    let outArray = Matrix.toArray(out);
+    if (log) {
+      if (table) {
+        console.log('Prediction');
+        console.table(outArray);
+      } else {
+        console.log('Prediction');
+        console.log(outArray);
+      }
+    }
+    return outArray;
   } else {
     DannError.error(
       'Input sequences length must equal the number of input neurons the Rann model has',
