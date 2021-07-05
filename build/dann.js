@@ -2136,9 +2136,7 @@ Dann.createFromJSON = function createFromJSON(data) {
  * <code>
  * const nn = new Dann(4, 2);
  * nn.makeWeights();
- * let prediction = nn.feedForward([0,0,0,1], {log:true});
- * //outputs an array of length 2
- * console.log(prediction);
+ * nn.feedForward([0,0,0,1], {log:true});
  * </code>
  */
 
@@ -2236,7 +2234,7 @@ Dann.prototype.feedForward = function feedForward(inputs, options) {
     let out = this.outs;
     if (showLog === true) {
       if (roundData === true) {
-        out = out.map((x) => round(x * dec) / dec);
+        out = out.map((x) => Math.round(x * dec) / dec);
       }
       if (table === true) {
         console.log('Prediction: ');
@@ -2516,7 +2514,7 @@ Dann.prototype.log = function log(options) {
     options === undefined ||
     (options !== undefined && options.details === true)
   ) {
-    console.log('Dann NeuralNetwork:');
+    console.log('Dann model:');
   }
   if (showBaseSettings) {
     console.log('Layers:');
@@ -3246,6 +3244,14 @@ Dann.prototype.toJSON = function toJSON() {
  * Recurrent Neural Network object. Feature still in development.
  * @class Rann
  * @constructor
+ * @param {Number} i The number of input neurons, must be the same length as the sequences to input.
+ * @param {Number} h The number of hidden neurons
+ * @param {Number} o The number of output neurons
+ * @example
+ * <code>
+ * const rnn = new Rann(10, 32, 10);
+ * rnn.log();
+ * </code>
  */
 Rann = function Rann(i = 1, h = 2, o = 1) {
   // Structure Values
@@ -3279,7 +3285,7 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
   this.V.randomize(-1, 1);
   this.W.randomize(-1, 1);
 
-  // Mult values (dev only)
+  // Mult values
   this.mulv;
   this.mulw;
   this.mulu;
@@ -3302,17 +3308,36 @@ Rann = function Rann(i = 1, h = 2, o = 1) {
 
   // Other values
   this.truncate = 5;
+  this.loss = 0;
+  this.epoch = 0;
+  this.lossfunc_s = 'mse';
+  this.lossfunc = lossfuncs[this.lossfunc_s];
 };
 
-Rann.checkSequences = function checkSequences(input, sequence) {
+/*
+ * Undisplayed documentation
+ * Check if sequences are the right format for a given Rann model.
+ * @param {Array} input Array of input sequences.
+ * @param {Number} sequence The sequence length
+ * @return {Boolean} If the sequences are valid for the given Rann model
+ */
+Rann.prototype.validateSequences = function checkSequences(input) {
   for (let i = 0; i < input.length; i++) {
-    if (input[i].length !== sequence) {
+    if (input[i].length !== this.i) {
       return false;
     }
   }
   return true;
 };
 
+/*
+ * Undisplaed documentation,
+ * This method allows for the gradients to keep a certan threshold value in order to avoid 'gradient explosion'
+ * @method clipGradients
+ * @param {Number} min_clip
+ * @param {Number} max_clip
+ * @returns
+ */
 Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
   // Clip maximum
   let dUmax = this.dU.max();
@@ -3350,12 +3375,72 @@ Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
   return;
 };
 
+/**
+ * Feed data to the Reccurent Neural Network.
+ * @method feed
+ * @param {Array} input An array of input sequences
+ * @param {Object} [options] An object setting optional parameters.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>log</td>
+ * <td>Boolean</td>
+ * <td>If set to true, it will log a report in the console.</td>
+ * </tr>
+ * <tr>
+ * <td>table</td>
+ * <td>Boolean</td>
+ * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
+ * </tr>
+ * <tr>
+ * <td>decimals</td>
+ * <td>Integer</td>
+ * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * @return {Array} The output sequence
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * rnn.feed([
+ *  [1,2],
+ *  [2,3],
+ *  [4,5]
+ * ]);
+ * </code>
+ */
 Rann.prototype.feed = function feed(input, options) {
-  if (Rann.checkSequences(input, this.i)) {
+  if (this.validateSequences(input)) {
     let log = false;
+    let roundData = false;
+    let table = false;
+    let dec = 21;
     if (options !== undefined) {
       if (options.log !== undefined) {
         log = options.log;
+      }
+      if (options.table !== undefined) {
+        table = options.table;
+      }
+      if (options.decimals !== undefined) {
+        if (options.decimals > 21) {
+          DannError.warn(
+            'Maximum number of decimals is 21, was set to 21 by default.',
+            'Rann.prototype.feed'
+          );
+          options.decimals = 21;
+        } else {
+          dec = Math.pow(10, options.decimals);
+          roundData = true;
+        }
       }
     }
     for (let d = 0; d < input.length; d++) {
@@ -3392,7 +3477,22 @@ Rann.prototype.feed = function feed(input, options) {
       }
     }
     let out = Matrix.map(this.output, this.o_actfunc);
-    return Matrix.toArray(out);
+    if (roundData) {
+      out = Matrix.map(out, (x) => {
+        return Math.round(x * dec) / dec;
+      });
+    }
+    let outArray = Matrix.toArray(out);
+    if (log) {
+      if (table) {
+        console.log('Prediction');
+        console.table(outArray);
+      } else {
+        console.log('Prediction');
+        console.log(outArray);
+      }
+    }
+    return outArray;
   } else {
     DannError.error(
       'Input sequences length must equal the number of input neurons the Rann model has',
@@ -3402,6 +3502,55 @@ Rann.prototype.feed = function feed(input, options) {
   }
 };
 
+/**
+ * Displays information about the model in the console.
+ * @method log
+ * @param {Object} [options] An object including specific properties.
+ * @example
+ * <code>
+ * const rnn = new Rann(4, 20, 4);
+ * rnn.log();
+ * </code>
+ */
+Rann.prototype.log = function log(options) {
+  console.log('Rann model:');
+  if (options === undefined) {
+    // Structure
+    console.log('Layers:');
+    for (let i = 0; i < this.arch.length; i++) {
+      if (i !== 0 && i !== this.arch.length - 1) {
+        console.log(
+          '     hidden layer: ' + this.arch[i] + '   (' + this.actname + ')'
+        );
+      } else if (i === 0) {
+        console.log('     Input layer: ' + this.arch[i]);
+      } else if (i === this.arch.length - 1) {
+        console.log(
+          '     output layer: ' + this.arch[i] + '   (' + this.o_actname + ')'
+        );
+      }
+    }
+    // Other values
+    console.log('Other values');
+    console.log('     Learning rate: ' + this.lr);
+    console.log('     Loss function: ' + this.lossfunc_s);
+    console.log('     Current epoch: ' + this.epoch);
+    console.log('     Latest loss: ' + this.loss);
+  }
+};
+
+/**
+ * Change the intiated weight values of a model.
+ * This method is optional in the creation of a Rann model.
+ * @method makeWeights
+ * @param {Number} min The minium value.
+ * @param {Number} max The maximum value.
+ * @example
+ * <code>
+ * const rnn = new Rann(4, 10, 4);
+ * rnn.makeWeights(-0.1, 0.1);
+ * </code>
+ */
 Rann.prototype.makeWeights = function makeWeights(min, max) {
   if (min !== undefined || max !== undefined) {
     this.U.randomize(min, max);
@@ -3416,20 +3565,95 @@ Rann.prototype.makeWeights = function makeWeights(min, max) {
   }
 };
 
-Rann.prototype.outputActivation = function outputActivation(act) {
-  this.o_actname = act;
-  let funcData = Layer.stringTofunc(this.actname);
-  this.o_actfunc = funcData['func'];
-  this.o_actfunc_d = funcData['func_d'];
-};
-
+/**
+ * Set the activation function of the shared hidden layer.
+ * @method setActivation
+ * @param {String} act The name of the activation function
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>Sigmoid</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/so8eiigug4">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>leakyReLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>reLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>siLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/f4nhtck5dr">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>tanH</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>binary</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softsign</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>sinc</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softplus</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * <br/>
+ * See how to add more <a href="./Add.html#method_activation">Here</a>
+ * @example
+ * <code>
+ * const rnn = new Rann(3, 20, 3);
+ * rnn.setActivation('tanH');
+ * rnn.log();
+ * </code>
+ */
 Rann.prototype.setActivation = function setActivation(act) {
+  if (activations[act] === undefined && !isBrowser) {
+    if (typeof act === 'string') {
+      DannError.error(
+        "'" +
+          act +
+          "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
+        'Rann.prototype.setActivation'
+      );
+      return;
+    } else {
+      DannError.error(
+        "Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.",
+        'Rann.prototype.setActivation'
+      );
+      return;
+    }
+  }
   this.actname = act;
   let funcData = Layer.stringTofunc(this.actname);
   this.actfunc = funcData['func'];
   this.actfunc_d = funcData['func_d'];
 };
 
+/*
+ * Undisplayed documentation
+ * Convert a string to an array of values.
+ * @param {String} str The string to convert to an array of values.
+ * @returns
+ */
 Rann.stringToNum = function stringToNum(str) {
   let supported =
     ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
@@ -3443,107 +3667,171 @@ Rann.stringToNum = function stringToNum(str) {
   return numbers;
 };
 
-Rann.prototype.train = function train(input, target) {
-  let y = Matrix.fromArray(target);
-  let sequence;
-  let input_s;
-  for (let d = 0; d < input.length; d++) {
-    this.previous = new Matrix(this.h, 1);
-
-    input_s = input[d];
-    sequence = input_s.length;
-
-    this.layers = [];
-
-    this.dU = new Matrix(this.h, this.i);
-    this.dV = new Matrix(this.o, this.h);
-    this.dW = new Matrix(this.h, this.h);
-
-    this.dU_t = new Matrix(this.h, this.i);
-    this.dV_t = new Matrix(this.o, this.h);
-    this.dW_t = new Matrix(this.h, this.h);
-
-    this.dU_i = new Matrix(this.h, this.i);
-    this.dW_i = new Matrix(this.h, this.h);
-
-    for (let t = 0; t < sequence; t++) {
-      // New input for sequence
-      new_input = new Matrix(sequence, 1);
-      new_input.matrix[t][0] = input_s[t];
-
-      // Mult input to hidden
-      this.mulu = Matrix.mult(this.U, new_input);
-
-      // Mult previous hidden to current hidden
-      this.mulw = Matrix.mult(this.W, this.previous);
-
-      // Add two matrices as a grid
-      let sum = Matrix.add(this.mulw, this.mulu);
-      this.sum = sum;
-      // Map to activation function
-      let mapped = Matrix.map(sum, this.actfunc);
-
-      this.mulv = Matrix.mult(this.V, mapped);
-      this.layers.push({ current: mapped, previous: this.previous });
-      this.previous = mapped;
+/**
+ * Train a Rann model according to sequence data.
+ * @method train
+ * @param {Array} input An array of sequences.
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * for (let i = 0; i < 10000; i++) {
+ *  rnn.train([
+ *    [1, 2],
+ *    [3, 4],
+ *    [5, 6],
+ *    [7, 8]
+ *  ]);
+ * }
+ * rnn.feed([
+ *  [1, 2],
+ *  [3, 4]
+ * ]);
+ * // Outputs close to [5, 6]
+ * </code>
+ */
+Rann.prototype.train = function train(input) {
+  if (this.validateSequences(input)) {
+    let length = input.length - 1;
+    for (let i = 0; i < length; i++) {
+      let target = input.splice(input.length - 1, 1);
+      this.trainSequence(input, target[0]);
     }
-    // Error difference
-    this.dmulv = Matrix.sub(this.mulv, y);
-  }
-  for (let t = 0; t < sequence; t++) {
-    // Derivative of V
-    this.dV_t = Matrix.mult(
-      this.dmulv,
-      Matrix.transpose(this.layers[t]['current'])
+  } else {
+    DannError.error(
+      'Input sequences length must equal the number of input neurons the Rann model has',
+      'Rann.prototype.train'
     );
-    // Derivative of mulv
-    let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
-    // Copy previous forward sums
-    let sum = this.sum;
-    let sum_ = this.sum;
-    // Create all 1 matrix
-    let submatrix = new Matrix(sum.rows, sum.cols);
-    submatrix.initiate(1);
-
-    // Find dadd
-    let sumsub = Matrix.sub(submatrix, sum_);
-    let summult = sum.mult(dsv);
-    let dadd = sumsub.mult(summult);
-
-    // Derivative of mulw
-    let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
-    ones_mulw.initiate(1);
-    this.dmulw = dadd.mult(ones_mulw);
-    let max_ = Math.max(-1, t - this.truncate - 1);
-
-    for (let i = t - 1; i > max_; i -= 1) {
-      // Derivative of mulu
-      let ones_mulu = new Matrix(this.mulu.rows, this.mulu.cols);
-      ones_mulu.initiate(1);
-      this.dmulu = dadd.mult(ones_mulu);
-
-      this.dW_i = Matrix.mult(this.W, this.layers[t]['previous']);
-
-      let new_input = new Matrix(sequence, 1);
-      new_input.matrix[t][0] = input_s[t];
-
-      this.dU_i = Matrix.mult(this.U, new_input);
-
-      this.dU_t = Matrix.addColumn(this.dU_t, this.dU_i);
-      this.dW_t = Matrix.addColumn(this.dW_t, this.dW_i);
-    }
-    this.dV.add(this.dV_t);
-    this.dU.add(this.dU_t);
-    this.dW.add(this.dW_t);
+    return undefined;
   }
+};
 
-  this.clipGradients(-10, 10);
+/*
+ * Undisplayed documentation.
+ * Train a Rann model according to sequence data.
+ * @method trainSequence
+ * @param {Array} input An array of sequences.
+ * @param {Array} target An expected output sequence
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * rnn.train([
+ *  [1, 2],
+ *  [3, 4],
+ *  [5, 6]
+ * ],
+ * [7, 8]
+ * );
+ * </code>
+ */
+Rann.prototype.trainSequence = function trainSequence(input, target) {
+  if (this.validateSequences(input)) {
+    let y = Matrix.fromArray(target);
+    let sequence;
+    let input_s;
+    for (let d = 0; d < input.length; d++) {
+      this.previous = new Matrix(this.h, 1);
 
-  this.U.sub(this.dU.mult(this.lr));
-  this.V.sub(this.dV.mult(this.lr));
-  this.W.sub(this.dW.mult(this.lr));
+      input_s = input[d];
+      sequence = input_s.length;
 
-  return undefined;
+      this.layers = [];
+
+      this.dU = new Matrix(this.h, this.i);
+      this.dV = new Matrix(this.o, this.h);
+      this.dW = new Matrix(this.h, this.h);
+
+      this.dU_t = new Matrix(this.h, this.i);
+      this.dV_t = new Matrix(this.o, this.h);
+      this.dW_t = new Matrix(this.h, this.h);
+
+      this.dU_i = new Matrix(this.h, this.i);
+      this.dW_i = new Matrix(this.h, this.h);
+
+      for (let t = 0; t < sequence; t++) {
+        // New input for sequence
+        new_input = new Matrix(sequence, 1);
+        new_input.matrix[t][0] = input_s[t];
+
+        // Mult input to hidden
+        this.mulu = Matrix.mult(this.U, new_input);
+
+        // Mult previous hidden to current hidden
+        this.mulw = Matrix.mult(this.W, this.previous);
+
+        // Add two matrices as a grid
+        let sum = Matrix.add(this.mulw, this.mulu);
+        this.sum = sum;
+        // Map to activation function
+        let mapped = Matrix.map(sum, this.actfunc);
+
+        this.mulv = Matrix.mult(this.V, mapped);
+        this.layers.push({ current: mapped, previous: this.previous });
+        this.previous = mapped;
+      }
+      // Error difference
+      this.dmulv = Matrix.sub(this.mulv, y);
+      this.loss = this.lossfunc(Matrix.toArray(this.mulv), target);
+    }
+    for (let t = 0; t < sequence; t++) {
+      // Derivative of V
+      this.dV_t = Matrix.mult(
+        this.dmulv,
+        Matrix.transpose(this.layers[t]['current'])
+      );
+      // Derivative of mulv
+      let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
+      // Copy previous forward sums
+      let sum = this.sum;
+      let sum_ = this.sum;
+      // Create all 1 matrix
+      let submatrix = new Matrix(sum.rows, sum.cols);
+      submatrix.initiate(1);
+
+      // Find dadd
+      let sumsub = Matrix.sub(submatrix, sum_);
+      let summult = sum.mult(dsv);
+      let dadd = sumsub.mult(summult);
+
+      // Derivative of mulw
+      let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
+      ones_mulw.initiate(1);
+      this.dmulw = dadd.mult(ones_mulw);
+      let max_ = Math.max(-1, t - this.truncate - 1);
+
+      for (let i = t - 1; i > max_; i -= 1) {
+        // Derivative of mulu
+        let ones_mulu = new Matrix(this.mulu.rows, this.mulu.cols);
+        ones_mulu.initiate(1);
+        this.dmulu = dadd.mult(ones_mulu);
+
+        this.dW_i = Matrix.mult(this.W, this.layers[t]['previous']);
+
+        let new_input = new Matrix(sequence, 1);
+        new_input.matrix[t][0] = input_s[t];
+
+        this.dU_i = Matrix.mult(this.U, new_input);
+
+        this.dU_t = Matrix.addColumn(this.dU_t, this.dU_i);
+        this.dW_t = Matrix.addColumn(this.dW_t, this.dW_i);
+      }
+      this.dV.add(this.dV_t);
+      this.dU.add(this.dU_t);
+      this.dW.add(this.dW_t);
+    }
+
+    this.clipGradients(-10, 10);
+
+    this.U.sub(this.dU.mult(this.lr));
+    this.V.sub(this.dV.mult(this.lr));
+    this.W.sub(this.dW.mult(this.lr));
+
+    return undefined;
+  } else {
+    DannError.error(
+      'Input sequences length must equal the number of input neurons the Rann model has',
+      'Rann.prototype.trainSequence'
+    );
+  }
 };
 
 //Node Module Exports:
