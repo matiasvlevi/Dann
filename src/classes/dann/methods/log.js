@@ -133,7 +133,7 @@ Dann.prototype.log = function log(options) {
     options === undefined ||
     (options !== undefined && options.details === true)
   ) {
-    console.log('Dann NeuralNetwork:');
+    console.log('Dann model:');
   }
   if (showBaseSettings) {
     console.log('Layers:');
