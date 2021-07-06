@@ -48,6 +48,7 @@
  */
 Rann.prototype.train = function train(input, options) {
   let normalize = false;
+  let logloss = false;
   if (options !== undefined) {
     if (options.normalize !== undefined) {
       normalize = options.normalize;
