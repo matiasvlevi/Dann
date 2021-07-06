@@ -15,7 +15,7 @@
  * rnn.log();
  * </code>
  */
-Rann = function Rann(i = 1, h = 2, o = 1) {
+Rann = function Rann(i = 2, h = 8, o = 2) {
   // Structure Values
   this.i = i;
   this.o = o;
