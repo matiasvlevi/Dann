@@ -69,8 +69,9 @@ Rann = function Rann(i = 2, h = 8, o = 2) {
   this.output;
 
   // Other values
+  this.largestSequenceValue = 1;
   this.truncate = 5;
-  this.loss = 0;
+  this.loss = 100;
   this.epoch = 0;
   this.lossfunc_s = 'mse';
   this.lossfunc = lossfuncs[this.lossfunc_s];
