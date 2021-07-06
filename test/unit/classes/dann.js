@@ -1,4 +1,4 @@
-suite('Dann Object', function () {
+suite('Dann Class', function () {
   suite('constructor', function () {
     suite('Without arguments', function () {
       let nn;

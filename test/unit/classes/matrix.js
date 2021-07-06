@@ -1,4 +1,4 @@
-suite('Matrix Object', function () {
+suite('Matrix Class', function () {
   suite('constructor', function () {
     suite('With arguments', function () {
       let m;

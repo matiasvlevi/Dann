@@ -1,4 +1,4 @@
-suite('Layer Object', function () {
+suite('Layer Class', function () {
   suite('constructor', function () {
     suite('avgpool layer', function () {
       let l1;
