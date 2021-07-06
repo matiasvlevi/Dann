@@ -114,7 +114,7 @@ suite('Dann Class', function () {
         assert.equal(nn.outs.length, 0);
       });
       test('Should have initiated loss value', function () {
-        assert.equal(nn.loss, 0);
+        assert.equal(nn.loss, 100);
         assert.typeOf(nn.loss, 'Number');
       });
       test('Should have initiated learning rate value', function () {
@@ -253,7 +253,7 @@ suite('Dann Class', function () {
         assert.equal(nn.outs.length, 0);
       });
       test('Should have initiated loss value', function () {
-        assert.equal(nn.loss, 0);
+        assert.equal(nn.loss, 100);
         assert.typeOf(nn.loss, 'Number');
       });
       test('Should have initiated learning rate value', function () {
