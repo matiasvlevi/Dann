@@ -3380,7 +3380,7 @@ Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
  * Feed data to the Reccurent Neural Network.
  * @method feed
  * @param {Array} input An array of input sequences
- * @param {Object} [options] An object setting optional parameters.
+ * @param {Object} [options] Object including specific properties.
  * <table>
  * <thead>
  * <tr>
@@ -3404,6 +3404,11 @@ Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
  * <td>decimals</td>
  * <td>Integer</td>
  * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
+ * </tr>
+ * <tr>
+ * <td>normalize</td>
+ * <td>Boolean</td>
+ * <td>If set to true, input values will be normalized. You also need to train the neural network with this option on.</td>
  * </tr>
  * </tbody>
  * </table>
@@ -3943,6 +3948,28 @@ Rann.stringToNum = function stringToNum(str) {
  * Train a Rann model according to sequence data.
  * @method train
  * @param {Array} input An array of sequences.
+ * @param {Object} [options] Object including specific properties.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>log</td>
+ * <td>Boolean</td>
+ * <td>If set to true, the loss value is going to be logged in the console.</td>
+ * </tr>
+ * <tr>
+ * <td>normalize</td>
+ * <td>Boolean</td>
+ * <td>If set to true, input values will be normalized. You also need to feed the neural network with this option on.</td>
+ * </tr>
+ * </tbody>
+ * </table>
  * @example
  * <code>
  * const rnn = new Rann(2, 10, 2);
@@ -3952,17 +3979,22 @@ Rann.stringToNum = function stringToNum(str) {
  *    [3, 4],
  *    [5, 6],
  *    [7, 8]
- *  ]);
+ *  ], {
+ *    normalize: true
+ *  });
  * }
  * rnn.feed([
  *  [1, 2],
  *  [3, 4]
- * ]);
+ * ], {
+ *    normalize: true
+ * });
  * // Outputs close to [5, 6]
  * </code>
  */
 Rann.prototype.train = function train(input, options) {
   let normalize = false;
+  let logloss = false;
   if (options !== undefined) {
     if (options.normalize !== undefined) {
       normalize = options.normalize;
