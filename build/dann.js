@@ -1818,7 +1818,7 @@ Dann = function Dann(i = 1, o = 1) {
   this.gradients = [];
 
   this.outs = [];
-  this.loss = 0;
+  this.loss = 100;
   this.losses = [];
   this.lr = 0.001;
   this.arch = [i, o];
@@ -3307,8 +3307,9 @@ Rann = function Rann(i = 2, h = 8, o = 2) {
   this.output;
 
   // Other values
+  this.largestSequenceValue = 1;
   this.truncate = 5;
-  this.loss = 0;
+  this.loss = 100;
   this.epoch = 0;
   this.lossfunc_s = 'mse';
   this.lossfunc = lossfuncs[this.lossfunc_s];
@@ -3418,30 +3419,41 @@ Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
  * </code>
  */
 Rann.prototype.feed = function feed(input, options) {
+  // options
+  let log = false;
+  let logTime = false;
+  let roundData = false;
+  let table = false;
+  let dec = 21;
+  let normalize = false;
+  if (options !== undefined) {
+    if (options.log !== undefined) {
+      log = options.log;
+    }
+    if (options.table !== undefined) {
+      table = options.table;
+    }
+    if (options.normalize !== undefined) {
+      normalize = options.normalize;
+    }
+    if (options.decimals !== undefined) {
+      if (options.decimals > 21) {
+        DannError.warn(
+          'Maximum number of decimals is 21, was set to 21 by default.',
+          'Rann.prototype.feed'
+        );
+        options.decimals = 21;
+      } else {
+        dec = Math.pow(10, options.decimals);
+        roundData = true;
+      }
+    }
+  }
+
   if (this.validateSequences(input)) {
-    let log = false;
-    let roundData = false;
-    let table = false;
-    let dec = 21;
-    if (options !== undefined) {
-      if (options.log !== undefined) {
-        log = options.log;
-      }
-      if (options.table !== undefined) {
-        table = options.table;
-      }
-      if (options.decimals !== undefined) {
-        if (options.decimals > 21) {
-          DannError.warn(
-            'Maximum number of decimals is 21, was set to 21 by default.',
-            'Rann.prototype.feed'
-          );
-          options.decimals = 21;
-        } else {
-          dec = Math.pow(10, options.decimals);
-          roundData = true;
-        }
-      }
+    // Normalize input
+    if (normalize) {
+      input = this.normalizeSequence(input);
     }
     for (let d = 0; d < input.length; d++) {
       // First previous values
@@ -3468,27 +3480,34 @@ Rann.prototype.feed = function feed(input, options) {
         let mapped = Matrix.map(sum, this.actfunc);
 
         this.mulv = Matrix.mult(this.V, mapped);
-        if (log === true) {
+        if (logTime === true) {
           console.log('Time: ' + t);
-          console.log(this.mulv);
+          console.log(Matrix.toArray(this.mulv));
         }
         this.previous = mapped;
         this.output = this.mulv;
       }
     }
     let out = Matrix.map(this.output, this.o_actfunc);
+
+    let outArray = Matrix.toArray(out);
+
+    // Un normalize output
+    if (normalize) {
+      outArray = this.unNormalizeSequence([outArray])[0];
+    }
+
     if (roundData) {
-      out = Matrix.map(out, (x) => {
+      outArray = outArray.map((x) => {
         return Math.round(x * dec) / dec;
       });
     }
-    let outArray = Matrix.toArray(out);
     if (log) {
       if (table) {
-        console.log('Prediction');
+        console.log('Prediction:');
         console.table(outArray);
       } else {
-        console.log('Prediction');
+        console.log('Prediction:');
         console.log(outArray);
       }
     }
@@ -3710,6 +3729,36 @@ Rann.prototype.makeWeights = function makeWeights(min, max) {
   }
 };
 
+Rann.prototype.normalizeSequence = function normalizeSequence(
+  sequence,
+  record
+) {
+  // Find largest value
+  if (record !== undefined) {
+    if (record === true) {
+      let largest = 0;
+      for (let i = 0; i < sequence.length; i++) {
+        for (let j = 0; j < sequence[0].length; j++) {
+          let v = sequence[i][j];
+          if (largest < v) {
+            largest = v;
+          }
+        }
+      }
+      this.largestSequenceValue = largest;
+    }
+  }
+  // Normalize sequence
+  let new_sequence = [];
+  for (let i = 0; i < sequence.length; i++) {
+    new_sequence[i] = [];
+    for (let j = 0; j < sequence[0].length; j++) {
+      new_sequence[i].push(sequence[i][j] / this.largestSequenceValue);
+    }
+  }
+  return new_sequence;
+};
+
 /**
  * Set the activation function of the shared hidden layer.
  * @method setActivation
@@ -3793,6 +3842,84 @@ Rann.prototype.setActivation = function setActivation(act) {
   this.actfunc_d = funcData['func_d'];
 };
 
+/**
+ * Set the loss function of a Rann model
+ * @method setLossFunction
+ * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>mse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/msg3bebyhe">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mae</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/sqyudacjzb">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>lcl</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ropuc3y6sa">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mbe</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/xzp1hr0vin">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mael</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/dimqieesut">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>rmse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/x7efwdfada">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/bzlqe7bafx">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>bce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * <br/>
+ * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
+ * @example
+ * <code>
+ * const rnn = new Rann(4, 21, 4);
+ * rnn.setLossFunction('mael');
+ * rnn.log();
+ * </code>
+ */
+Rann.prototype.setLossFunction = function setLossFunction(name) {
+  let func = lossfuncs[name];
+  if (func === undefined) {
+    if (typeof name === 'string') {
+      DannError.error(
+        "'" +
+          name +
+          "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
+        'Rann.prototype.setLossFunction'
+      );
+      return;
+    } else {
+      DannError.error(
+        "Did not detect string value, as a result, the loss function is set to 'mse' by default.",
+        'Rann.prototype.setLossFunction'
+      );
+      return;
+    }
+  }
+  this.lossfunc_s = name;
+  this.lossfunc = func;
+};
+
 /*
  * Undisplayed documentation
  * Convert a string to an array of values.
@@ -3834,12 +3961,28 @@ Rann.stringToNum = function stringToNum(str) {
  * // Outputs close to [5, 6]
  * </code>
  */
-Rann.prototype.train = function train(input) {
+Rann.prototype.train = function train(input, options) {
+  let normalize = false;
+  if (options !== undefined) {
+    if (options.normalize !== undefined) {
+      normalize = options.normalize;
+    }
+    if (options.log !== undefined) {
+      logloss = options.log;
+    }
+  }
+  if (normalize) {
+    // Normalize input
+    input = this.normalizeSequence(input, true);
+  }
   if (this.validateSequences(input)) {
     let length = input.length - 1;
     for (let i = 0; i < length; i++) {
       let target = input.splice(input.length - 1, 1);
       this.trainSequence(input, target[0]);
+    }
+    if (logloss) {
+      console.log('Loss: ', this.loss);
     }
   } else {
     DannError.error(
@@ -3977,6 +4120,18 @@ Rann.prototype.trainSequence = function trainSequence(input, target) {
       'Rann.prototype.trainSequence'
     );
   }
+};
+
+Rann.prototype.unNormalizeSequence = function unNormalizeSequence(sequence) {
+  // Normalize sequence
+  let new_sequence = [];
+  for (let i = 0; i < sequence.length; i++) {
+    new_sequence[i] = [];
+    for (let j = 0; j < sequence[0].length; j++) {
+      new_sequence[i].push(sequence[i][j] * this.largestSequenceValue);
+    }
+  }
+  return new_sequence;
 };
 
 //Node Module Exports:
