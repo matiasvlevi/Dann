@@ -2,7 +2,7 @@
  * Feed data to the Reccurent Neural Network.
  * @method feed
  * @param {Array} input An array of input sequences
- * @param {Object} [options] An object setting optional parameters.
+ * @param {Object} [options] Object including specific properties.
  * <table>
  * <thead>
  * <tr>
@@ -27,6 +27,11 @@
  * <td>Integer</td>
  * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
  * </tr>
+ * <tr>
+ * <td>normalize</td>
+ * <td>Boolean</td>
+ * <td>If set to true, input values will be normalized. You also need to train the neural network with this option on.</td>
+ * </tr>
  * </tbody>
  * </table>
  * @return {Array} The output sequence
@@ -41,30 +46,41 @@
  * </code>
  */
 Rann.prototype.feed = function feed(input, options) {
+  // options
+  let log = false;
+  let logTime = false;
+  let roundData = false;
+  let table = false;
+  let dec = 21;
+  let normalize = false;
+  if (options !== undefined) {
+    if (options.log !== undefined) {
+      log = options.log;
+    }
+    if (options.table !== undefined) {
+      table = options.table;
+    }
+    if (options.normalize !== undefined) {
+      normalize = options.normalize;
+    }
+    if (options.decimals !== undefined) {
+      if (options.decimals > 21) {
+        DannError.warn(
+          'Maximum number of decimals is 21, was set to 21 by default.',
+          'Rann.prototype.feed'
+        );
+        options.decimals = 21;
+      } else {
+        dec = Math.pow(10, options.decimals);
+        roundData = true;
+      }
+    }
+  }
+
   if (this.validateSequences(input)) {
-    let log = false;
-    let roundData = false;
-    let table = false;
-    let dec = 21;
-    if (options !== undefined) {
-      if (options.log !== undefined) {
-        log = options.log;
-      }
-      if (options.table !== undefined) {
-        table = options.table;
-      }
-      if (options.decimals !== undefined) {
-        if (options.decimals > 21) {
-          DannError.warn(
-            'Maximum number of decimals is 21, was set to 21 by default.',
-            'Rann.prototype.feed'
-          );
-          options.decimals = 21;
-        } else {
-          dec = Math.pow(10, options.decimals);
-          roundData = true;
-        }
-      }
+    // Normalize input
+    if (normalize) {
+      input = this.normalizeSequence(input);
     }
     for (let d = 0; d < input.length; d++) {
       // First previous values
@@ -91,27 +107,34 @@ Rann.prototype.feed = function feed(input, options) {
         let mapped = Matrix.map(sum, this.actfunc);
 
         this.mulv = Matrix.mult(this.V, mapped);
-        if (log === true) {
+        if (logTime === true) {
           console.log('Time: ' + t);
-          console.log(this.mulv);
+          console.log(Matrix.toArray(this.mulv));
         }
         this.previous = mapped;
         this.output = this.mulv;
       }
     }
     let out = Matrix.map(this.output, this.o_actfunc);
+
+    let outArray = Matrix.toArray(out);
+
+    // Un normalize output
+    if (normalize) {
+      outArray = this.unNormalizeSequence([outArray])[0];
+    }
+
     if (roundData) {
-      out = Matrix.map(out, (x) => {
+      outArray = outArray.map((x) => {
         return Math.round(x * dec) / dec;
       });
     }
-    let outArray = Matrix.toArray(out);
     if (log) {
       if (table) {
-        console.log('Prediction');
+        console.log('Prediction:');
         console.table(outArray);
       } else {
-        console.log('Prediction');
+        console.log('Prediction:');
         console.log(outArray);
       }
     }
