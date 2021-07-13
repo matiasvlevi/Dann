@@ -3743,14 +3743,9 @@ Rann.prototype.normalizeSequence = function normalizeSequence(
     if (record === true) {
       let largest = 0;
       for (let i = 0; i < sequence.length; i++) {
-        for (let j = 0; j < sequence[0].length; j++) {
-          let v = sequence[i][j];
-          if (largest < v) {
-            largest = v;
-          }
-        }
+        max.push(Math.max(sequence[i]));
       }
-      this.largestSequenceValue = largest;
+      this.largestSequenceValue = Math.max(max);
     }
   }
   // Normalize sequence
