@@ -186,6 +186,7 @@ MIT
     <td align="center"><a href="https://github.com/Labnann"><img src="https://avatars.githubusercontent.com/u/55809005?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Labnan</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/issues?q=author%3ALabnann" title="Bug reports">🐛</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=Labnann" title="Code">💻</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=Labnann" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/SharkAce"><img src="https://avatars.githubusercontent.com/u/85720638?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sharkAce</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/commits?author=SharkAce" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/shirsho1106"><img src="https://avatars.githubusercontent.com/u/60136067?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hasnain Iqbal</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/commits?author=shirsho1106" title="Code">💻</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=shirsho1106" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/ramos-papadopoulos"><img src="https://avatars.githubusercontent.com/u/82990932?v=4?s=100" width="100px;" alt=""/><br /><sub><b>EL Ramos</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/issues?q=author%3Aramos-papadopoulos" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
