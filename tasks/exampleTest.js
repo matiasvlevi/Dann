@@ -1,5 +1,5 @@
 const symbol = require('log-symbols');
-const Dannjs = require('../build/dann.min.js');
+const Dannjs = require('../build/lib.min.js');
 const Dann = Dannjs.dann;
 const Matrix = Dannjs.matrix;
 const Layer = Dannjs.layer;

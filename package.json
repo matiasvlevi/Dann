@@ -34,7 +34,7 @@
   "description": "Deep Neural Network Library for JavaScript.",
   "homepage": "https://dannjs.org",
   "license": "ISC",
-  "main": "build/dann.js",
+  "main": "build/lib.js",
   "name": "dannjs",
   "repository": {
     "type": "git",
