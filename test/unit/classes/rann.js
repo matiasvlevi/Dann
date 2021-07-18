@@ -248,4 +248,109 @@ suite('Rann Class', function () {
       });
     });
   });
+  suite('toJSON & fromJSON', function () {
+    suite('Should save the model to JSON properly', function () {
+      let rnn;
+      let rnn2;
+      let guess;
+      let json;
+      setup(function () {
+        rnn = new Rann(2, 16, 2);
+        rnn.train([
+          [0, 0],
+          [1, 1],
+        ]);
+        guess = rnn.feed([[0, 0]]);
+        json = rnn.toJSON();
+        rnn2 = new Rann();
+        rnn2.fromJSON(json);
+      });
+      test('Should have saved meta data', function () {
+        assert.equal(json.i, 2);
+        assert.equal(json.h, 16);
+        assert.equal(json.o, 2);
+        assert.equal(json.act, 'sigmoid');
+        assert.equal(json.act_o, 'linear');
+        assert.equal(json.lr, rnn.lr);
+        assert.equal(json.lf, rnn.lossfunc_s);
+        assert.equal(json.lsv, 1);
+      });
+      test('Should have saved layers array', function () {
+        let layers = JSON.parse(json.layers);
+        assert.equal(layers[0].current.shape, rnn.layers[0].current.shape);
+        assert.equal(layers[0].previous.shape, rnn.layers[0].previous.shape);
+        assert.equal(layers[1].current.shape, rnn.layers[1].current.shape);
+        assert.equal(layers[1].previous.shape, rnn.layers[1].previous.shape);
+      });
+      test('Should have saved weights', function () {
+        let u = new Matrix().set(JSON.parse(json.U));
+        let w = new Matrix().set(JSON.parse(json.W));
+        let v = new Matrix().set(JSON.parse(json.V));
+        assert.equal(u.shape, rnn.U.shape);
+        assert.equal(w.shape, rnn.W.shape);
+        assert.equal(v.shape, rnn.V.shape);
+      });
+      test('Should have saved gradients', function () {
+        let du = new Matrix().set(JSON.parse(json.dU));
+        let dw = new Matrix().set(JSON.parse(json.dW));
+        let dv = new Matrix().set(JSON.parse(json.dV));
+        assert.equal(du.shape, rnn.dU.shape);
+        assert.equal(dw.shape, rnn.dW.shape);
+        assert.equal(dv.shape, rnn.dV.shape);
+
+        let dut = new Matrix().set(JSON.parse(json.dU_t));
+        let dwt = new Matrix().set(JSON.parse(json.dW_t));
+        let dvt = new Matrix().set(JSON.parse(json.dV_t));
+
+        assert.equal(dut.shape, rnn.dU_t.shape);
+        assert.equal(dwt.shape, rnn.dW_t.shape);
+        assert.equal(dvt.shape, rnn.dV_t.shape);
+
+        let dui = new Matrix().set(JSON.parse(json.dU_i));
+        let dwi = new Matrix().set(JSON.parse(json.dW_i));
+
+        assert.equal(dui.shape, rnn.dU_i.shape);
+        assert.equal(dwi.shape, rnn.dW_i.shape);
+      });
+      test('Should apply meta data to a new model', function () {
+        assert.equal(rnn2.i, 2);
+        assert.equal(rnn2.h, 16);
+        assert.equal(rnn2.o, 2);
+        assert.equal(rnn2.actname, 'sigmoid');
+        assert.equal(rnn2.o_actname, 'linear');
+        assert.equal(rnn2.lr, rnn.lr);
+        assert.equal(rnn2.lossfunc_s, rnn.lossfunc_s);
+        assert.equal(rnn2.largestSequenceValue, 1);
+      });
+      test('Should apply layers to a new model', function () {
+        assert.equal(rnn2.layers[0].current.shape, rnn.layers[0].current.shape);
+        assert.equal(
+          rnn2.layers[0].previous.shape,
+          rnn.layers[0].previous.shape
+        );
+        assert.equal(rnn2.layers[1].current.shape, rnn.layers[1].current.shape);
+        assert.equal(
+          rnn2.layers[1].previous.shape,
+          rnn.layers[1].previous.shape
+        );
+      });
+      test('Should apply weights to a new model', function () {
+        assert.equal(rnn2.U.shape, rnn.U.shape);
+        assert.equal(rnn2.W.shape, rnn.W.shape);
+        assert.equal(rnn2.V.shape, rnn.V.shape);
+      });
+      test('Should apply gradients to a new model', function () {
+        assert.equal(rnn2.dU.shape, rnn.dU.shape);
+        assert.equal(rnn2.dW.shape, rnn.dW.shape);
+        assert.equal(rnn2.dV.shape, rnn.dV.shape);
+
+        assert.equal(rnn2.dU_t.shape, rnn.dU_t.shape);
+        assert.equal(rnn2.dW_t.shape, rnn.dW_t.shape);
+        assert.equal(rnn2.dV_t.shape, rnn.dV_t.shape);
+
+        assert.equal(rnn2.dU_i.shape, rnn.dU_i.shape);
+        assert.equal(rnn2.dW_i.shape, rnn.dW_i.shape);
+      });
+    });
+  });
 });
