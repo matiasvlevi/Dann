@@ -54,8 +54,7 @@
  * </code>
  */
 Rann.prototype.setLossFunction = function setLossFunction(name) {
-  let func = lossfuncs[name];
-  if (func === undefined) {
+  if (lossfuncs[name] === undefined) {
     if (typeof name === 'string') {
       DannError.error(
         "'" +
@@ -73,5 +72,5 @@ Rann.prototype.setLossFunction = function setLossFunction(name) {
     }
   }
   this.lossfunc_s = name;
-  this.lossfunc = func;
+  this.lossfunc = lossfuncs[name];
 };
