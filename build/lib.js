@@ -3236,6 +3236,1039 @@ Dann.prototype.toJSON = function toJSON() {
   return data;
 };
 
+/**
+ * @module Rann
+ */
+
+/**
+ * Recurrent Neural Network object. Feature still in development.
+ * @class Rann
+ * @constructor
+ * @param {Number} i The number of input neurons, must be the same length as the sequences to input.
+ * @param {Number} h The number of hidden neurons
+ * @param {Number} o The number of output neurons
+ * @example
+ * <code>
+ * const rnn = new Rann(10, 32, 10);
+ * rnn.log();
+ * </code>
+ */
+Rann = function Rann(i = 2, h = 8, o = 2) {
+  // Structure Values
+  this.i = i;
+  this.o = o;
+  this.h = h;
+  this.lr = 0.001;
+  this.arch = [this.i, this.h, this.o];
+
+  this.layers = [];
+
+  // Weights
+  this.U = new Matrix(this.h, this.i);
+  this.V = new Matrix(this.o, this.h);
+  this.W = new Matrix(this.h, this.h);
+
+  // Gradients
+  this.dU = new Matrix(this.h, this.i);
+  this.dV = new Matrix(this.o, this.h);
+  this.dW = new Matrix(this.h, this.h);
+
+  this.dU_t = new Matrix(this.h, this.i);
+  this.dV_t = new Matrix(this.o, this.h);
+  this.dW_t = new Matrix(this.h, this.h);
+
+  this.dU_i = new Matrix(this.h, this.i);
+  this.dW_i = new Matrix(this.h, this.h);
+
+  // Randomize
+  this.U.randomize(-1, 1);
+  this.V.randomize(-1, 1);
+  this.W.randomize(-1, 1);
+
+  // Mult values
+  this.mulv;
+  this.mulw;
+  this.mulu;
+
+  // Set hidden activation
+  this.actname = 'sigmoid';
+  let funcData = Layer.stringTofunc(this.actname);
+  this.actfunc = funcData['func'];
+  this.actfunc_d = funcData['func_d'];
+
+  // Set output activation
+  this.o_actname = 'linear';
+  this.o_actfunc = (x) => x;
+  this.o_actfunc_d = (x) => 1;
+
+  // Data values
+  this.previous;
+  this.input;
+  this.output;
+
+  // Other values
+  this.largestSequenceValue = 1;
+  this.truncate = 5;
+  this.loss = 100;
+  this.epoch = 0;
+  this.lossfunc_s = 'mse';
+  this.lossfunc = lossfuncs[this.lossfunc_s];
+};
+
+/*
+ * Undisplayed documentation
+ * Check if sequences are the right format for a given Rann model.
+ * @param {Array} input Array of input sequences.
+ * @param {Number} sequence The sequence length
+ * @return {Boolean} If the sequences are valid for the given Rann model
+ */
+Rann.prototype.validateSequences = function checkSequences(input) {
+  for (let i = 0; i < input.length; i++) {
+    if (input[i].length !== this.i) {
+      return false;
+    }
+  }
+  return true;
+};
+
+/*
+ * Undisplaed documentation,
+ * This method allows for the gradients to keep a certan threshold value in order to avoid 'gradient explosion'
+ * @method clipGradients
+ * @param {Number} min_clip
+ * @param {Number} max_clip
+ * @returns
+ */
+Rann.prototype.clipGradients = function clipGradients(min_clip, max_clip) {
+  // Clip maximum
+  let dUmax = this.dU.max();
+  if (dUmax > max_clip) {
+    let s = max_clip / dUmax;
+    this.dU.map((x) => x * s);
+  }
+  let dVmax = this.dV.max();
+  if (dVmax > max_clip) {
+    let s = max_clip / dVmax;
+    this.dV.map((x) => x * s);
+  }
+  let dWmax = this.dW.max();
+  if (dWmax > max_clip) {
+    let s = max_clip / dWmax;
+    this.dW.map((x) => x * s);
+  }
+  // Clip minimum
+  let dUmin = this.dU.min();
+  if (dUmin < min_clip) {
+    let s = min_clip / dUmin;
+    this.dU.map((x) => x * s);
+  }
+  let dVmin = this.dV.min();
+  if (dVmin < min_clip) {
+    let s = min_clip / dVmin;
+    this.dV.map((x) => x * s);
+  }
+  let dWmin = this.dW.min();
+  if (dWmin < min_clip) {
+    let s = min_clip / dWmin;
+    this.dW.map((x) => x * s);
+  }
+
+  return;
+};
+
+/**
+ * Feed data to the Reccurent Neural Network.
+ * @method feed
+ * @param {Array} input An array of input sequences
+ * @param {Object} [options] Object including specific properties.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>log</td>
+ * <td>Boolean</td>
+ * <td>If set to true, it will log a report in the console.</td>
+ * </tr>
+ * <tr>
+ * <td>table</td>
+ * <td>Boolean</td>
+ * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
+ * </tr>
+ * <tr>
+ * <td>decimals</td>
+ * <td>Integer</td>
+ * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
+ * </tr>
+ * <tr>
+ * <td>normalize</td>
+ * <td>Boolean</td>
+ * <td>If set to true, input values will be normalized. You also need to train the neural network with this option on.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * @return {Array} The output sequence
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * rnn.feed([
+ *  [1,2],
+ *  [2,3],
+ *  [4,5]
+ * ]);
+ * </code>
+ */
+Rann.prototype.feed = function feed(input, options) {
+  // options
+  let log = false;
+  let logTime = false;
+  let roundData = false;
+  let table = false;
+  let dec = 21;
+  let normalize = false;
+  if (options !== undefined) {
+    if (options.log !== undefined) {
+      log = options.log;
+    }
+    if (options.table !== undefined) {
+      table = options.table;
+    }
+    if (options.normalize !== undefined) {
+      normalize = options.normalize;
+    }
+    if (options.decimals !== undefined) {
+      if (options.decimals > 21) {
+        DannError.warn(
+          'Maximum number of decimals is 21, was set to 21 by default.',
+          'Rann.prototype.feed'
+        );
+        options.decimals = 21;
+      } else {
+        dec = Math.pow(10, options.decimals);
+        roundData = true;
+      }
+    }
+  }
+
+  if (this.validateSequences(input)) {
+    // Normalize input
+    if (normalize) {
+      input = this.normalizeSequence(input);
+    }
+    for (let d = 0; d < input.length; d++) {
+      // First previous values
+      this.previous = new Matrix(this.h, 1);
+      // Input sequence
+      let input_s = input[d];
+      // Sequence length
+      let sequence = input[d].length;
+      for (let t = 0; t < sequence; t++) {
+        // New input for sequence
+        new_input = new Matrix(sequence, 1);
+        new_input.matrix[t][0] = input_s[t];
+
+        // Mult input to hidden
+        this.mulu = Matrix.mult(this.U, new_input);
+
+        // Mult previous hidden to current hidden
+        this.mulw = Matrix.mult(this.W, this.previous);
+
+        // Add two matrices as a grid
+        let sum = Matrix.add(this.mulw, this.mulu);
+
+        // Map to activation function
+        let mapped = Matrix.map(sum, this.actfunc);
+
+        this.mulv = Matrix.mult(this.V, mapped);
+        if (logTime === true) {
+          console.log('Time: ' + t);
+          console.log(Matrix.toArray(this.mulv));
+        }
+        this.previous = mapped;
+        this.output = this.mulv;
+      }
+    }
+    let out = Matrix.map(this.output, this.o_actfunc);
+
+    let outArray = Matrix.toArray(out);
+
+    // Un normalize output
+    if (normalize) {
+      outArray = this.unNormalizeSequence([outArray])[0];
+    }
+
+    if (roundData) {
+      outArray = outArray.map((x) => {
+        return Math.round(x * dec) / dec;
+      });
+    }
+    if (log) {
+      if (table) {
+        console.log('Prediction:');
+        console.table(outArray);
+      } else {
+        console.log('Prediction:');
+        console.log(outArray);
+      }
+    }
+    return outArray;
+  } else {
+    DannError.error(
+      'Input sequences length must equal the number of input neurons the Rann model has',
+      'Rann.prototype.feed'
+    );
+    return undefined;
+  }
+};
+
+Rann.prototype.fromJSON = function fromJSON(data) {
+  // Meta data
+  this.i = data.i;
+  this.h = data.h;
+  this.o = data.o;
+  this.arch = JSON.parse(data.arch);
+
+  // Neural network data
+  this.lr = data.lr;
+  this.largestSequenceValue = data.lsv;
+  this.truncate = data.trun;
+  this.epoch = data.e;
+  this.loss = data.loss;
+
+  this.layers = [];
+  let layers = JSON.parse(data.layers);
+  for (let i = 0; i < layers.length; i++) {
+    let current = new Matrix().set(layers[i].current.matrix);
+    let previous = new Matrix().set(layers[i].previous.matrix);
+    this.layers[i] = {
+      current: current,
+      previous: previous,
+    };
+  }
+
+  // Weights
+
+  this.U = new Matrix().set(JSON.parse(data.U));
+
+  this.V = new Matrix().set(JSON.parse(data.V));
+
+  this.W = new Matrix().set(JSON.parse(data.W));
+
+  // Gradients
+  this.dU = new Matrix().set(JSON.parse(data.dU));
+  this.dV = new Matrix().set(JSON.parse(data.dV));
+  this.dW = new Matrix().set(JSON.parse(data.dW));
+
+  this.dU_t = new Matrix().set(JSON.parse(data.dU_t));
+  this.dV_t = new Matrix().set(JSON.parse(data.dV_t));
+  this.dW_t = new Matrix().set(JSON.parse(data.dW_t));
+
+  this.dU_i = new Matrix().set(JSON.parse(data.dU_i));
+  this.dW_i = new Matrix().set(JSON.parse(data.dW_i));
+
+  // Set model's loss function
+  this.setLossFunction(data.lf);
+
+  // Set hidden layer activation
+  this.setActivation(data.act);
+
+  // Set output activation (Only linear is supported as of now)
+  this.o_actname = 'linear';
+  this.o_actfunc = (x) => x;
+  this.o_actfunc_d = (x) => 1;
+};
+
+/**
+ * Displays information about the model in the console.
+ * @method log
+ * @param {Object} [options] An object including specific properties.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>details</td>
+ * <td>Boolean</td>
+ * <td>If set to true, the function will log more advanced details about the model.</td>
+ * </tr>
+ * <tr>
+ * <td>table</td>
+ * <td>Boolean</td>
+ * <td>Whether or not we want to print our matrices in the form of a table or Matrix object log.</td>
+ * </tr>
+ * <tr>
+ * <td>gradients</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the gradients of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>weights</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the weights of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>struct</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the structure of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>misc</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * @example
+ * <code>
+ * const rnn = new Rann(4, 20, 4);
+ * rnn.log();
+ * </code>
+ */
+Rann.prototype.log = function log(options) {
+  let log;
+  let weights = false;
+  let gradients = false;
+  let struct = false;
+  let misc = false;
+  let table = false;
+  if (options === undefined) {
+    console.log('Rann model:');
+    // Structure
+    console.log('Layers:');
+    for (let i = 0; i < this.arch.length; i++) {
+      if (i !== 0 && i !== this.arch.length - 1) {
+        console.log(
+          '     hidden layer: ' + this.arch[i] + '   (' + this.actname + ')'
+        );
+      } else if (i === 0) {
+        console.log('     Input layer: ' + this.arch[i]);
+      } else if (i === this.arch.length - 1) {
+        console.log(
+          '     output layer: ' + this.arch[i] + '   (' + this.o_actname + ')'
+        );
+      }
+    }
+    // Other values
+    console.log('Other values');
+    console.log('     Learning rate: ' + this.lr);
+    console.log('     Loss function: ' + this.lossfunc_s);
+    console.log('     Current epoch: ' + this.epoch);
+    console.log('     Latest loss: ' + this.loss);
+  } else {
+    log = console.log;
+    if (options.weights !== undefined) {
+      weights = options.weights;
+    }
+    if (options.gradients !== undefined) {
+      gradients = options.gradients;
+    }
+    if (options.struct !== undefined) {
+      struct = options.struct;
+    }
+    if (options.misc !== undefined) {
+      misc = options.misc;
+    }
+    if (options.table !== undefined) {
+      table = options.table;
+    }
+    if (options.details !== undefined) {
+      if (options.details === true) {
+        struct = options.details;
+        gradients = options.details;
+        misc = options.details;
+        weights = options.details;
+      }
+    }
+    // Logs
+    if (struct) {
+      console.log('Rann model:');
+      console.log('Layers:');
+      for (let i = 0; i < this.arch.length; i++) {
+        if (i !== 0 && i !== this.arch.length - 1) {
+          console.log(
+            '     hidden layer: ' + this.arch[i] + '   (' + this.actname + ')'
+          );
+        } else if (i === 0) {
+          console.log('     Input layer: ' + this.arch[i]);
+        } else if (i === this.arch.length - 1) {
+          console.log(
+            '     output layer: ' + this.arch[i] + '   (' + this.o_actname + ')'
+          );
+        }
+      }
+    }
+    if (misc) {
+      console.log('Other values');
+      console.log('     Learning rate: ' + this.lr);
+      console.log('     Loss function: ' + this.lossfunc_s);
+      console.log('     Current epoch: ' + this.epoch);
+      console.log('     Latest loss: ' + this.loss);
+    }
+    if (misc && weights) {
+      // Line break
+      console.log('');
+    }
+    if (weights) {
+      let w0, w1, w2;
+      if (table) {
+        log = console.table;
+        w0 = this.U.matrix;
+        w1 = this.W.matrix;
+        w2 = this.V.matrix;
+      } else {
+        log = console.log;
+        w0 = this.U;
+        w1 = this.W;
+        w2 = this.V;
+      }
+      console.log('U: input to hidden weights');
+      log(w0);
+      console.log('W: shared hidden weights');
+      log(w1);
+      console.log('V: hidden to output weights');
+      log(w2);
+    }
+    if (weights && gradients) {
+      // Line break
+      console.log('');
+    }
+    if (gradients) {
+      let g0, g1, g2;
+      if (table) {
+        log = console.table;
+        g0 = this.dU.matrix;
+        g1 = this.dW.matrix;
+        g2 = this.dV.matrix;
+      } else {
+        log = console.log;
+        g0 = this.dU;
+        g1 = this.dW;
+        g2 = this.dV;
+      }
+      console.log('Gradients of U:');
+      log(g0);
+      console.log('Gradients of W:');
+      log(g1);
+      console.log('Gradients of V:');
+      log(g2);
+    }
+  }
+};
+
+/**
+ * Change the intiated weight values of a model.
+ * This method is optional in the creation of a Rann model.
+ * @method makeWeights
+ * @param {Number} min The minium value.
+ * @param {Number} max The maximum value.
+ * @example
+ * <code>
+ * const rnn = new Rann(4, 10, 4);
+ * rnn.makeWeights(-0.1, 0.1);
+ * </code>
+ */
+Rann.prototype.makeWeights = function makeWeights(min, max) {
+  if (min !== undefined || max !== undefined) {
+    this.U.randomize(min, max);
+    this.V.randomize(min, max);
+    this.W.randomize(min, max);
+    return;
+  } else {
+    DannError.error(
+      'Must specify minimum and maximum values for weights',
+      'Rann.prototype.makeWeights'
+    );
+  }
+};
+
+Rann.prototype.normalizeSequence = function normalizeSequence(
+  sequence,
+  record
+) {
+  // Find largest value
+  if (record !== undefined) {
+    if (record === true) {
+      let max_arr = [];
+      for (let i = 0; i < sequence.length; i++) {
+        max_arr.push(Math.max(sequence[i]));
+      }
+      this.largestSequenceValue = Math.max(max);
+    }
+  }
+  // Normalize sequence
+  let new_sequence = [];
+  for (let i = 0; i < sequence.length; i++) {
+    new_sequence[i] = [];
+    for (let j = 0; j < sequence[0].length; j++) {
+      new_sequence[i].push(sequence[i][j] / this.largestSequenceValue);
+    }
+  }
+  return new_sequence;
+};
+
+/**
+ * Set the activation function of the shared hidden layer.
+ * @method setActivation
+ * @param {String} act The name of the activation function
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>Sigmoid</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/so8eiigug4">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>leakyReLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>reLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>siLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/f4nhtck5dr">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>tanH</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>binary</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softsign</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>sinc</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softplus</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * <br/>
+ * See how to add more <a href="./Add.html#method_activation">Here</a>
+ * @example
+ * <code>
+ * const rnn = new Rann(3, 20, 3);
+ * rnn.setActivation('tanH');
+ * rnn.log();
+ * </code>
+ */
+Rann.prototype.setActivation = function setActivation(act) {
+  if (activations[act] === undefined && !isBrowser) {
+    if (typeof act === 'string') {
+      DannError.error(
+        "'" +
+          act +
+          "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
+        'Rann.prototype.setActivation'
+      );
+      return;
+    } else {
+      DannError.error(
+        "Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.",
+        'Rann.prototype.setActivation'
+      );
+      return;
+    }
+  }
+  this.actname = act;
+  let funcData = Layer.stringTofunc(this.actname);
+  this.actfunc = funcData['func'];
+  this.actfunc_d = funcData['func_d'];
+};
+
+/**
+ * Set the loss function of a Rann model
+ * @method setLossFunction
+ * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>mse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/msg3bebyhe">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mae</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/sqyudacjzb">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>lcl</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ropuc3y6sa">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mbe</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/xzp1hr0vin">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mael</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/dimqieesut">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>rmse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/x7efwdfada">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/bzlqe7bafx">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>bce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * <br/>
+ * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
+ * @example
+ * <code>
+ * const rnn = new Rann(4, 21, 4);
+ * rnn.setLossFunction('mael');
+ * rnn.log();
+ * </code>
+ */
+Rann.prototype.setLossFunction = function setLossFunction(name) {
+  if (lossfuncs[name] === undefined) {
+    if (typeof name === 'string') {
+      DannError.error(
+        "'" +
+          name +
+          "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
+        'Rann.prototype.setLossFunction'
+      );
+      return;
+    } else {
+      DannError.error(
+        "Did not detect string value, as a result, the loss function is set to 'mse' by default.",
+        'Rann.prototype.setLossFunction'
+      );
+      return;
+    }
+  }
+  this.lossfunc_s = name;
+  this.lossfunc = lossfuncs[name];
+};
+
+/*
+ * Undisplayed documentation
+ * Convert a string to an array of values.
+ * @param {String} str The string to convert to an array of values.
+ * @returns
+ */
+Rann.stringToNum = function stringToNum(str) {
+  let supported =
+    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  let letters = str.split('');
+  let numbers = [];
+  for (letter of letters) {
+    let ascii_value = supported.indexOf(letter);
+    let value = (ascii_value + 1) / (supported.length + 1);
+    numbers.push(value);
+  }
+  return numbers;
+};
+
+Rann.prototype.toJSON = function toJSON() {
+  // Meta
+  let strarch = JSON.stringify(this.arch);
+
+  // Weights
+  let wstrU = JSON.stringify(this.U.matrix);
+  let wstrV = JSON.stringify(this.V.matrix);
+  let wstrW = JSON.stringify(this.W.matrix);
+
+  // Gradients
+  let gstrU = JSON.stringify(this.dU.matrix);
+  let gstrV = JSON.stringify(this.dV.matrix);
+  let gstrW = JSON.stringify(this.dW.matrix);
+
+  let gstrUt = JSON.stringify(this.dU_t.matrix);
+  let gstrVt = JSON.stringify(this.dV_t.matrix);
+  let gstrWt = JSON.stringify(this.dW_t.matrix);
+
+  let gstrUi = JSON.stringify(this.dU_i.matrix);
+  let gstrWi = JSON.stringify(this.dW_i.matrix);
+
+  // Layers
+  let strlayers = JSON.stringify(this.layers);
+
+  return {
+    i: this.i,
+    h: this.h,
+    o: this.o,
+    act: this.actname,
+    act_o: this.o_actname,
+    lsv: this.largestSequenceValue,
+    trun: this.truncate,
+    loss: this.loss,
+    e: this.epoch,
+    lf: this.lossfunc_s,
+    lr: this.lr,
+    arch: strarch,
+    layers: strlayers,
+    U: wstrU,
+    V: wstrV,
+    W: wstrW,
+    dU: gstrU,
+    dV: gstrV,
+    dW: gstrW,
+    dU_t: gstrUt,
+    dV_t: gstrVt,
+    dW_t: gstrWt,
+    dU_i: gstrUi,
+    dW_i: gstrWi,
+  };
+};
+
+/**
+ * Train a Rann model according to sequence data.
+ * @method train
+ * @param {Array} input An array of sequences.
+ * @param {Object} [options] Object including specific properties.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>log</td>
+ * <td>Boolean</td>
+ * <td>If set to true, the loss value is going to be logged in the console.</td>
+ * </tr>
+ * <tr>
+ * <td>normalize</td>
+ * <td>Boolean</td>
+ * <td>If set to true, input values will be normalized. You also need to feed the neural network with this option on.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * for (let i = 0; i < 10000; i++) {
+ *  rnn.train([
+ *    [1, 2],
+ *    [3, 4],
+ *    [5, 6],
+ *    [7, 8]
+ *  ], {
+ *    normalize: true
+ *  });
+ * }
+ * rnn.feed([
+ *  [1, 2],
+ *  [3, 4]
+ * ], {
+ *    normalize: true
+ * });
+ * // Outputs close to [5, 6]
+ * </code>
+ */
+Rann.prototype.train = function train(input, options) {
+  let normalize = false;
+  let logloss = false;
+  if (options !== undefined) {
+    if (options.normalize !== undefined) {
+      normalize = options.normalize;
+    }
+    if (options.log !== undefined) {
+      logloss = options.log;
+    }
+  }
+  if (normalize) {
+    // Normalize input
+    input = this.normalizeSequence(input, true);
+  }
+  if (this.validateSequences(input)) {
+    let length = input.length - 1;
+    for (let i = 0; i < length; i++) {
+      let target = input.splice(input.length - 1, 1);
+      this.trainSequence(input, target[0]);
+    }
+    if (logloss) {
+      console.log('Loss: ', this.loss);
+    }
+  } else {
+    DannError.error(
+      'Input sequences length must equal the number of input neurons the Rann model has',
+      'Rann.prototype.train'
+    );
+    return undefined;
+  }
+};
+
+/*
+ * Undisplayed documentation.
+ * Train a Rann model according to sequence data.
+ * @method trainSequence
+ * @param {Array} input An array of sequences.
+ * @param {Array} target An expected output sequence
+ * @example
+ * <code>
+ * const rnn = new Rann(2, 10, 2);
+ * rnn.train([
+ *  [1, 2],
+ *  [3, 4],
+ *  [5, 6]
+ * ],
+ * [7, 8]
+ * );
+ * </code>
+ */
+Rann.prototype.trainSequence = function trainSequence(input, target) {
+  if (this.validateSequences(input)) {
+    let y = Matrix.fromArray(target);
+    let sequence;
+    let input_s;
+    for (let d = 0; d < input.length; d++) {
+      this.previous = new Matrix(this.h, 1);
+
+      input_s = input[d];
+      sequence = input_s.length;
+
+      this.layers = [];
+
+      this.dU = new Matrix(this.h, this.i);
+      this.dV = new Matrix(this.o, this.h);
+      this.dW = new Matrix(this.h, this.h);
+
+      this.dU_t = new Matrix(this.h, this.i);
+      this.dV_t = new Matrix(this.o, this.h);
+      this.dW_t = new Matrix(this.h, this.h);
+
+      this.dU_i = new Matrix(this.h, this.i);
+      this.dW_i = new Matrix(this.h, this.h);
+
+      for (let t = 0; t < sequence; t++) {
+        // New input for sequence
+        new_input = new Matrix(sequence, 1);
+        new_input.matrix[t][0] = input_s[t];
+
+        // Mult input to hidden
+        this.mulu = Matrix.mult(this.U, new_input);
+
+        // Mult previous hidden to current hidden
+        this.mulw = Matrix.mult(this.W, this.previous);
+
+        // Add two matrices as a grid
+        let sum = Matrix.add(this.mulw, this.mulu);
+        this.sum = sum;
+        // Map to activation function
+        let mapped = Matrix.map(sum, this.actfunc);
+
+        this.mulv = Matrix.mult(this.V, mapped);
+        this.layers.push({ current: mapped, previous: this.previous });
+        this.previous = mapped;
+      }
+      // Error difference
+      this.dmulv = Matrix.sub(this.mulv, y);
+      this.loss = this.lossfunc(Matrix.toArray(this.mulv), target);
+    }
+    for (let t = 0; t < sequence; t++) {
+      // Derivative of V
+      this.dV_t = Matrix.mult(
+        this.dmulv,
+        Matrix.transpose(this.layers[t]['current'])
+      );
+      // Derivative of mulv
+      let dsv = Matrix.mult(Matrix.transpose(this.V), this.dmulv);
+      // Copy previous forward sums
+      let sum = this.sum;
+      let sum_ = this.sum;
+      // Create all 1 matrix
+      let submatrix = new Matrix(sum.rows, sum.cols);
+      submatrix.initiate(1);
+
+      // Find dadd
+      let sumsub = Matrix.sub(submatrix, sum_);
+      let summult = sum.mult(dsv);
+      let dadd = sumsub.mult(summult);
+
+      // Derivative of mulw
+      let ones_mulw = new Matrix(this.mulw.rows, this.mulw.cols);
+      ones_mulw.initiate(1);
+      this.dmulw = dadd.mult(ones_mulw);
+      let max_ = Math.max(-1, t - this.truncate - 1);
+
+      for (let i = t - 1; i > max_; i -= 1) {
+        // Derivative of mulu
+        let ones_mulu = new Matrix(this.mulu.rows, this.mulu.cols);
+        ones_mulu.initiate(1);
+        this.dmulu = dadd.mult(ones_mulu);
+
+        this.dW_i = Matrix.mult(this.W, this.layers[t]['previous']);
+
+        let new_input = new Matrix(sequence, 1);
+        new_input.matrix[t][0] = input_s[t];
+
+        this.dU_i = Matrix.mult(this.U, new_input);
+
+        this.dU_t = Matrix.addColumn(this.dU_t, this.dU_i);
+        this.dW_t = Matrix.addColumn(this.dW_t, this.dW_i);
+      }
+      this.dV.add(this.dV_t);
+      this.dU.add(this.dU_t);
+      this.dW.add(this.dW_t);
+    }
+
+    this.clipGradients(-10, 10);
+
+    this.U.sub(this.dU.mult(this.lr));
+    this.V.sub(this.dV.mult(this.lr));
+    this.W.sub(this.dW.mult(this.lr));
+
+    return undefined;
+  } else {
+    DannError.error(
+      'Input sequences length must equal the number of input neurons the Rann model has',
+      'Rann.prototype.trainSequence'
+    );
+  }
+};
+
+Rann.prototype.unNormalizeSequence = function unNormalizeSequence(sequence) {
+  // Normalize sequence
+  let new_sequence = [];
+  for (let i = 0; i < sequence.length; i++) {
+    new_sequence[i] = [];
+    for (let j = 0; j < sequence[0].length; j++) {
+      new_sequence[i].push(sequence[i][j] * this.largestSequenceValue);
+    }
+  }
+  return new_sequence;
+};
+
 //Node Module Exports:
 if (!isBrowser) {
   module.exports = {
