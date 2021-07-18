@@ -3526,6 +3526,63 @@ Rann.prototype.feed = function feed(input, options) {
   }
 };
 
+Rann.prototype.fromJSON = function fromJSON(data) {
+  // Meta data
+  this.i = data.i;
+  this.h = data.h;
+  this.o = data.o;
+  this.arch = JSON.parse(data.arch);
+
+  // Neural network data
+  this.lr = data.lr;
+  this.largestSequenceValue = data.lsv;
+  this.truncate = data.trun;
+  this.epoch = data.e;
+  this.loss = data.loss;
+
+  this.layers = [];
+  let layers = JSON.parse(data.layers);
+  for (let i = 0; i < layers.length; i++) {
+    let current = new Matrix().set(layers[i].current.matrix);
+    let previous = new Matrix().set(layers[i].previous.matrix);
+    this.layers[i] = {
+      current: current,
+      previous: previous,
+    };
+  }
+
+  // Weights
+
+  this.U = new Matrix().set(JSON.parse(data.U));
+
+  this.V = new Matrix().set(JSON.parse(data.V));
+
+  this.W = new Matrix().set(JSON.parse(data.W));
+
+  // Gradients
+  this.dU = new Matrix().set(JSON.parse(data.dU));
+  this.dV = new Matrix().set(JSON.parse(data.dV));
+  this.dW = new Matrix().set(JSON.parse(data.dW));
+
+  this.dU_t = new Matrix().set(JSON.parse(data.dU_t));
+  this.dV_t = new Matrix().set(JSON.parse(data.dV_t));
+  this.dW_t = new Matrix().set(JSON.parse(data.dW_t));
+
+  this.dU_i = new Matrix().set(JSON.parse(data.dU_i));
+  this.dW_i = new Matrix().set(JSON.parse(data.dW_i));
+
+  // Set model's loss function
+  this.setLossFunction(data.lf);
+
+  // Set hidden layer activation
+  this.setActivation(data.act);
+
+  // Set output activation (Only linear is supported as of now)
+  this.o_actname = 'linear';
+  this.o_actfunc = (x) => x;
+  this.o_actfunc_d = (x) => 1;
+};
+
 /**
  * Displays information about the model in the console.
  * @method log
@@ -3741,9 +3798,9 @@ Rann.prototype.normalizeSequence = function normalizeSequence(
   // Find largest value
   if (record !== undefined) {
     if (record === true) {
-      let largest = 0;
+      let max_arr = [];
       for (let i = 0; i < sequence.length; i++) {
-        max.push(Math.max(sequence[i]));
+        max_arr.push(Math.max(sequence[i]));
       }
       this.largestSequenceValue = Math.max(max);
     }
@@ -3758,6 +3815,8 @@ Rann.prototype.normalizeSequence = function normalizeSequence(
   }
   return new_sequence;
 };
+
+
 
 /**
  * Set the activation function of the shared hidden layer.
@@ -3898,8 +3957,7 @@ Rann.prototype.setActivation = function setActivation(act) {
  * </code>
  */
 Rann.prototype.setLossFunction = function setLossFunction(name) {
-  let func = lossfuncs[name];
-  if (func === undefined) {
+  if (lossfuncs[name] === undefined) {
     if (typeof name === 'string') {
       DannError.error(
         "'" +
@@ -3917,7 +3975,7 @@ Rann.prototype.setLossFunction = function setLossFunction(name) {
     }
   }
   this.lossfunc_s = name;
-  this.lossfunc = func;
+  this.lossfunc = lossfuncs[name];
 };
 
 /*
@@ -3937,6 +3995,58 @@ Rann.stringToNum = function stringToNum(str) {
     numbers.push(value);
   }
   return numbers;
+};
+
+Rann.prototype.toJSON = function toJSON() {
+  // Meta
+  let strarch = JSON.stringify(this.arch);
+
+  // Weights
+  let wstrU = JSON.stringify(this.U.matrix);
+  let wstrV = JSON.stringify(this.V.matrix);
+  let wstrW = JSON.stringify(this.W.matrix);
+
+  // Gradients
+  let gstrU = JSON.stringify(this.dU.matrix);
+  let gstrV = JSON.stringify(this.dV.matrix);
+  let gstrW = JSON.stringify(this.dW.matrix);
+
+  let gstrUt = JSON.stringify(this.dU_t.matrix);
+  let gstrVt = JSON.stringify(this.dV_t.matrix);
+  let gstrWt = JSON.stringify(this.dW_t.matrix);
+
+  let gstrUi = JSON.stringify(this.dU_i.matrix);
+  let gstrWi = JSON.stringify(this.dW_i.matrix);
+
+  // Layers
+  let strlayers = JSON.stringify(this.layers);
+
+  return {
+    i: this.i,
+    h: this.h,
+    o: this.o,
+    act: this.actname,
+    act_o: this.o_actname,
+    lsv: this.largestSequenceValue,
+    trun: this.truncate,
+    loss: this.loss,
+    e: this.epoch,
+    lf: this.lossfunc_s,
+    lr: this.lr,
+    arch: strarch,
+    layers: strlayers,
+    U: wstrU,
+    V: wstrV,
+    W: wstrW,
+    dU: gstrU,
+    dV: gstrV,
+    dW: gstrW,
+    dU_t: gstrUt,
+    dV_t: gstrVt,
+    dW_t: gstrWt,
+    dU_i: gstrUi,
+    dW_i: gstrWi,
+  };
 };
 
 /**
