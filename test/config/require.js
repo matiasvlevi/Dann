@@ -1,5 +1,5 @@
 //Dannjs imports
-const Dannjs = require('../build/dann.js');
+const Dannjs = require('../build/lib.js');
 const Dann = Dannjs.dann;
 const Matrix = Dannjs.matrix;
 const Layer = Dannjs.layer;
