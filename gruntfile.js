@@ -45,8 +45,16 @@ module.exports = (grunt) => {
     },
     concat: {
       build: {
-        src: files,
+        src: files.build,
+        dest: 'build/lib.js',
+      },
+      dann: {
+        src: files.onlyDann,
         dest: 'build/dann.js',
+      },
+      rann: {
+        src: files.onlyRann,
+        dest: 'build/rann.js',
       },
       unit: {
         src: unitfiles,
@@ -57,8 +65,16 @@ module.exports = (grunt) => {
       src: {
         files: [
           {
+            src: 'build/lib.js',
+            dest: 'build/lib.min.js',
+          },
+          {
             src: 'build/dann.js',
             dest: 'build/dann.min.js',
+          },
+          {
+            src: 'build/rann.js',
+            dest: 'build/rann.min.js',
           },
         ],
       },
@@ -231,8 +247,14 @@ module.exports = (grunt) => {
   grunt.registerTask('readmeCompile', ['clean:markdown', 'marked']);
   grunt.registerTask('lint-no-fix', ['eslint:source']);
   grunt.registerTask('lint-fix', ['eslint:fix']);
-  grunt.registerTask('build', ['lint-no-fix', 'concat:build', 'terser']);
-  grunt.registerTask('build-fix', ['lint-fix', 'concat:build', 'terser']);
+  grunt.registerTask('build', [
+    'lint-no-fix',
+    'concat:build',
+    'concat:dann',
+    'concat:rann',
+    'terser',
+  ]);
+  grunt.registerTask('build-fix', ['lint-fix', 'build', 'terser']);
   grunt.registerTask('build-unit', ['concat:unit', 'lint-fix']);
   grunt.registerTask('doc-compile', [
     'clean:documentation',
