@@ -10,8 +10,17 @@
 <br/>
 
 #### CDN
+Whole library
+```js
+<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/lib.js"></script>
+```
+Only dann
 ```js
 <script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/dann.js"></script>
+```
+Only rann
+```js
+<script src="https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/rann.js"></script>
 ```
 
 #### Nodejs
