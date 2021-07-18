@@ -5,9 +5,9 @@ Rann.prototype.normalizeSequence = function normalizeSequence(
   // Find largest value
   if (record !== undefined) {
     if (record === true) {
-      let largest = 0;
+      let max_arr = [];
       for (let i = 0; i < sequence.length; i++) {
-        max.push(Math.max(sequence[i]));
+        max_arr.push(Math.max(sequence[i]));
       }
       this.largestSequenceValue = Math.max(max);
     }
