@@ -353,4 +353,27 @@ suite('Rann Class', function () {
       });
     });
   });
+  suite('stringToNum & numToString', function () {
+    let str;
+    let expected;
+    setup(function () {
+      str = 'Hector Salamanca';
+      expected = [
+        0.4270833333333333, 0.7291666666666666, 0.7083333333333334,
+        0.8854166666666666, 0.8333333333333334, 0.8645833333333334,
+        0.010416666666666666, 0.5416666666666666, 0.6875, 0.8020833333333334,
+        0.6875, 0.8125, 0.6875, 0.8229166666666666, 0.7083333333333334, 0.6875,
+      ];
+    });
+    test('Should return number array', function () {
+      let ans = Rann.stringToNum(str);
+      for (let i = 0; i < expected.length; i++) {
+        assert.equal(expected[i], ans[i]);
+      }
+    });
+    test('Should return string', function () {
+      let ans = Rann.numToString(expected);
+      assert.equal(str, ans);
+    });
+  });
 });

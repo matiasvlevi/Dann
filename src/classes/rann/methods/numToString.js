@@ -4,8 +4,7 @@
  * @return {String} converted string
  */
 Rann.numToString = function numToString(num) {
-  let supported =
-    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  let supported = Rann.ascii();
   let ans = '';
   for (let i = 0; i < num.length; i++) {
     let letter = Math.floor(num[i] * supported.length);
