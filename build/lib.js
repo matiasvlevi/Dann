@@ -3822,8 +3822,7 @@ Rann.prototype.normalizeSequence = function normalizeSequence(
  * @return {String} converted string
  */
 Rann.numToString = function numToString(num) {
-  let supported =
-    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  let supported = Rann.ascii();
   let ans = '';
   for (let i = 0; i < num.length; i++) {
     let letter = Math.floor(num[i] * supported.length);
@@ -3999,8 +3998,7 @@ Rann.prototype.setLossFunction = function setLossFunction(name) {
  * @returns
  */
 Rann.stringToNum = function stringToNum(str) {
-  let supported =
-    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  let supported = Rann.ascii();
   let letters = str.split('');
   let numbers = [];
   for (letter of letters) {
@@ -4009,6 +4007,10 @@ Rann.stringToNum = function stringToNum(str) {
     numbers.push(value);
   }
   return numbers;
+};
+
+Rann.ascii = function ascii() {
+  return ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 };
 
 Rann.prototype.toJSON = function toJSON() {
