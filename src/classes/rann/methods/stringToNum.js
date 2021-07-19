@@ -5,8 +5,7 @@
  * @returns
  */
 Rann.stringToNum = function stringToNum(str) {
-  let supported =
-    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  let supported = Rann.ascii();
   let letters = str.split('');
   let numbers = [];
   for (letter of letters) {
