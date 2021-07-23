@@ -1866,20 +1866,26 @@ Rann = function Rann(i = 2, h = 8, o = 2) {
   this.lossfunc = lossfuncs[this.lossfunc_s];
 };
 
-/*
- * Undisplayed documentation
- * Check if sequences are the right format for a given Rann model.
- * @param {Array} input Array of input sequences.
- * @param {Number} sequence The sequence length
- * @return {Boolean} If the sequences are valid for the given Rann model
- */
-Rann.prototype.validateSequences = function checkSequences(input) {
-  for (let i = 0; i < input.length; i++) {
-    if (input[i].length !== this.i) {
-      return false;
+Rann.ascii = function ascii() {
+  return ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+};
+
+Rann.asciiToBinary = function asciiToBinary(char) {
+  let supported = Rann.ascii();
+  let index = supported.indexOf(char);
+  return numberToBinary(index, 7);
+};
+
+Rann.binaryToAscii = function binaryToAscii(binary_arr) {
+  let supported = Rann.ascii();
+  let str = binary_arr.toString().replace(/,/gi, '');
+  if (str.length < 7) {
+    for (let i = 7; i > str.length; i++) {
+      str = '0' + str;
     }
   }
-  return true;
+  let index = parseInt(str, 2);
+  return supported[index];
 };
 
 /*
@@ -1982,6 +1988,7 @@ Rann.prototype.feed = function feed(input, options) {
   let table = false;
   let dec = 21;
   let normalize = false;
+  let stringType = false;
   if (options !== undefined) {
     if (options.log !== undefined) {
       log = options.log;
@@ -2005,7 +2012,10 @@ Rann.prototype.feed = function feed(input, options) {
       }
     }
   }
-
+  if (typeof input[0] === 'string') {
+    input = Rann.inputToNum(input);
+    stringType = true;
+  }
   if (this.validateSequences(input)) {
     // Normalize input
     if (normalize) {
@@ -2066,6 +2076,10 @@ Rann.prototype.feed = function feed(input, options) {
         console.log('Prediction:');
         console.log(outArray);
       }
+    }
+    if (stringType === true) {
+      console.log(outArray);
+      outArray = Rann.numToOutput(outArray);
     }
     return outArray;
   } else {
@@ -2132,6 +2146,20 @@ Rann.prototype.fromJSON = function fromJSON(data) {
   this.o_actname = 'linear';
   this.o_actfunc = (x) => x;
   this.o_actfunc_d = (x) => 1;
+};
+
+Rann.inputToNum = function inputToNum(input) {
+  let supported = Rann.ascii();
+  let str = '';
+  for (let i = 0; i < input.length; i++) {
+    str += ' ' + input[i];
+  }
+  let new_input = [];
+  for (let i = 0; i < str.length; i++) {
+    let index = supported.indexOf(str[i]);
+    new_input.push(numberToBinary(index, 7));
+  }
+  return new_input;
 };
 
 /**
@@ -2367,19 +2395,14 @@ Rann.prototype.normalizeSequence = function normalizeSequence(
   return new_sequence;
 };
 
-/*
- * @method numToString
- * @param {Array} num list of number to convert to string
- * @return {String} converted string
- */
-Rann.numToString = function numToString(num) {
+Rann.numToOutput = function numToOutput(num) {
   let supported = Rann.ascii();
-  let ans = '';
+  let new_num = [];
   for (let i = 0; i < num.length; i++) {
-    let letter = Math.floor(num[i] * supported.length);
-    ans += supported[letter];
+    new_num.push(Math.round(num[i]));
   }
-  return ans;
+  let str = new_num.toString().replace(/,/gi, '');
+  return supported[parseInt(str, 2)];
 };
 
 /**
@@ -2542,28 +2565,6 @@ Rann.prototype.setLossFunction = function setLossFunction(name) {
   this.lossfunc = lossfuncs[name];
 };
 
-/*
- * Undisplayed documentation
- * Convert a string to an array of values.
- * @param {String} str The string to convert to an array of values.
- * @returns
- */
-Rann.stringToNum = function stringToNum(str) {
-  let supported = Rann.ascii();
-  let letters = str.split('');
-  let numbers = [];
-  for (letter of letters) {
-    let ascii_value = supported.indexOf(letter);
-    let value = (ascii_value + 1) / (supported.length + 1);
-    numbers.push(value);
-  }
-  return numbers;
-};
-
-Rann.ascii = function ascii() {
-  return ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-};
-
 Rann.prototype.toJSON = function toJSON() {
   // Meta
   let strarch = JSON.stringify(this.arch);
@@ -2678,6 +2679,9 @@ Rann.prototype.train = function train(input, options) {
   if (normalize) {
     // Normalize input
     input = this.normalizeSequence(input, true);
+  }
+  if (typeof input[0] === 'string') {
+    input = Rann.inputToNum(input);
   }
   if (this.validateSequences(input)) {
     let length = input.length - 1;
@@ -2836,6 +2840,25 @@ Rann.prototype.unNormalizeSequence = function unNormalizeSequence(sequence) {
     }
   }
   return new_sequence;
+};
+
+/*
+ * Undisplayed documentation
+ * Check if sequences are the right format for a given Rann model.
+ * @param {Array} input Array of input sequences.
+ * @param {Number} sequence The sequence length
+ * @return {Boolean} If the sequences are valid for the given Rann model
+ */
+Rann.prototype.validateSequences = function checkSequences(input) {
+  for (let i = 0; i < input.length; i++) {
+    let type = typeof input[i];
+    if (type === 'number') {
+      if (input[i].length !== this.i) {
+        return false;
+      }
+    }
+  }
+  return true;
 };
 
 //Node Module Exports:
