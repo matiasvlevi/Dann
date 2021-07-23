@@ -61,6 +61,9 @@ Rann.prototype.train = function train(input, options) {
     // Normalize input
     input = this.normalizeSequence(input, true);
   }
+  if (typeof input[0] === 'string') {
+    input = Rann.inputToNum(input);
+  }
   if (this.validateSequences(input)) {
     let length = input.length - 1;
     for (let i = 0; i < length; i++) {
