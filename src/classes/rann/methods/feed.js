@@ -53,6 +53,7 @@ Rann.prototype.feed = function feed(input, options) {
   let table = false;
   let dec = 21;
   let normalize = false;
+  let stringType = false;
   if (options !== undefined) {
     if (options.log !== undefined) {
       log = options.log;
@@ -76,7 +77,10 @@ Rann.prototype.feed = function feed(input, options) {
       }
     }
   }
-
+  if (typeof input[0] === 'string') {
+    input = Rann.inputToNum(input);
+    stringType = true;
+  }
   if (this.validateSequences(input)) {
     // Normalize input
     if (normalize) {
@@ -137,6 +141,10 @@ Rann.prototype.feed = function feed(input, options) {
         console.log('Prediction:');
         console.log(outArray);
       }
+    }
+    if (stringType === true) {
+      console.log(outArray);
+      outArray = Rann.numToOutput(outArray);
     }
     return outArray;
   } else {
