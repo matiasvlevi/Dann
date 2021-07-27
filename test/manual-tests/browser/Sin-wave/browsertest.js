@@ -1,11 +1,11 @@
 //__________________________ // BROWSER TEST BELOW // __________________________//
 
 // the length of a sequence
-let sequence_length = 20;
+let sequence_length = 100;
 // The number of sequences
-let nb_sequence = 20;
+let nb_sequence = 3;
 // Value resolution
-let resolution = 0.2;
+let resolution = 0.1;
 
 // Creating the dataset
 let dataset = makeSinWave(sequence_length, nb_sequence, resolution);
