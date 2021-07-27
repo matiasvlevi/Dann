@@ -52,7 +52,6 @@ Rann.prototype.feed = function feed(input, options) {
   let roundData = false;
   let table = false;
   let dec = 21;
-  let normalize = false;
   let stringType = false;
   if (options !== undefined) {
     if (options.log !== undefined) {
@@ -60,9 +59,6 @@ Rann.prototype.feed = function feed(input, options) {
     }
     if (options.table !== undefined) {
       table = options.table;
-    }
-    if (options.normalize !== undefined) {
-      normalize = options.normalize;
     }
     if (options.decimals !== undefined) {
       if (options.decimals > 21) {
@@ -83,7 +79,7 @@ Rann.prototype.feed = function feed(input, options) {
   }
   if (this.validateSequences(input)) {
     // Normalize input
-    if (normalize) {
+    if (this.normalize) {
       input = this.normalizeSequence(input);
     }
     for (let d = 0; d < input.length; d++) {
