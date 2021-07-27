@@ -2,9 +2,13 @@
 
 // the length of a sequence
 let sequence_length = 50;
+// The number of sequences
+let nb_sequence = 10;
+// Value resolution
+let resolution = 0.03;
 
 // Creating the dataset
-let dataset = makeSinWave(sequence_length, 16, 0.1);
+let dataset = makeSinWave(sequence_length, nb_sequence, resolution);
 let ans = dataset.splice(dataset.length - 1, 1)[0];
 
 // Creating the Rann model
