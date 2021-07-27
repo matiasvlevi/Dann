@@ -1,27 +1,25 @@
 //__________________________ // BROWSER TEST BELOW // __________________________//
 
 // the length of a sequence
-let sequence_length = 50;
+let sequence_length = 20;
 // The number of sequences
-let nb_sequence = 10;
+let nb_sequence = 20;
 // Value resolution
-let resolution = 0.03;
+let resolution = 0.2;
 
 // Creating the dataset
 let dataset = makeSinWave(sequence_length, nb_sequence, resolution);
 let ans = dataset.splice(dataset.length - 1, 1)[0];
 
 // Creating the Rann model
-let rnn = new Rann(sequence_length, 50, sequence_length);
-rnn.makeWeights(-1, 1);
-rnn.setActivation('tanH');
-rnn.lr = 0.00001;
+let rnn = new Rann(sequence_length, 32, sequence_length);
+rnn.lr = 0.0001;
 
 
 // Creating the graph values
-let gdata = concatArray(dataset).concat(ans);
-// Creating empty arrays to fill graphs
-let empty = new Array(sequence_length * (dataset.length + 1));
+let gdata = concatArray(dataset) //.concat(ans);
+  // Creating empty arrays to fill graphs
+let empty = new Array(sequence_length * (dataset.length));
 let prediction = rnn.feed(dataset);
 let guess = empty.concat(prediction);
 
@@ -55,6 +53,8 @@ function setup() {
 let pause = false;
 
 // p5 draw
+train(150);
+
 function draw() {
   background(51);
   if (!pause) {
