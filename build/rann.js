@@ -2695,18 +2695,21 @@ Rann.prototype.train = function train(input, options) {
       logloss = options.log;
     }
   }
-  if (this.normalize) {
-    // Normalize input
-    input = this.normalizeSequence(input, true);
-  }
-  if (typeof input[0] === 'string') {
-    input = Rann.inputToNum(input);
-  }
   if (this.validateSequences(input)) {
-    let length = input.length - 1;
+    if (typeof input[0] === 'string') {
+      // string to numbers
+      input = Rann.inputToNum(input);
+    }
+    if (this.normalize) {
+      // Normalize input
+      input = this.normalizeSequence(input, true);
+    }
+    let input_values = Object.assign([], input);
+    let length = input_values.length - 1;
+
     for (let i = 0; i < length; i++) {
-      let target = input.splice(input.length - 1, 1);
-      this.trainSequence(input, target[0]);
+      let target = input_values.splice(input_values.length - 1, 1);
+      this.trainSequence(input_values, target[0]);
     }
     if (logloss) {
       console.log('Loss: ', this.loss);
