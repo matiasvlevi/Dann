@@ -81,8 +81,7 @@ console.log('Before Training');
 nn.feedForward([1, 1, 0, 1], { log: true, decimals: 3 });
 console.log(' ');
 
-//Training for 500 epochs:
-
+//Training for 5000 epochs:
 let epoch = 5000;
 for (nn.epoch = 0; nn.epoch < epoch; nn.epoch++) {
   let sum = 0;
