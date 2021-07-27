@@ -47,17 +47,13 @@
  * </code>
  */
 Rann.prototype.train = function train(input, options) {
-  let normalize = false;
   let logloss = false;
   if (options !== undefined) {
-    if (options.normalize !== undefined) {
-      normalize = options.normalize;
-    }
     if (options.log !== undefined) {
       logloss = options.log;
     }
   }
-  if (normalize) {
+  if (this.normalize) {
     // Normalize input
     input = this.normalizeSequence(input, true);
   }
