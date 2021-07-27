@@ -11,6 +11,7 @@ if (!isBrowser) {
     xor: XOR,
     makeXOR: makeXOR,
     makeBinary: makeBinary,
+    makeSinWave: makeSinWave,
     add: Add,
   };
 }
