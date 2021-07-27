@@ -63,7 +63,7 @@ function draw() {
     train(1);
 
     // update the model's output in the graph 
-    guess = empty.concat(rnn.feed([dataset[dataset.length - 2]]));
+    guess = empty.concat(rnn.feed([dataset[dataset.length - 1]]));
     graph.updateValue(1, guess);
 
     // Display graph        
