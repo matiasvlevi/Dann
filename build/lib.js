@@ -3332,6 +3332,7 @@ Rann = function Rann(i = 2, h = 8, o = 2) {
   this.output;
 
   // Other values
+  this.normalize = false;
   this.largestSequenceValue = 1;
   this.truncate = 5;
   this.loss = 100;
@@ -3461,7 +3462,6 @@ Rann.prototype.feed = function feed(input, options) {
   let roundData = false;
   let table = false;
   let dec = 21;
-  let normalize = false;
   let stringType = false;
   if (options !== undefined) {
     if (options.log !== undefined) {
@@ -3469,9 +3469,6 @@ Rann.prototype.feed = function feed(input, options) {
     }
     if (options.table !== undefined) {
       table = options.table;
-    }
-    if (options.normalize !== undefined) {
-      normalize = options.normalize;
     }
     if (options.decimals !== undefined) {
       if (options.decimals > 21) {
@@ -3492,7 +3489,7 @@ Rann.prototype.feed = function feed(input, options) {
   }
   if (this.validateSequences(input)) {
     // Normalize input
-    if (normalize) {
+    if (this.normalize) {
       input = this.normalizeSequence(input);
     }
     for (let d = 0; d < input.length; d++) {
@@ -3844,26 +3841,27 @@ Rann.prototype.makeWeights = function makeWeights(min, max) {
   }
 };
 
-Rann.prototype.normalizeSequence = function normalizeSequence(
-  sequence,
-  record
-) {
+Rann.prototype.normalizeSequence = function normalizeSequence(input, record) {
   // Find largest value
   if (record !== undefined) {
     if (record === true) {
       let max_arr = [];
-      for (let i = 0; i < sequence.length; i++) {
-        max_arr.push(Math.max(sequence[i]));
+      for (let i = 0; i < input.length; i++) {
+        max_arr = max_arr.concat(input[i]);
       }
-      this.largestSequenceValue = Math.max(max);
+      let largest = Math.max.apply(1, max_arr);
+      if (this.largestSequenceValue < largest) {
+        this.largestSequenceValue = largest;
+      }
     }
   }
   // Normalize sequence
   let new_sequence = [];
-  for (let i = 0; i < sequence.length; i++) {
+  let sequence_length = input[0].length;
+  for (let i = 0; i < input.length; i++) {
     new_sequence[i] = [];
-    for (let j = 0; j < sequence[0].length; j++) {
-      new_sequence[i].push(sequence[i][j] / this.largestSequenceValue);
+    for (let j = 0; j < sequence_length; j++) {
+      new_sequence[i].push(input[i][j] / this.largestSequenceValue);
     }
   }
   return new_sequence;
@@ -4140,17 +4138,13 @@ Rann.prototype.toJSON = function toJSON() {
  * </code>
  */
 Rann.prototype.train = function train(input, options) {
-  let normalize = false;
   let logloss = false;
   if (options !== undefined) {
-    if (options.normalize !== undefined) {
-      normalize = options.normalize;
-    }
     if (options.log !== undefined) {
       logloss = options.log;
     }
   }
-  if (normalize) {
+  if (this.normalize) {
     // Normalize input
     input = this.normalizeSequence(input, true);
   }
