@@ -120,7 +120,7 @@ Rann.prototype.feed = function feed(input, options) {
     let outArray = Matrix.toArray(out);
 
     // Un normalize output
-    if (normalize) {
+    if (this.normalize) {
       outArray = this.unNormalizeSequence([outArray])[0];
     }
 
