@@ -53,6 +53,9 @@ module.exports = (grunt) => {
         dest: 'test/unit.js',
       },
     },
+    sig: {
+      message: 'Author signature',
+    },
     terser: {
       src: {
         files: [
@@ -250,6 +253,7 @@ module.exports = (grunt) => {
     'replace:readmeversion',
     'replace:constant',
     'build-fix',
+    'sig',
   ]);
   grunt.registerTask('test', [
     'doc-compile',
