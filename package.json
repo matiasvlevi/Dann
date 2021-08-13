@@ -52,7 +52,7 @@
     "browser": "start test/manual-tests/browser/empty-example/browser.html",
     "doc:show": "start docs/documentation/index.html",
     "contrib": "npx all-contributors generate",
-    "sig": "grunt sig"
+    "sig": "npx vlev"
   },
   "version": "2.2.10",
   "keywords": [
