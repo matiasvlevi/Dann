@@ -17,7 +17,7 @@
   <a href="#Demo">Demo</a> •
   <a href="#Installation">Installation</a> •
   <a href="#Getting-started">Getting started</a> •
-  <a href="https://dannjs.org/docs/">Documentation</a> •
+  <a href="https://dannjs.org/docs/classes/Dann">Documentation</a> •
   <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Contribute</a> •
   <a href="https://discord.gg/yeAqHsGdtU">Discord</a> •
   <a href="#license">License</a>
