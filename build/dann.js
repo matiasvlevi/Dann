@@ -1,5 +1,5 @@
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.2.10';
+const VERSION = 'v2.2.11';
 
 /**
  * Add a new custom function to Dannjs.
