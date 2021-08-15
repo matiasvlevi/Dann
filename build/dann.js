@@ -530,6 +530,18 @@ function mse(predictions, target) {
   ans = sum / n;
   return ans;
 }
+function quantile(predictions, target, percentile) {
+  let q = percentile;
+  let sum = 0;
+  for (let i = 0; i < target.length; i++) {
+    if (target[i] - predictions[i] >= 0) {
+      sum += q * (target[i] - predictions[i]);
+    } else {
+      sum += (q - 1) * (target[i] - predictions[i]);
+    }
+  }
+  return sum / target.length;
+}
 let lossfuncs = {
   //Basic
   mae: mae,
@@ -541,6 +553,7 @@ let lossfuncs = {
   rmse: rmse,
   //Experimental:
   mael: mael,
+  quantile: quantile,
 };
 
 //Shortening Mathjs functions:
@@ -1733,6 +1746,7 @@ Dann = function Dann(i = 1, o = 1) {
 
   this.lossfunc = mse;
   this.lossfunc_s = this.lossfunc.name;
+  this.percentile = 0.5;
 };
 
 /**
@@ -1956,7 +1970,7 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
 
-  this.loss = this.lossfunc(this.outs, target);
+  this.loss = this.lossfunc(this.outs, target, this.percentile);
   if (recordLoss === true) {
     this.losses.push(this.loss);
   }
@@ -2199,7 +2213,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
   this.lr = data.lrate;
   this.arch = data.arch;
   this.epoch = data.e;
-
+  this.percentile = data.per;
   return this;
 };
 
@@ -2218,7 +2232,7 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * Load a previously saved json file from ./savedDanns/. If the network's architechture is not the same, it is going to overwrite the Dann object.
  * @method load
  * @for Dann
- * @deprecated Use Use fromJSON or createFromJSON, Removed in 2.2.6
+ * @deprecated Use fromJSON or createFromJSON, Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
  */
@@ -2818,6 +2832,7 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  * Set the loss function of a Dann model
  * @method setLossFunction
  * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
+ * @param {Number} [percentile] Some loss functions like the Quantile loss will need a percentile value. Ranges between 0 and 1.
  * <table>
  * <thead>
  *   <tr>
@@ -2858,6 +2873,10 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  *     <td>bce</td>
  *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
  *   </tr>
+ *   <tr>
+ *     <td>quantile</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/7rsvaivrat">See graph</a></td>
+ *   </tr>
  * </tbody>
  * </table>
  * <br/>
@@ -2873,8 +2892,24 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  * //After changing the loss function
  * console.log(nn.lossfunc);
  * </code>
+ * @example
+ * <code>
+ * const nn = new Dann(4, 4);
+ * nn.addHiddenLayer(16, 'sigmoid');
+ * nn.makeWeights();
+ * //Before changing the loss function
+ * console.log(nn.lossfunc);
+ * // Quantile loss with 40 percentile
+ * nn.setLossFunction('quantile', 0.4);
+ * //After changing the loss function
+ * console.log(nn.lossfunc);
+ * </code>
  */
-Dann.prototype.setLossFunction = function setLossFunction(name) {
+Dann.prototype.setLossFunction = function setLossFunction(
+  name,
+  percentile = 0.5
+) {
+  this.percentile = percentile;
   let func = lossfuncs[name];
   if (func === undefined) {
     if (typeof name === 'string') {
@@ -3118,6 +3153,7 @@ Dann.prototype.toJSON = function toJSON() {
     lf: this.lossfunc_s,
     loss: this.loss,
     e: this.epoch,
+    per: this.percentile,
   };
   return data;
 };
