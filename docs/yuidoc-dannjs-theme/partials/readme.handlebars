@@ -1,142 +1,55 @@
-<p align="center">
+<div align="center">
   <a href="https://dannjs.org/">
     <img src="https://dannjs.org/transparentlogo.png" alt="Dannjs" height="150" />
   </a>
-</p>
+  <h4>RNN development Branch</h4>
+  <a href="https://github.com/matiasvlevi/Dann">Back to master branch</a>
+</div>
 
-<p align="center">
-    <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/v/dannjs?style=flat&color=f69e7b&labelColor=383e56" alt="versionNpmStat"/></a> <a href="https://github.com/matiasvlevi/Dann" target="_blank"><img src="https://img.shields.io/github/repo-size/matiasvlevi/Dann?style=flat&label=size&color=f69e7b&labelColor=383e56" alt="repoSize"/></a> <a href="https://www.npmjs.com/package/dannjs" target="_blank"><img src="https://img.shields.io/npm/dt/dannjs?style=flat&color=f69e7b&labelColor=383e56" alt="downloadNpmStat"/></a> <a href="https://raw.githubusercontent.com/matiasvlevi/Dann/master/LICENSE" target="_blank"><img alt="GitHub" src="https://img.shields.io/github/license/matiasvlevi/dann?color=f69e7b&labelColor=383e56" alt="Liscence"></a>
-</p>
-<h4 align="center">Deep Neural Network Library for Javascript</h4>
-<p align="center">
-    Train a neural network with your data & save its trained state!
-
-</p>
-
-<p align="center">
-  <a href="#Demo">Demo</a> •
-  <a href="#Installation">Installation</a> •
-  <a href="#Getting-started">Getting started</a> •
-  <a href="https://dannjs.org/docs/classes/Dann">Documentation</a> •
-  <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Contribute</a> •
-  <a href="https://discord.gg/yeAqHsGdtU">Discord</a> •
-  <a href="#license">License</a>
-</p>
-<br/>
-
-
-<h2 id="installation">Installation</h2>
-<h3 id="cdn-">CDN :</h3>
-<pre><code class="rmcode html">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@v2.2.11/build/dann.min.js&quot;&gt;&lt;/script&gt;</code></pre>
-<h3 id="node-">Node :</h3>
-<pre><code>npm i dannjs</code></pre><p><a href="https://www.npmjs.com/package/dannjs">dannjs on npmjs.com</a>
-<br/><br/></p>
-<h2 id="getting-started">Getting started</h2>
-<h3 id="node-imports">Node Imports</h3>
-<p>Object types from the library can be imported like this</p>
-<pre><code class="rmcode js">const dn = require(&#39;dannjs&#39;);
-const Dann = dn.dann;
-const Layer = dn.layer;
-const Matrix = dn.matrix;</code></pre>
-<p>The objects containing functions can be imported this way</p>
-<pre><code class="rmcode js">const dn = require(&#39;dannjs&#39;);
-const lossfuncs = dn.lossfuncs;
-const activations = dn.activations;
-const poolfuncs = dn.poolfuncs;</code></pre>
-<br/>
-
-<h3 id="basic-model-construction">Basic model construction</h3>
-<p>Setting up a small (4,6,6,2) neural network.</p>
-<pre><code class="rmcode js">const nn = new Dann(4, 2);
-nn.addHiddenLayer(6, &#39;leakyReLU&#39;);
-nn.addHiddenLayer(6, &#39;leakyReLU&#39;);
-nn.outputActivation(&#39;tanH&#39;);
-nn.makeWeights();
-nn.lr = 0.0001;
-nn.log({details:true});</code></pre>
-<br/>
-
-
-<h3 id="train-by-backpropagation">Train by backpropagation</h3>
-<p>Training with a dataset.</p>
-<pre><code class="rmcode js">//XOR 2 inputs, 1 output
-const dataset = [
-    {
-        input: [0, 0],
-        output: [0]
-    },
-    {
-        input: [1, 0],
-        output: [1]
-    },
-    {
-        input: [0, 1],
-        output: [1]
-    },
-    {
-        input: [1, 1],
-        output: [0]
-    }
-];
-
-//train 1 epoch
-for (data of dataset) {
-    nn.backpropagate(data.input, data.output);
-    console.log(nn.loss);
-}</code></pre>
-<br/>
-
-<h3 id="train-by-mutation">Train by mutation</h3>
-<p>For neuroevolution simulations. Works best with small models &amp; large population size.</p>
-<pre><code class="rmcode js">const populationSize = 1000;
-let newGeneration = [];
-
-for (let i = 0; i &lt; populationSize; i++) {
-
-    // parentNN would be the best nn from past generation.
-    const childNN = parentNN;
-    childNN.mutateRandom(0.01, 0.65);
-
-    newGeneration.push(childNN);
-}</code></pre>
-<br/>
-
-<h3 id="standalone-function">Standalone function</h3>
-<p>Convert a Neural Network to a JS function that can output predictions without the library.</p>
-<pre><code class="rmcode js">let strfunc = nn.toFunction();
-console.log(strfunc);</code></pre>
-<br/>
-
-<h3 id="save-json">Save JSON</h3>
-<pre><code class="rmcode js">let json = nn.toJSON();
-console.log(json);</code></pre>
-<br/>
 
 <br/>
 
-<h3 id="demo">Demo:</h3>
-<p><a href="https://dannjs.org/livedemo.html">AI predicts San-francisco Housing prices.</a> <br/>
-more examples &amp; demos <a href="https://dannjs.org/#exm">here</a>
-<br/></p>
-<h3 id="sandbox">SandBox:</h3>
-<p>Try out the new Dannjs Sandbox! <br/>
-<a href="https://dannjs.org/sandbox">https://dannjs.org/sandbox</a></p>
-<h3 id="contribute">Contribute</h3>
-<p><a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">Contributor docs</a></p>
-<h4 id="report-bugs">Report Bugs</h4>
-<p><a href="https://github.com/matiasvlevi/Dann/issues/new">Report an issue</a></p>
-<h4 id="socials">Socials</h4>
-</span>
-<a href="https://twitter.com/DannjsAi" target="_blanck"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/DannjsAi?label=Twitter&style=social"></a>
-<span class="badge-patreon">
-<a href="https://www.patreon.com/dannjs" title="Donate to this project using Patreon"><img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fres-3.cloudinary.com%2Fcrunchbase-production%2Fimage%2Fupload%2Fc_lpad%2Ch_256%2Cw_256%2Cf_auto%2Cq_auto%3Aeco%2Fv1498102829%2Foul9xkady63xqqn3iw7c.png&f=1&nofb=1" alt="Patreon donate button" height="2.5%" width="2.5%"/></a>
-
+<h4 id="cdn">CDN</h4>
+<p>Whole library</p>
+<pre><code class="rmcode js">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/lib.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>Only dann</p>
+<pre><code class="rmcode js">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/dann.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>Only rann</p>
+<pre><code class="rmcode js">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/matiasvlevi/dann@RNN/build/rann.js&quot;&gt;&lt;/script&gt;</code></pre>
 <br/>
 
+<h4 id="nodejs">Nodejs</h4>
+<pre><code class="rmcode js">const Dannjs = require(&#39;dannjs&#39;);
+const Rann = Dannjs.rann;</code></pre>
+<h2 id="examples">Examples</h2>
+<p>Feed sequence data</p>
+<pre><code class="rmcode js">let rnn = new Rann(2, 20, 2);
+rnn.feed([
+  [1, 2],
+  [3, 4],
+  [5, 6],
+  [7, 8]
+]);
+</code></pre>
+<p>Train sequence data</p>
+<pre><code class="rmcode js">rnn.train([
+  [1, 2],
+  [3, 4],
+  [5, 6],
+  [7, 8],
+  [9, 10]  
+])
+rnn.feed([
+  [5,6],
+  [7,8]
+]);
+// Outputs close to [9, 10] if well trained 
+// (Call train more than once)</code></pre>
+<p><br/><br/><br/></p>
 <h2 id="license">License</h2>
 <p>MIT</p>
-<p><br/><br/><br/></p>
-<h2 id="contributors">Contributors</h2>
+<p><br/><br/><br/>
+<br/></p>
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -148,7 +61,6 @@ more examples &amp; demos <a href="https://dannjs.org/#exm">here</a>
     <td align="center"><a href="https://github.com/SharkAce"><img src="https://avatars.githubusercontent.com/u/85720638?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sharkAce</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/commits?author=SharkAce" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/shirsho1106"><img src="https://avatars.githubusercontent.com/u/60136067?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hasnain Iqbal</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/commits?author=shirsho1106" title="Code">💻</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=shirsho1106" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/ramos-papadopoulos"><img src="https://avatars.githubusercontent.com/u/82990932?v=4?s=100" width="100px;" alt=""/><br /><sub><b>EL Ramos</b></sub></a><br /><a href="https://github.com/matiasvlevi/Dann/issues?q=author%3Aramos-papadopoulos" title="Bug reports">🐛</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=ramos-papadopoulos" title="Tests">⚠️</a> <a href="https://github.com/matiasvlevi/Dann/commits?author=ramos-papadopoulos" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/viabhinav"><img src="https://avatars.githubusercontent.com/u/48197061?v=4?s=100" width="100px;" alt=""/><br /><sub><b>viabhinav</b></sub></a><br /><a href="#tutorial-viabhinav" title="Tutorials">✅</a></td>
   </tr>
 </table>
 
@@ -156,7 +68,5 @@ more examples &amp; demos <a href="https://dannjs.org/#exm">here</a>
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
-<br/>
-
+<p><br/><br/></p>
 <p>Any contributions are welcome! See <a href="https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>

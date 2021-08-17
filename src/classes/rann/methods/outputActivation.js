@@ -16,7 +16,7 @@ Rann.prototype.outputActivation = function outputActivation(act) {
       return;
     }
   }
-    this.o_actname = act;
+  this.o_actname = act;
   let funcData = Layer.stringTofunc(this.o_actname);
   this.o_actfunc = funcData['func'];
   this.o_actfunc_d = funcData['func_d'];
