@@ -17,6 +17,7 @@ body {
 
 pre, code {
     font-family: Consolas, Menlo, "Courier New", monospace;
+    margin-bottom: 12px;
 }
 
 a {
