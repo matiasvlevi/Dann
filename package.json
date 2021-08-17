@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.2.10",
+  "_id": "dannjs@2.2.11",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -51,9 +51,10 @@
     "nodetest": "cd test/manual-tests/node/empty-example & start run.cmd",
     "browser": "start test/manual-tests/browser/empty-example/browser.html",
     "doc:show": "start docs/documentation/index.html",
-    "contrib": "npx all-contributors generate"
+    "contrib": "npx all-contributors generate",
+    "sig": "npx vlev"
   },
-  "version": "2.2.10",
+  "version": "2.2.11",
   "keywords": [
     "dann",
     "dannjs",

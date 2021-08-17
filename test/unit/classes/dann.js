@@ -282,6 +282,20 @@ suite('Dann Class', function () {
         assert.equal(nn.lossfunc_s, 'mael');
       });
     });
+    suite('Setting a loss function with percentile', function () {
+      let nn;
+      setup(function () {
+        nn = new Dann(12, 4);
+        nn.addHiddenLayer(16);
+        nn.makeWeights();
+        nn.setLossFunction('quantile', 0.2);
+      });
+      test('Should have initiated quantile loss function with 20% percentile', function () {
+        assert.equal(nn.lossfunc, lossfuncs.quantile);
+        assert.equal(nn.percentile, 0.2);
+        assert.equal(nn.lossfunc_s, 'quantile');
+      });
+    });
   });
   suite('addHiddenLayer', function () {
     suite('add one 16 neuron tanH hidden layer', function () {

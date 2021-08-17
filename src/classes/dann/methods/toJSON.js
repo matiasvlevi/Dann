@@ -58,6 +58,7 @@ Dann.prototype.toJSON = function toJSON() {
     lf: this.lossfunc_s,
     loss: this.loss,
     e: this.epoch,
+    per: this.percentile,
   };
   return data;
 };

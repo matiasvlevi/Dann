@@ -2,6 +2,7 @@
  * Set the loss function of a Dann model
  * @method setLossFunction
  * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
+ * @param {Number} [percentile] Some loss functions like the Quantile loss will need a percentile value. Ranges between 0 and 1.
  * <table>
  * <thead>
  *   <tr>
@@ -42,6 +43,10 @@
  *     <td>bce</td>
  *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
  *   </tr>
+ *   <tr>
+ *     <td>quantile</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/7rsvaivrat">See graph</a></td>
+ *   </tr>
  * </tbody>
  * </table>
  * <br/>
@@ -57,8 +62,24 @@
  * //After changing the loss function
  * console.log(nn.lossfunc);
  * </code>
+ * @example
+ * <code>
+ * const nn = new Dann(4, 4);
+ * nn.addHiddenLayer(16, 'sigmoid');
+ * nn.makeWeights();
+ * //Before changing the loss function
+ * console.log(nn.lossfunc);
+ * // Quantile loss with 40 percentile
+ * nn.setLossFunction('quantile', 0.4);
+ * //After changing the loss function
+ * console.log(nn.lossfunc);
+ * </code>
  */
-Dann.prototype.setLossFunction = function setLossFunction(name) {
+Dann.prototype.setLossFunction = function setLossFunction(
+  name,
+  percentile = 0.5
+) {
+  this.percentile = percentile;
   let func = lossfuncs[name];
   if (func === undefined) {
     if (typeof name === 'string') {

@@ -61,6 +61,9 @@ module.exports = (grunt) => {
         dest: 'test/unit.js',
       },
     },
+    sig: {
+      message: 'Author signature',
+    },
     terser: {
       src: {
         files: [

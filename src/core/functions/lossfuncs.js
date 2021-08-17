@@ -101,6 +101,18 @@ function mse(predictions, target) {
   ans = sum / n;
   return ans;
 }
+function quantile(predictions, target, percentile) {
+  let q = percentile;
+  let sum = 0;
+  for (let i = 0; i < target.length; i++) {
+    if (target[i] - predictions[i] >= 0) {
+      sum += q * (target[i] - predictions[i]);
+    } else {
+      sum += (q - 1) * (target[i] - predictions[i]);
+    }
+  }
+  return sum / target.length;
+}
 let lossfuncs = {
   //Basic
   mae: mae,
@@ -112,4 +124,5 @@ let lossfuncs = {
   rmse: rmse,
   //Experimental:
   mael: mael,
+  quantile: quantile,
 };

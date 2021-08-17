@@ -129,7 +129,7 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
 
-  this.loss = this.lossfunc(this.outs, target);
+  this.loss = this.lossfunc(this.outs, target, this.percentile);
   if (recordLoss === true) {
     this.losses.push(this.loss);
   }

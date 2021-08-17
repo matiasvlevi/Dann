@@ -58,6 +58,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
   this.lr = data.lrate;
   this.arch = data.arch;
   this.epoch = data.e;
-
+  this.percentile = data.per;
   return this;
 };
