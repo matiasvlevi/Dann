@@ -1975,7 +1975,12 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
 
   this.loss = this.lossfunc(this.outs, target, this.percentile);
   if (quantileRange) {
-    this.quantileLoss = Dann.range(this.outs, target, this.lossfunc, 0.1);
+    this.quantileLoss = Dann.range(
+      this.outs,
+      target,
+      this.lossfunc,
+      this.percentile
+    );
   }
   if (recordLoss === true) {
     this.losses.push(this.loss);
