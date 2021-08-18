@@ -47,7 +47,7 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
   let mode = 'cpu';
   let recordLoss = false;
   let table = false;
-
+  let quantileRange = false;
   //optional parameters:
   if (options !== undefined) {
     if (options.log !== undefined) {
@@ -66,6 +66,9 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
       mode = 'cpu';
     } else {
       mode = 'cpu';
+    }
+    if (options.range !== undefined) {
+      quantileRange = true;
     }
     if (options.saveLoss !== undefined) {
       recordLoss = options.saveLoss;
@@ -130,6 +133,9 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
   this.biases[0].add(this.gradients[0]);
 
   this.loss = this.lossfunc(this.outs, target, this.percentile);
+  if (quantileRange) {
+    console.log(Dann.range(this.outs, target, this.lossfunc, 0.1));
+  }
   if (recordLoss === true) {
     this.losses.push(this.loss);
   }
