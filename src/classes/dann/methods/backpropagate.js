@@ -41,38 +41,16 @@
  * }
  * </code>
  */
-Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
+Dann.prototype.backpropagate = function backpropagate(
+  inputs,
+  target,
+  options = {}
+) {
   //optional parameter values:
-  let showLog = false;
-  let mode = 'cpu';
-  let recordLoss = false;
-  let table = false;
-
-  //optional parameters:
-  if (options !== undefined) {
-    if (options.log !== undefined) {
-      showLog = options.log;
-    } else {
-      showLog = false;
-    }
-    if (options.table !== undefined) {
-      table = options.table;
-    }
-    if (options.mode !== undefined) {
-      mode = options.mode;
-      if (mode === 'gpu') {
-        console.log('gpu version coming soon');
-      }
-      mode = 'cpu';
-    } else {
-      mode = 'cpu';
-    }
-    if (options.saveLoss !== undefined) {
-      recordLoss = options.saveLoss;
-    } else {
-      recordLoss = true;
-    }
-  }
+  let showLog = options.log || false;
+  let mode = options.mode || 'cpu';
+  let recordLoss = options.saveLoss || false;
+  let table = options.table || false;
 
   let targets = new Matrix(0, 0);
   if (target.length === this.o) {
