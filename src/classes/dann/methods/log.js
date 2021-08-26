@@ -65,75 +65,48 @@
  * nn.log();
  * </code>
  */
-Dann.prototype.log = function log(options) {
-  //Optional parameters values:
-  let showWeights = false;
-  let showGradients = false;
-  let showErrors = false;
-  let showBiases = false;
-  let showBaseSettings = false;
-  let showOther = false;
-  let showDetailedLayers = false;
-  let table = false;
-  let decimals = 1000;
-  //Optional parameters:
-  if (options !== undefined) {
-    if (options.weights) {
-      showWeights = options.weights;
-    }
-    if (options.gradients) {
-      showGradients = options.gradients;
-    }
-    if (options.errors) {
-      showErrors = options.errors;
-    }
-    if (options.biases) {
-      showBiases = options.biases;
-    }
-    if (options.struct) {
-      showBaseSettings = options.struct;
-    }
-    if (options.misc) {
-      showOther = options.misc;
-    }
-    if (options.table) {
-      table = options.table;
-    }
-    if (options.layers) {
-      showDetailedLayers = options.layers;
-      showBaseSettings = options.layers;
-    }
-    if (options.details) {
-      let v = options.details;
-      showGradients = v;
-      showWeights = v;
-      showErrors = v;
-      showBiases = v;
-      showBaseSettings = v;
-      showOther = v;
-      showDetailedLayers = v;
-    }
-    if (options.decimals) {
-      if (options.decimals > 21) {
-        console.error('Dann Error: Maximum number of decimals is 21.');
-        console.trace();
-        options.decimals = 21;
-      }
-      decimals = pow(10, options.decimals);
-    }
-  } else {
-    showBaseSettings = true;
-    showOther = true;
+Dann.prototype.log = function log(
+  options = {
+    struct: true,
+    misc: true,
   }
+) {
+  //Optional parameters values:
+  let showWeights = options.weights || false;
+  let showGradients = options.gradients || false;
+  let showErrors = options.errors || false;
+  let showBiases = options.biases || false;
+  let showBaseSettings = options.struct || false;
+  let showOther = options.misc || false;
+  let showDetailedLayers = options.layers || false;
+  let table = options.table || false;
+  let decimals = 1000;
+
+  // Limit decimals to maximum of 21
+  if (options.decimals > 21) {
+    DannError.error('Maximum number of decimals is 21.', 'Dann.prototype.log');
+    options.decimals = 21;
+  }
+  decimals = pow(10, options.decimals);
+
+  // Details sets all values to true.
+  if (options.details) {
+    let v = options.details;
+    showGradients = v;
+    showWeights = v;
+    showErrors = v;
+    showBiases = v;
+    showBaseSettings = v;
+    showOther = v;
+    showDetailedLayers = v;
+  }
+
+  // Initiate weights if they weren't initiated allready.
   if (this.weights.length === 0) {
-    // make weights if they weren't made allready.
     this.makeWeights();
   }
-  if (
-    options === undefined ||
-    (options !== undefined && options.details === true)
-  ) {
-    console.log('Dann NeuralNetwork:');
+  if (showBaseSettings === true) {
+    console.log('Dann Model:');
   }
   if (showBaseSettings) {
     console.log('Layers:');
@@ -142,10 +115,10 @@ Dann.prototype.log = function log(options) {
       let str = layerObj.type + ' Layer: ';
       let afunc = '';
       if (i === 0) {
-        str = 'Input Layer:   ';
+        str = 'input Layer:   ';
         afunc = '       ';
       } else if (i === layerObj.length - 1) {
-        str = 'Output Layer:  ';
+        str = 'output Layer:  ';
         afunc = '  (' + layerObj.actname + ')';
       } else {
         afunc = '  (' + layerObj.actname + ')';
