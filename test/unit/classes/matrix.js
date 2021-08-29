@@ -854,4 +854,28 @@ suite('Matrix Object', function () {
       });
     });
   });
+  suite('Matrix.prototype.fillCol', function () {
+    let m;
+    setup(function () {
+      m = new Matrix(4, 3);
+      m.fillCol(2, 1);
+    });
+    test('Should have filled a matrix column with values of 1', function () {
+      for (let i = 0; i < 4; i++) {
+        assert.equal(m.matrix[i][2], 1);
+      }
+    });
+  });
+  suite('Matrix.prototype.fillRow', function () {
+    let m;
+    setup(function () {
+      m = new Matrix(4, 3);
+      m.fillRow(2, 1);
+    });
+    test('Should have filled a matrix row with values of 1', function () {
+      for (let i = 0; i < 3; i++) {
+        assert.equal(m.matrix[2][i], 1);
+      }
+    });
+  });
 });
