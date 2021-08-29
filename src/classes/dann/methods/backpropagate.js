@@ -61,17 +61,17 @@ Dann.prototype.backpropagate = function backpropagate(
   if (target.length === this.o) {
     targets = Matrix.fromArray(target);
   } else {
-    console.error(
-      'Dann Error: The target array length does not match the number of ouputs the dannjs model has.'
+    DannError.error(
+      'The target array length does not match the number of ouputs the dannjs model has.',
+      'Dann.prototype.backpropagate'
     );
-    console.trace();
     return;
   }
   if (typeof this.lr !== 'number') {
-    console.error(
-      'Dann Error: The learning rate specified (Dann.lr property) is not a number.'
+    DannError.error(
+      'The learning rate specified (Dann.lr property) is not a number.',
+      'Dann.prototype.backpropagate'
     );
-    console.trace();
     return;
   }
 
