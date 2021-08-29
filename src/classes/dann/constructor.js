@@ -27,6 +27,7 @@ Dann = function Dann(i = 1, o = 1) {
   this.biases = [];
   this.errors = [];
   this.gradients = [];
+  this.dropout = [];
 
   this.outs = [];
   this.loss = 0;
