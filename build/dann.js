@@ -1,5 +1,5 @@
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.2.11';
+const VERSION = 'v2.3.11';
 
 /**
  * Add a new custom function to Dannjs.
@@ -777,6 +777,59 @@ Matrix.prototype.addRandom = function addRandom(magnitude, prob) {
     }
   }
   this.set(newMatrix);
+};
+
+/**
+ * Fill a culmn of a matrix with a value.
+ * @method fillCol
+ * @param {Number} col The column to fill
+ * @param {Number} num The value to fill the column with
+ * @chainable
+ * @example
+ * <code>
+ * let m = new Matrix(3, 4);
+ * // Fill column 3 with values of 100
+ * m.fillCol(3, 100);
+ * </code>
+ */
+Matrix.prototype.fillCol = function fillCol(col, num) {
+  if (col >= this.cols) {
+    DannError.error(
+      'The column index specified is too large for this matrix.',
+      'Matrix.prototype.fillCol'
+    );
+    return;
+  }
+  for (let i = 0; i < this.rows; i++) {
+    this.matrix[i][col] = num;
+  }
+  return this;
+};
+
+/**
+ * Fill a specific row in a matrix.
+ * @method fillRow
+ *
+ * @param {Number} row The row index to fill
+ * @param {Number} num The value to fill the row with
+ * @chainable
+ * @example
+ * <code>
+ * let m = new Matrix(3, 4);
+ * // Fill row 2 with values of 100
+ * m.fillRow(2, 100);
+ * </code>
+ */
+Matrix.prototype.fillRow = function fillRow(row, num) {
+  if (row >= this.rows) {
+    DannError.error(
+      'The row index specified is too large for this matrix.',
+      'Matrix.prototype.fillRow'
+    );
+    return;
+  }
+  this.matrix[row].fill(num);
+  return this;
 };
 
 /**
@@ -1734,6 +1787,7 @@ Dann = function Dann(i = 1, o = 1) {
   this.biases = [];
   this.errors = [];
   this.gradients = [];
+  this.dropout = [];
 
   this.outs = [];
   this.loss = 0;
@@ -1747,6 +1801,66 @@ Dann = function Dann(i = 1, o = 1) {
   this.lossfunc = mse;
   this.lossfunc_s = this.lossfunc.name;
   this.percentile = 0.5;
+};
+
+/*
+ * Undisplayed documentation
+ * Creates dropout matrices
+ * @method addDropout
+ * @param {Number} rate The probability of a neuron being idle during the backwards pass, preventing it from learning during this pass. A number ranging in between 0 and 1.
+ */
+Dann.prototype.addDropout = function addDropout(rate) {
+  // if not init, cancel
+  if (this.weights.length === 0) {
+    DannError.error(
+      'You need to initialize weights before using this function',
+      'Dann.prototype.addDropout'
+    );
+    return;
+  }
+  this.dropout = [];
+
+  // Set the map function argument 'rate'
+  let func = ((v) => {
+    let a = 1 - rate;
+    return Math.floor(Math.random() + a);
+  })
+    .toString()
+    .replace(/rate/gm, rate);
+
+  let randomMap = eval(func);
+  let inactive = [];
+  for (let i = 0; i < this.Layers.length; i++) {
+    let neuronList = new Array(this.Layers[i].size).fill(1).map(randomMap);
+    inactive.push(neuronList);
+  }
+  for (let i = 0; i < this.weights.length; i++) {
+    this.dropout.push(
+      new Matrix(this.weights[i].rows, this.weights[i].cols).initiate(1)
+    );
+  }
+  for (let i = 0; i < inactive.length; i++) {
+    if (i === 0) {
+      for (let j = 0; j < inactive[i].length; j++) {
+        if (inactive[i][j] === 0) {
+          this.dropout[i].fillCol(j, 0);
+        }
+      }
+    } else if (i === inactive.length - 1) {
+      for (let j = 0; j < inactive[i].length; j++) {
+        if (inactive[i][j] === 0) {
+          this.dropout[i - 1].fillRow(j, 0);
+        }
+      }
+    } else {
+      for (let j = 0; j < inactive[i].length; j++) {
+        if (inactive[i][j] === 0) {
+          this.dropout[i - 1].fillRow(j, 0);
+          this.dropout[i].fillCol(j, 0);
+        }
+      }
+    }
+  }
 };
 
 /**
@@ -1866,6 +1980,10 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
  * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
  * </tr>
  * <tr>
+ * <td>dropout</td>
+ * <td>Number</td>
+ * <td>A value ranging from 0 to 1 determining the chance of a neuron being idle during a backward pass.</td>
+ * </tr>
  * </tbody>
  * </table>
  * @example
@@ -1892,6 +2010,7 @@ Dann.prototype.backpropagate = function backpropagate(
   let mode = options.mode || 'cpu';
   let recordLoss = options.saveLoss || false;
   let table = options.table || false;
+  let dropout = options.dropout || undefined;
 
   let targets = new Matrix(0, 0);
   if (target.length === this.o) {
@@ -1925,9 +2044,32 @@ Dann.prototype.backpropagate = function backpropagate(
   );
   this.gradients[this.gradients.length - 1].mult(this.lr);
 
+  if (dropout !== undefined) {
+    if (dropout >= 1) {
+      DannError.error(
+        'The probability value can not be bigger or equal to 1',
+        'Dann.prototype.backpropagate'
+      );
+      return;
+    } else if (dropout <= 0) {
+      DannError.error(
+        'The probability value can not be smaller or equal to 0',
+        'Dann.prototype.backpropagate'
+      );
+      return;
+    }
+    // init Dropout here.
+    this.addDropout(dropout);
+  }
+
   for (let i = this.weights.length - 1; i > 0; i--) {
     let h_t = Matrix.transpose(this.Layers[i].layer);
     let weights_deltas = Matrix.mult(this.gradients[i], h_t);
+
+    if (dropout !== undefined) {
+      // Compute dropout
+      weights_deltas = weights_deltas.mult(this.dropout[i]);
+    }
 
     this.weights[i].add(weights_deltas);
     this.biases[i].add(this.gradients[i]);
@@ -1944,6 +2086,11 @@ Dann.prototype.backpropagate = function backpropagate(
 
   let i_t = Matrix.transpose(this.Layers[0].layer);
   let weights_deltas = Matrix.mult(this.gradients[0], i_t);
+
+  if (dropout !== undefined) {
+    // Add dropout here
+    weights_deltas = weights_deltas.mult(this.dropout[0]);
+  }
 
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
