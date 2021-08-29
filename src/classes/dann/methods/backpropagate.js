@@ -25,6 +25,10 @@
  * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
  * </tr>
  * <tr>
+ * <td>dropout</td>
+ * <td>Number</td>
+ * <td>A value ranging from 0 to 1 determining the chance of a neuron being idle during a backward pass.</td>
+ * </tr>
  * </tbody>
  * </table>
  * @example
@@ -51,6 +55,7 @@ Dann.prototype.backpropagate = function backpropagate(
   let mode = options.mode || 'cpu';
   let recordLoss = options.saveLoss || false;
   let table = options.table || false;
+  let dropout = options.dropout || undefined;
 
   let targets = new Matrix(0, 0);
   if (target.length === this.o) {
@@ -84,9 +89,32 @@ Dann.prototype.backpropagate = function backpropagate(
   );
   this.gradients[this.gradients.length - 1].mult(this.lr);
 
+  if (dropout !== undefined) {
+    if (dropout >= 1) {
+      DannError.error(
+        'The probability value can not be bigger or equal to 1',
+        'Dann.prototype.backpropagate'
+      );
+      return;
+    } else if (dropout <= 0) {
+      DannError.error(
+        'The probability value can not be smaller or equal to 0',
+        'Dann.prototype.backpropagate'
+      );
+      return;
+    }
+    // init Dropout here.
+    this.addDropout(dropout);
+  }
+
   for (let i = this.weights.length - 1; i > 0; i--) {
     let h_t = Matrix.transpose(this.Layers[i].layer);
     let weights_deltas = Matrix.mult(this.gradients[i], h_t);
+
+    if (dropout !== undefined) {
+      // Compute dropout
+      weights_deltas = weights_deltas.mult(this.dropout[i]);
+    }
 
     this.weights[i].add(weights_deltas);
     this.biases[i].add(this.gradients[i]);
@@ -103,6 +131,11 @@ Dann.prototype.backpropagate = function backpropagate(
 
   let i_t = Matrix.transpose(this.Layers[0].layer);
   let weights_deltas = Matrix.mult(this.gradients[0], i_t);
+
+  if (dropout !== undefined) {
+    // Add dropout here
+    weights_deltas = weights_deltas.mult(this.dropout[0]);
+  }
 
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
