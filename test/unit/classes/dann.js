@@ -609,6 +609,50 @@ suite('Dann Object', function () {
         }
       });
     });
+    suite('Dropout mechanic with backpropagate option', function () {
+      let nn;
+      setup(function () {
+        nn = new Dann(4, 2);
+        nn.addHiddenLayer(4);
+        nn.makeWeights();
+
+        nn.backpropagate([1, 1, 1, 1], [0, 1], { dropout: 0.1 });
+      });
+      test('Should have created dropout matrices', function () {
+        assert.equal(nn.dropout.length, nn.weights.length);
+        for (let i = 0; i < 2; i++) {
+          assert.equal(nn.dropout[i].rows, nn.weights[i].rows);
+          assert.equal(nn.dropout[i].cols, nn.weights[i].cols);
+          for (let j = 0; j < nn.dropout[i].rows; j++) {
+            for (let k = 0; k < nn.dropout[i].cols; k++) {
+              assert.typeOf(nn.dropout[i].matrix[j][k], 'Number');
+            }
+          }
+        }
+      });
+    });
+    suite('Dropout mechanic with method', function () {
+      let nn;
+      setup(function () {
+        nn = new Dann(4, 2);
+        nn.addHiddenLayer(4);
+        nn.makeWeights();
+
+        nn.addDropout(0.1);
+      });
+      test('Should have created dropout matrices', function () {
+        assert.equal(nn.dropout.length, nn.weights.length);
+        for (let i = 0; i < 2; i++) {
+          assert.equal(nn.dropout[i].rows, nn.weights[i].rows);
+          assert.equal(nn.dropout[i].cols, nn.weights[i].cols);
+          for (let j = 0; j < nn.dropout[i].rows; j++) {
+            for (let k = 0; k < nn.dropout[i].cols; k++) {
+              assert.typeOf(nn.dropout[i].matrix[j][k], 'Number');
+            }
+          }
+        }
+      });
+    });
     suite('toJSON & fromJSON train test', function () {
       let nn;
       let nn1;
