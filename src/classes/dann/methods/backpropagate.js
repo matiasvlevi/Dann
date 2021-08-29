@@ -25,10 +25,6 @@
  * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
  * </tr>
  * <tr>
- * <td>dropout</td>
- * <td>number</td>
- * <td>The probability of a neuron being idle during the backwards pass, preventing it from learning during this pass. A number ranging in between 0 and 1.</td>
- * </tr>
  * </tbody>
  * </table>
  * @example
@@ -45,42 +41,16 @@
  * }
  * </code>
  */
-Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
+Dann.prototype.backpropagate = function backpropagate(
+  inputs,
+  target,
+  options = {}
+) {
   //optional parameter values:
-  let showLog = false;
-  let mode = 'cpu';
-  let recordLoss = false;
-  let table = false;
-  let dropout = false;
-
-  //optional parameters:
-  if (options !== undefined) {
-    if (options.log !== undefined) {
-      showLog = options.log;
-    } else {
-      showLog = false;
-    }
-    if (options.table !== undefined) {
-      table = options.table;
-    }
-    if (options.mode !== undefined) {
-      mode = options.mode;
-      if (mode === 'gpu') {
-        console.log('gpu version coming soon');
-      }
-      mode = 'cpu';
-    } else {
-      mode = 'cpu';
-    }
-    if (options.saveLoss !== undefined) {
-      recordLoss = options.saveLoss;
-    } else {
-      recordLoss = true;
-    }
-    if (options.dropout !== undefined) {
-      dropout = options.dropout;
-    }
-  }
+  let showLog = options.log || false;
+  let mode = options.mode || 'cpu';
+  let recordLoss = options.saveLoss || false;
+  let table = options.table || false;
 
   let targets = new Matrix(0, 0);
   if (target.length === this.o) {
@@ -114,32 +84,9 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
   );
   this.gradients[this.gradients.length - 1].mult(this.lr);
 
-  if (dropout !== false) {
-    if (dropout >= 1) {
-      DannError.error(
-        'The probability value can not be bigger or equal to 1',
-        'Dann.prototype.backpropagate'
-      );
-      return;
-    } else if (dropout <= 0) {
-      DannError.error(
-        'The probability value can not be smaller or equal to 0',
-        'Dann.prototype.backpropagate'
-      );
-      return;
-    }
-    // init Dropout here.
-    this.addDropout(dropout);
-  }
-
   for (let i = this.weights.length - 1; i > 0; i--) {
     let h_t = Matrix.transpose(this.Layers[i].layer);
     let weights_deltas = Matrix.mult(this.gradients[i], h_t);
-
-    if (dropout !== false) {
-      // Compute dropout
-      weights_deltas = weights_deltas.mult(this.dropout[i]);
-    }
 
     this.weights[i].add(weights_deltas);
     this.biases[i].add(this.gradients[i]);
@@ -156,11 +103,6 @@ Dann.prototype.backpropagate = function backpropagate(inputs, target, options) {
 
   let i_t = Matrix.transpose(this.Layers[0].layer);
   let weights_deltas = Matrix.mult(this.gradients[0], i_t);
-
-  if (dropout !== false) {
-    // Add dropout here
-    weights_deltas = weights_deltas.mult(this.dropout[0]);
-  }
 
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
