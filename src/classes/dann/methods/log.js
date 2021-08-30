@@ -85,9 +85,10 @@ Dann.prototype.log = function log(
   // Limit decimals to maximum of 21
   if (options.decimals > 21) {
     DannError.error('Maximum number of decimals is 21.', 'Dann.prototype.log');
-    options.decimals = 21;
+    decimals = pow(10, 21);
+  } else {
+    decimals = pow(10, options.decimals) || decimals;
   }
-  decimals = pow(10, options.decimals);
 
   // Details sets all values to true.
   if (options.details) {
