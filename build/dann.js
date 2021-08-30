@@ -1,5 +1,5 @@
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.3.11';
+const VERSION = 'v2.3.12';
 
 /**
  * Add a new custom function to Dannjs.
@@ -2024,17 +2024,17 @@ Dann.prototype.backpropagate = function backpropagate(
   if (target.length === this.o) {
     targets = Matrix.fromArray(target);
   } else {
-    console.error(
-      'Dann Error: The target array length does not match the number of ouputs the dannjs model has.'
+    DannError.error(
+      'The target array length does not match the number of ouputs the dannjs model has.',
+      'Dann.prototype.backpropagate'
     );
-    console.trace();
     return;
   }
   if (typeof this.lr !== 'number') {
-    console.error(
-      'Dann Error: The learning rate specified (Dann.lr property) is not a number.'
+    DannError.error(
+      'The learning rate specified (Dann.lr property) is not a number.',
+      'Dann.prototype.backpropagate'
     );
-    console.trace();
     return;
   }
 
@@ -2534,9 +2534,10 @@ Dann.prototype.log = function log(
   // Limit decimals to maximum of 21
   if (options.decimals > 21) {
     DannError.error('Maximum number of decimals is 21.', 'Dann.prototype.log');
-    options.decimals = 21;
+    decimals = pow(10, 21);
+  } else {
+    decimals = pow(10, options.decimals) || decimals;
   }
-  decimals = pow(10, options.decimals);
 
   // Details sets all values to true.
   if (options.details) {
