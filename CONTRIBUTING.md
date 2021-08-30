@@ -25,7 +25,7 @@ Install dev dependencies with :
 npm ci
 ```
 
-<br/>
+<br/><br/>
 
 ## Organization
 
@@ -61,7 +61,7 @@ or
 npm run build:fix
 ```
 
-<br/>
+<br/><br/>
 
 ## Documentation
 
@@ -95,9 +95,15 @@ Build the inline documentation with :
 npm run doc
 ```
 
-Once built, you can open `docs/documentation/index.html` to access the new documentation.
 
-<br/>
+You can also run the following command to open the docs with your browser
+```
+npm run doc:show
+```
+
+You can also open `docs/documentation/index.html` manually.
+
+<br/><br/>
 
 
 
@@ -149,7 +155,13 @@ These files provide a template for writing a manual example :
 * `test/manual-tests/node/empty-example`
 * `test/manual-tests/browser/empty-example`
 
-<br/>
+You can run the following command to open a testing environement in your browser.
+
+```
+npm run browser
+```
+
+<br/><br/><br/><br/>
 
 ## Pull request
 
