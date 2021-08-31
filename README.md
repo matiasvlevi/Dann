@@ -1,3 +1,4 @@
+
 <p align="center">
   <a href="https://dannjs.org/">
     <img src="https://dannjs.org/transparentlogo.png" alt="Dannjs" height="150" />
@@ -155,26 +156,25 @@ more examples & demos [here](https://dannjs.org/#exm)
 Try out the new Dannjs Sandbox! <br/>
 [https://dannjs.org/sandbox](https://dannjs.org/sandbox)
 
-### Contribute
-[Contributor docs](https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md)
-
-#### Report Bugs
-[Report an issue](https://github.com/matiasvlevi/Dann/issues/new)
-
-#### Socials
-
-</span>
-<a href="https://twitter.com/DannjsAi" target="_blanck"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/DannjsAi?label=Twitter&style=social"></a>
-<span class="badge-patreon">
-<a href="https://www.patreon.com/dannjs" title="Donate to this project using Patreon"><img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fres-3.cloudinary.com%2Fcrunchbase-production%2Fimage%2Fupload%2Fc_lpad%2Ch_256%2Cw_256%2Cf_auto%2Cq_auto%3Aeco%2Fv1498102829%2Foul9xkady63xqqn3iw7c.png&f=1&nofb=1" alt="Patreon donate button" height="2.5%" width="2.5%"/></a>
-
 <br/>
-  
-## License
 
-MIT
+### Socials
 
-<br/><br/><br/>
+<div>
+<a href="https://twitter.com/DannjsAi" target="_blank">
+<img src=https://raw.githubusercontent.com/matiasvlevi/SocialMediaIcons/main/twitter.svg alt=twitter width=40px />
+</a>
+<a href="https://patreon.com/dannjs" target="_blank">
+<img src=https://raw.githubusercontent.com/matiasvlevi/SocialMediaIcons/main/patreon.svg alt=twitter width=40px />
+</a>
+<a href="https://instagram.com/dannj.s" target="_blank">
+<img src=https://raw.githubusercontent.com/matiasvlevi/SocialMediaIcons/main/instagram.svg alt=twitter width=40px />
+</a>
+</div>
+
+
+<br/><br/>
+ 
 
 ## Contributors
 
@@ -201,3 +201,11 @@ MIT
 <br/>
 
 Any contributions are welcome! See [CONTRIBUTING.md](https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md).
+
+<br/>
+
+## License
+
+MIT
+
+<br/><br/>
