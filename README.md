@@ -202,10 +202,10 @@ Try out the new Dannjs Sandbox! <br/>
 
 Any contributions are welcome! See [CONTRIBUTING.md](https://github.com/matiasvlevi/Dann/blob/master/CONTRIBUTING.md).
 
-<br/>
+<br/><br/><br/><br/><br/>
 
 ## License
 
 MIT
 
-<br/><br/>
+
