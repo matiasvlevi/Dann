@@ -152,8 +152,8 @@ more examples & demos [here](https://dannjs.org/#exm)
 <br/>
 
 
-### SandBox:
-Try out the new Dannjs Sandbox! <br/>
+### Oneline editor:
+
 [https://dannjs.org/sandbox](https://dannjs.org/sandbox)
 
 <br/>
