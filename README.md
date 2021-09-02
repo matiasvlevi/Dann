@@ -152,7 +152,7 @@ more examples & demos [here](https://dannjs.org/#exm)
 <br/>
 
 
-### Oneline editor:
+### Online editor:
 
 [https://dannjs.org/sandbox](https://dannjs.org/sandbox)
 
