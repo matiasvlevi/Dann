@@ -222,7 +222,6 @@ module.exports = (grunt) => {
   grunt.initConfig(config);
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-terser');
-  grunt.loadNpmTasks('grunt-terser');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
