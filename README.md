@@ -174,6 +174,13 @@ more examples & demos [here](https://dannjs.org/#exm)
 
 <br/>
 
+### Graph Dann models with this library
+
+[Dann-p5](https://github.com/matiasvlevi/Dann-p5)
+
+<br/>
+
+
 ### Stickers
 [Get Dannjs stickers!](https://www.redbubble.com/i/sticker/Dannjs-by-Dannjs/76468421.EJUG5)
 
