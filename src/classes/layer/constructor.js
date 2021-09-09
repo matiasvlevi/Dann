@@ -63,17 +63,17 @@ Layer = function Layer(type, arg1, arg2, arg3, arg4, arg5) {
 
     // Handle Unvalid Layer Formats
     if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
-      console.error(
-        'Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)'
+      DannError.error(
+        'the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)',
+        'Layer.constructor'
       );
-      console.trace();
       return;
     }
     if (this.size !== Math.floor(this.size)) {
-      console.error(
-        "Dann Error: the Width must be divisible by the stride (jumps size). Width is the root of the array's length."
+      DannError.error(
+        "the Width must be divisible by the stride (jumps size). Width is the root of the array's length.",
+        'Layer.constructor'
       );
-      console.trace();
       return;
     }
 
