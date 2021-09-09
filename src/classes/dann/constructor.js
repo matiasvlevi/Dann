@@ -38,7 +38,7 @@ Dann = function Dann(i = 1, o = 1) {
   this.epoch = 0;
   this.recordLoss = false;
 
-  this.lossfunc = mse;
+  this.lossfunc = lossfuncs.mse;
   this.lossfunc_s = this.lossfunc.name;
   this.percentile = 0.5;
 };
