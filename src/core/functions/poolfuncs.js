@@ -1,4 +1,7 @@
-// Pooling functions:
+/**
+ * Pool selection functions
+ * For Layer class, these are not used in Dann.
+ */
 let poolfuncs = {
   max: function (arr) {
     let record = 0;
