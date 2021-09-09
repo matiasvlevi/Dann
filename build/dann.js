@@ -284,279 +284,243 @@ DannError.error = function (error, method) {
   console.trace();
 };
 
-//Activation functions:
-function sigmoid(x) {
-  return 1 / (1 + Math.exp(-x));
-}
-function sigmoid_d(x) {
-  let x1 = sigmoid(x);
-  return x1 * (1 - x1);
-}
-function leakySigmoid(x) {
-  return 1 / (1 + Math.exp(-x)) + x / 100;
-}
-function leakySigmoid_d(x) {
-  let x1 = leakySigmoid(x);
-  return x1 * (1 - x1);
-}
-function siLU(x) {
-  return x / (1 + Math.exp(-x));
-}
-function siLU_d(x) {
-  let top = 1 + Math.exp(-x) + x * Math.exp(-x);
-  let down = Math.pow(1 + Math.exp(-x), 2);
-  return top / down;
-}
-function tanH(x) {
-  let top = Math.exp(x) - Math.exp(-x);
-  let down = Math.exp(x) + Math.exp(-x);
-  return top / down;
-}
-function tanH_d(x) {
-  return 1 - Math.pow(tanH(x), 2);
-}
-function leakyReLUCapped(x) {
-  if (x >= 0 && x <= 6) {
-    return x;
-  } else if (x < 0) {
-    return 0.1 * x;
-  } else {
-    return 6;
-  }
-}
-function leakyReLUCapped_d(x) {
-  if (x >= 0 && x <= 6) {
-    return 1;
-  } else if (x < 0) {
-    return 0.1;
-  } else {
-    return 0;
-  }
-}
-function leakyReLU(x) {
-  if (x >= 0) {
-    return 1 * x;
-  } else {
-    return 0.01 * x;
-  }
-}
-function leakyReLU_d(x) {
-  if (x >= 0) {
-    return 1;
-  } else {
-    return 0.01;
-  }
-}
-function reLU(x) {
-  if (x >= 0) {
-    return 1 * x;
-  } else {
-    return 0;
-  }
-}
-function reLU_d(x) {
-  if (x >= 0) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-function sinc(x) {
-  if (x === 0) {
-    return 1;
-  } else {
-    return Math.sin(x) / x;
-  }
-}
-function sinc_d(x) {
-  if (x === 0) {
-    return 0;
-  } else {
-    return Math.cos(x) / x - Math.sin(x) / (x * x);
-  }
-}
-function softsign(x) {
-  return x / (1 + Math.abs(x));
-}
-function softsign_d(x) {
-  let down = 1 + Math.abs(x);
-  return 1 / (down * down);
-}
-function binary(x) {
-  if (x <= 0) {
-    return 0;
-  } else {
-    return 1;
-  }
-}
-function binary_d(x) {
-  return 0;
-}
-function softplus(x) {
-  return Math.log(1 + Math.exp(x));
-}
-function softplus_d(x) {
-  return sigmoid(x);
-}
-
-// Exporting Functions:
+/*
+ * Activation functions
+ */
 let activations = {
-  //Basic:
-  sigmoid: sigmoid,
-  sigmoid_d: sigmoid_d,
-  tanH: tanH,
-  tanH_d: tanH_d,
-  siLU: siLU,
-  siLU_d: siLU_d,
-  reLU: reLU,
-  reLU_d: reLU_d,
-  leakyReLU: leakyReLU,
-  leakyReLU_d: leakyReLU_d,
-  sinc: sinc,
-  sinc_d: sinc_d,
-  softsign: softsign,
-  softsign_d: softsign_d,
-  binary: binary,
-  binary_d: binary_d,
-  softplus: softplus,
-  softplus_d: softplus_d,
-  //Experimental:
-  leakySigmoid: leakySigmoid,
-  leakySigmoid_d: leakySigmoid_d,
-  leakyReLUCapped: leakyReLUCapped,
-  leakyReLUCapped_d: leakyReLUCapped_d,
-};
-
-// loss functions:
-function mae(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += abs(y - yHat);
-  }
-  ans = sum / n;
-  return ans;
-}
-function bce(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += y * log(yHat) + (1 - y) * log(1 - yHat);
-  }
-  ans = -sum / n;
-  return ans;
-}
-function lcl(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += log(cosh(yHat - y));
-  }
-  ans = sum / n;
-  return ans;
-}
-function mbe(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += y - yHat;
-  }
-  ans = sum / n;
-  return ans;
-}
-//New experimental function: Mean absolute exponential loss
-function mael(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    let x = y - yHat;
-
-    //Mean absolute exponential function
-    let top = -x * (exp(-x) - 1);
-    let down = exp(-x) + 1;
-    sum += top / down;
-  }
-  ans = sum / n;
-  return ans;
-}
-function rmse(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += pow(y - yHat, 2);
-  }
-  ans = sqrt(sum / n);
-  return ans;
-}
-function mce(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += pow(abs(y - yHat), 3);
-  }
-  ans = sum / n;
-  return ans;
-}
-function mse(predictions, target) {
-  let sum = 0;
-  let ans = 0;
-  let n = target.length;
-  for (let i = 0; i < n; i++) {
-    let y = target[i];
-    let yHat = predictions[i];
-    sum += pow(y - yHat, 2);
-  }
-  ans = sum / n;
-  return ans;
-}
-function quantile(predictions, target, percentile) {
-  let q = percentile;
-  let sum = 0;
-  for (let i = 0; i < target.length; i++) {
-    if (target[i] - predictions[i] >= 0) {
-      sum += q * (target[i] - predictions[i]);
+  // Basic
+  sigmoid(x) {
+    return 1 / (1 + Math.exp(-x));
+  },
+  sigmoid_d(x) {
+    let x1 = 1 / (1 + Math.exp(-x));
+    return x1 * (1 - x1);
+  },
+  siLU(x) {
+    return x / (1 + Math.exp(-x));
+  },
+  siLU_d(x) {
+    let top = 1 + Math.exp(-x) + x * Math.exp(-x);
+    let down = Math.pow(1 + Math.exp(-x), 2);
+    return top / down;
+  },
+  tanH(x) {
+    let top = Math.exp(x) - Math.exp(-x);
+    let down = Math.exp(x) + Math.exp(-x);
+    return top / down;
+  },
+  tanH_d(x) {
+    let numer = Math.pow(Math.exp(2 * x) - 1, 2);
+    let denom = Math.pow(Math.exp(2 * x) + 1, 2);
+    return 1 - numer / denom;
+  },
+  leakyReLU(x) {
+    return Math.max(x, x * 0.01);
+  },
+  leakyReLU_d(x) {
+    if (x >= 0) {
+      return 1;
     } else {
-      sum += (q - 1) * (target[i] - predictions[i]);
+      return 0.01;
     }
-  }
-  return sum / target.length;
-}
-let lossfuncs = {
-  //Basic
-  mae: mae,
-  bce: bce,
-  lcl: lcl,
-  mbe: mbe,
-  mce: mce,
-  mse: mse,
-  rmse: rmse,
-  //Experimental:
-  mael: mael,
-  quantile: quantile,
+  },
+  reLU(x) {
+    return Math.max(x, 0);
+  },
+  reLU_d(x) {
+    if (x >= 0) {
+      return 1;
+    } else {
+      return 0;
+    }
+  },
+  sinc(x) {
+    if (x === 0) {
+      return 1;
+    } else {
+      return Math.sin(x) / x;
+    }
+  },
+  sinc_d(x) {
+    if (x === 0) {
+      return 0;
+    } else {
+      return Math.cos(x) / x - Math.sin(x) / (x * x);
+    }
+  },
+  softsign(x) {
+    return x / (1 + Math.abs(x));
+  },
+  softsign_d(x) {
+    let down = 1 + Math.abs(x);
+    return 1 / (down * down);
+  },
+  binary(x) {
+    if (x <= 0) {
+      return 0;
+    } else {
+      return 1;
+    }
+  },
+  binary_d(x) {
+    return 0;
+  },
+  softplus(x) {
+    return Math.log(1 + Math.exp(x));
+  },
+  softplus_d(x) {
+    return this.sigmoid(x);
+  },
+  // Experimental
+  leakyReLUCapped(x) {
+    if (x >= 0 && x <= 6) {
+      return x;
+    } else if (x < 0) {
+      return 0.1 * x;
+    } else {
+      return 6;
+    }
+  },
+  leakyReLUCapped_d(x) {
+    if (x >= 0 && x <= 6) {
+      return 1;
+    } else if (x < 0) {
+      return 0.1;
+    } else {
+      return 0;
+    }
+  },
+  leakySigmoid(x) {
+    return 1 / (1 + Math.exp(-x)) + x / 100;
+  },
+  leakySigmoid_d(x) {
+    let x1 = leakySigmoid(x);
+    return x1 * (1 - x1);
+  },
 };
 
-//Shortening Mathjs functions:
+/*
+ * Loss functions
+ */
+let lossfuncs = {
+  mae(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += abs(y - yHat);
+    }
+    ans = sum / n;
+    return ans;
+  },
+  bce(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += y * log(yHat) + (1 - y) * log(1 - yHat);
+    }
+    ans = -sum / n;
+    return ans;
+  },
+  lcl(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += log(cosh(yHat - y));
+    }
+    ans = sum / n;
+    return ans;
+  },
+  mbe(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += y - yHat;
+    }
+    ans = sum / n;
+    return ans;
+  },
+  mael(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      let x = y - yHat;
+
+      //Mean absolute exponential function
+      let top = -x * (exp(-x) - 1);
+      let down = exp(-x) + 1;
+      sum += top / down;
+    }
+    ans = sum / n;
+    return ans;
+  },
+  rmse(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += pow(y - yHat, 2);
+    }
+    ans = sqrt(sum / n);
+    return ans;
+  },
+  mce(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += pow(abs(y - yHat), 3);
+    }
+    ans = sum / n;
+    return ans;
+  },
+  mse(predictions, target) {
+    let sum = 0;
+    let ans = 0;
+    let n = target.length;
+    for (let i = 0; i < n; i++) {
+      let y = target[i];
+      let yHat = predictions[i];
+      sum += pow(y - yHat, 2);
+    }
+    ans = sum / n;
+    return ans;
+  },
+  quantile(predictions, target, percentile) {
+    let q = percentile;
+    let sum = 0;
+    for (let i = 0; i < target.length; i++) {
+      if (target[i] - predictions[i] >= 0) {
+        sum += q * (target[i] - predictions[i]);
+      } else {
+        sum += (q - 1) * (target[i] - predictions[i]);
+      }
+    }
+    return sum / target.length;
+  },
+};
+
+/*
+ * Mathjs wrapper
+ */
 const random = (a, b) => Math.random(1) * (b - a) + a;
 const exp = (x) => Math.exp(x);
 const abs = (x) => Math.abs(x);
@@ -564,11 +528,12 @@ const log = (x) => Math.log(x);
 const pow = (x, e) => Math.pow(x, e);
 const round = (x) => Math.round(x);
 const sqrt = (x) => Math.sqrt(x);
-
-//Other math functions:
 const cosh = (x) => (exp(x) + exp(-x)) / 2;
 
-// Pooling functions:
+/**
+ * Pool selection functions
+ * For Layer class, these are not used in Dann.
+ */
 let poolfuncs = {
   max: function (arr) {
     let record = 0;
@@ -1479,17 +1444,17 @@ Layer = function Layer(type, arg1, arg2, arg3, arg4, arg5) {
 
     // Handle Unvalid Layer Formats
     if (divx !== Math.floor(divx) && divy !== Math.floor(divy)) {
-      console.error(
-        'Dann Error: the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)'
+      DannError.error(
+        'the width & height value specified to arrange the inputted array as a matrix are not valid. (The array length must be divisible by the width & height values.)',
+        'Layer.constructor'
       );
-      console.trace();
       return;
     }
     if (this.size !== Math.floor(this.size)) {
-      console.error(
-        "Dann Error: the Width must be divisible by the stride (jumps size). Width is the root of the array's length."
+      DannError.error(
+        "the Width must be divisible by the stride (jumps size). Width is the root of the array's length.",
+        'Layer.constructor'
       );
-      console.trace();
       return;
     }
 
@@ -1798,7 +1763,7 @@ Dann = function Dann(i = 1, o = 1) {
   this.epoch = 0;
   this.recordLoss = false;
 
-  this.lossfunc = mse;
+  this.lossfunc = lossfuncs.mse;
   this.lossfunc_s = this.lossfunc.name;
   this.percentile = 0.5;
 };
