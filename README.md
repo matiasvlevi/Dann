@@ -182,7 +182,7 @@ more examples & demos [here](https://dannjs.org/#exm)
 
 
 ### Stickers
-[Get Dannjs stickers!](https://www.redbubble.com/i/sticker/Dannjs-by-Dannjs/76468421.EJUG5)
+[Get Dannjs stickers!](https://www.redbubble.com/people/Dannjs/shop)
 
 
 <br/><br/>
