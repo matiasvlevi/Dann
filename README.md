@@ -43,22 +43,12 @@ npm i dannjs
 ## Getting started
 
 
-### Node Imports
+### Require package
 
 Object types from the library can be imported like this
 ```js
-const dn = require('dannjs');
-const Dann = dn.dann;
-const Layer = dn.layer;
-const Matrix = dn.matrix;
- ```
-
-The objects containing functions can be imported this way
-```js
-const dn = require('dannjs');
-const lossfuncs = dn.lossfuncs;
-const activations = dn.activations;
-const poolfuncs = dn.poolfuncs;
+const Dannjs = require('dannjs');
+const Dann = Dannjs.dann;
  ```
 
 <br/>
