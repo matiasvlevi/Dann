@@ -1,96 +1,6 @@
+/*! Dann.js */
 const isBrowser = typeof process !== 'object';
 const VERSION = 'v2.3.13';
-
-/**
- * Add a new custom function to Dannjs.
- * @class Add
- */
-Add = function Add() {};
-
-/**
- * Add a custom activation function.
- * @method activation
- * @param {string} name the name of the new activation function.
- * @param {function} activation the activation function.
- * @param {function} derivative the derivative of this activation function.
- * @example
- * <code>
- * Add.activation('myfunc',
- *   (x) => {
- *     if (x <= 0) {
- *       return 0;
- *     } else {
- *       return 1;
- *     }
- *   },
- *   (x) => {
- *     return 0;
- *   }
- * );
- * let nn = new Dann();
- * nn.outputActivation('myfunc');
- * nn.log();
- * </code>
- */
-Add.activation = function (name, activation, derivative) {
-  if (typeof name !== 'string') {
-    DannError.error('The name argument is not a string.', 'Add.activation');
-    return;
-  }
-  if (activation.length !== 1 || derivative.length !== 1) {
-    DannError.error(
-      'One of the functions specified does not have only 1 argument.',
-      'Add.activation'
-    );
-    return;
-  } else {
-    activations[name] = activation;
-    activations[name + '_d'] = derivative;
-    return;
-  }
-};
-
-/**
- * Add a custom loss function.
- * @method loss
- * @param {string} name the name of the new loss function.
- * @param {function} loss the loss function.
- * @example
- * <code>
- * Add.loss('myfunc',
- *   (predictions, target) => {
- *     let sum = 0;
- *     let ans = 0;
- *     let n = target.length;
- *     for (let i = 0; i < n; i++) {
- *       let y = target[i];
- *       let yHat = predictions[i];
- *       sum += abs(y - yHat);
- *     }
- *     ans = sum / n;
- *     return ans;
- *   }
- * );
- * let nn = new Dann();
- * nn.setLossFunction('myfunc');
- * nn.log();
- * </code>
- */
-Add.loss = function (name, loss) {
-  if (typeof name !== 'string') {
-    DannError.error('The name argument is not a string.', 'Add.loss');
-    return;
-  }
-  if (loss.length === 2) {
-    lossfuncs[name] = loss;
-  } else {
-    DannError.error(
-      'The loss function specified can only have 2 argument.',
-      'newActivation'
-    );
-    return;
-  }
-};
 
 /*
  * Undisplayed documentation
@@ -566,16 +476,17 @@ let poolfuncs = {
 };
 
 /**
- * @module Matrix
- */
-
-/**
  * A way to describe matrices and perform operations with them.
  * @class Matrix
+ * @for Matrix
  * @constructor
  * @param {Number} rows the number of rows.
  * @param {Number} cols the number of columns.
  * @example
+ * <code>
+ * const Dannjs = require('dannjs');
+ * const Matrix = Dannjs.matrix;
+ * </code>
  * <code>
  * const m = new Matrix(3,4);
  * m.log();
@@ -1380,18 +1291,19 @@ Matrix.transpose = function transpose(m) {
 };
 
 /**
- * @module Layer
- */
-
-/**
- * A way to descript downsampling layers.
+ * A way to describe downsampling layers.
  * @class Layer
+ * @for Layer
  * @constructor
  * @param {String} type A string representing the type of this layer.
  * @param {Number} Size The size of the downsampling layer.
  * @param {Number} Sample The size of the 2d sample iterating trough the array.
  * @param {Number} Stride The number of jumps the sample is going to perform for each iteration.
  * @example
+ * <code>
+ * const Dannjs = require('dannjs');
+ * const Layer = Dannjs.layer;
+ * </code>
  * <code>
  * const l1 = new Layer('avgpool', 16, 2, 2);
  * l1.log();
@@ -1725,8 +1637,8 @@ Layer.prototype.getSubtype = function getSubtype() {
 
 /**
  * @module Dann
+ * @submodule Create
  */
-
 /**
  * Deep Neural Network object. Can be trained with data or by neuro-evolution.
  * @class Dann
@@ -1735,8 +1647,12 @@ Layer.prototype.getSubtype = function getSubtype() {
  * @param {Number} [output] the number of output neurons.
  * @example
  * <code>
- * // 2 input, 1 output model
- * const nn = new Dann(2, 1);
+ * const Dannjs = require('dannjs');
+ * const Dann = Dannjs.dann;
+ * </code>
+ * <code>
+ * // 784 input, 2 output model
+ * const nn = new Dann(784, 2);
  * nn.log();
  * </code>
  */
@@ -1837,11 +1753,14 @@ Dann.prototype.addDropout = function addDropout(rate) {
 };
 
 /**
+ * @module Dann
+ * @submodule Create
+ */
+/**
  * Add a Hidden Neuron Layer to a Dann neural network.
  * @method addHiddenLayer
- * @for Dann
  * @param {Number} size Layer size, the number of neurons in the layer.
- * @param {String} [act] Takes a string of the activation function's name. If left empty, the activation function will be set to 'sigmoid' by default. See available activation functions <a target="_blank" href="https://dannjs.org">Here</a>.
+ * @param {String} [act] Takes a string of the activation function's name. If left empty, the activation function will be set to 'sigmoid' by default. See available activation functions below.
  * <table>
  * <thead>
  *   <tr>
@@ -1927,9 +1846,561 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
 };
 
 /**
+ * @module Dann
+ * @submodule Create
+ */
+/**
+ * Creates the weights. This function should be called after all the hidden layers were added. The optional parameters determine the range in which starting weights are going to be set randomly. If no arguments are specified, weights are going to be set in between -1 and 1.
+ * @method makeWeights
+ * @param {Number} [arg1] The minimum range value.
+ * @param {Number} [arg2] The maximum range value.
+ * @example
+ * <code>
+ * const nn = new Dann(2, 2);
+ * // initiate the Weights
+ * nn.makeWeights();
+ * // log weights
+ * nn.log({weights:true, table:true});
+ * // add a layer & re-initiate weights in a range of (-0.1, 0.1)
+ * nn.addHiddenLayer(4, 'sigmoid');
+ * nn.makeWeights(-0.1, 0.1);
+ * // log weights
+ * console.log('New re-initiated weights:');
+ * nn.log({weights:true, table:true});
+ * </code>
+ */
+Dann.prototype.makeWeights = function makeWeights(arg1, arg2) {
+  let min = -1;
+  let max = 1;
+  if (arg1 !== undefined && arg2 !== undefined) {
+    min = arg1;
+    max = arg2;
+  }
+  for (let i = 0; i < this.Layers.length - 1; i++) {
+    let previousLayerObj = this.Layers[i];
+    let layerObj = this.Layers[i + 1];
+
+    let weights = new Matrix(layerObj.layer.rows, previousLayerObj.layer.rows);
+    let biases = new Matrix(layerObj.layer.rows, 1);
+
+    weights.randomize(min, max);
+    biases.randomize(1, -1);
+    this.weights[i] = weights;
+    this.biases[i] = biases;
+
+    this.errors[i] = new Matrix(layerObj.layer.rows, 1);
+    this.gradients[i] = new Matrix(layerObj.layer.rows, 1);
+
+    if (layerObj.actfunc === undefined) {
+      layerObj.setFunc('sigmoid');
+    }
+  }
+  for (let i = 0; i < this.Layers.length; i++) {
+    let layerObj = this.Layers[i];
+    this.arch[i] = layerObj.layer.rows;
+  }
+};
+
+/**
+ * @module Dann
+ * @submodule Create
+ */
+/**
+ * Sets the activation function of the output.
+ * @method outputActivation
+ * @param {String} act Takes a string of the activation function's name. If this function is not called, the activation function will be set to 'sigmoid' by default. See available activation functions <a target="_blank" href="https://dannjs.org">here</a>.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>Sigmoid</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/so8eiigug4">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>leakyReLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>reLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>siLU</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/f4nhtck5dr">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>tanH</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>binary</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softsign</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>sinc</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>softplus</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * <br/>
+ * See how to add more <a href="./Add.html#method_activation">Here</a>
+ * @example
+ * <code>
+ * const nn = new Dann(4, 2);
+ * nn.addHiddenLayer(8, 'sigmoid');
+ * nn.makeWeights();
+ * console.log('Before changing the output activation');
+ * nn.log({struct:true});
+ * nn.outputActivation('tanH');
+ * console.log('After changing the output activation');
+ * nn.log({struct:true});
+ * </code>
+ */
+Dann.prototype.outputActivation = function outputActivation(act) {
+  if (activations[act] === undefined && !isBrowser) {
+    if (typeof act === 'string') {
+      DannError.error(
+        "'" +
+          act +
+          "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
+        'Dann.prototype.outputActivation'
+      );
+      return;
+    } else {
+      DannError.error(
+        "Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.",
+        'Dann.prototype.outputActivation'
+      );
+      return;
+    }
+  }
+  this.Layers[this.Layers.length - 1].setFunc(act);
+};
+
+/**
+ * @module Dann
+ * @submodule Create
+ */
+/**
+ * Set the loss function of a Dann model
+ * @method setLossFunction
+ * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
+ * @param {Number} [percentile] Some loss functions like the Quantile loss will need a percentile value. Ranges between 0 and 1.
+ * <table>
+ * <thead>
+ *   <tr>
+ *     <th>Name</th>
+ *     <th>Desmos</th>
+ *   </tr>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *     <td>mse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/msg3bebyhe">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mae</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/sqyudacjzb">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>lcl</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ropuc3y6sa">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mbe</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/xzp1hr0vin">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mael</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/dimqieesut">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>rmse</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/x7efwdfada">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/bzlqe7bafx">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>bce</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
+ *   </tr>
+ *   <tr>
+ *     <td>quantile</td>
+ *     <td><a target="_blank" href="https://www.desmos.com/calculator/7rsvaivrat">See graph</a></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ * <br/>
+ * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
+ * @example
+ * <code>
+ * const nn = new Dann(4, 2);
+ * nn.addHiddenLayer(8, 'sigmoid');
+ * nn.makeWeights();
+ * //Before changing the loss function
+ * console.log(nn.lossfunc);
+ * nn.setLossFunction('mael');
+ * //After changing the loss function
+ * console.log(nn.lossfunc);
+ * </code>
+ * @example
+ * <code>
+ * const nn = new Dann(4, 4);
+ * nn.addHiddenLayer(16, 'sigmoid');
+ * nn.makeWeights();
+ * //Before changing the loss function
+ * console.log(nn.lossfunc);
+ * // Quantile loss with 40 percentile
+ * nn.setLossFunction('quantile', 0.4);
+ * //After changing the loss function
+ * console.log(nn.lossfunc);
+ * </code>
+ */
+Dann.prototype.setLossFunction = function setLossFunction(
+  name,
+  percentile = 0.5
+) {
+  this.percentile = percentile;
+  let func = lossfuncs[name];
+  if (func === undefined) {
+    if (typeof name === 'string') {
+      DannError.error(
+        "'" +
+          name +
+          "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
+        'Dann.prototype.setLossFunction'
+      );
+      return;
+    } else {
+      DannError.error(
+        "Did not detect string value, as a result, the loss function is set to 'mse' by default.",
+        'Dann.prototype.setLossFunction'
+      );
+      return;
+    }
+  }
+  this.lossfunc_s = name;
+  this.lossfunc = func;
+};
+
+/**
+ * @module Dann
+ * @submodule Interact
+ */
+/**
+ * Feed data through the model to obtain an output or prediction.
+ * @method feedForward
+ * @param {Array} inputs Array of input data.
+ * @param {Object} [options] Object including specific properties.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>log</td>
+ * <td>Boolean</td>
+ * <td>If set to true, it will log a report in the console.</td>
+ * </tr>
+ * <tr>
+ * <td>table</td>
+ * <td>Boolean</td>
+ * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
+ * </tr>
+ * <tr>
+ * <td>decimals</td>
+ * <td>Integer</td>
+ * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ *
+ * @return {Array} Array of output predictions.
+ * @example
+ * <code>
+ * const nn = new Dann(4, 2);
+ * nn.makeWeights();
+ * let prediction = nn.feedForward([0,0,0,1], {log:true});
+ * //outputs an array of length 2
+ * console.log(prediction);
+ * </code>
+ */
+
+Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
+  //optional parameter values:
+  let showLog = options.log || false;
+  let table = options.table || false;
+  let roundData = false;
+  let dec = pow(10, options.decimals) || 1000;
+  if (options.decimals !== undefined) {
+    roundData = true;
+  }
+
+  if (inputs.length === this.i) {
+    this.Layers[0].layer = Matrix.fromArray(inputs);
+  } else {
+    for (let i = 0; i < this.o; i++) {
+      this.outs[i] = 0;
+    }
+    DannError.error(
+      'The input array length does not match the number of inputs the dannjs model has.',
+      'Dann.prototype.feedForward'
+    );
+    return this.outs;
+  }
+  if (this.weights.length === 0) {
+    DannError.warn(
+      'The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.',
+      'Dann.prototype.feedForward'
+    );
+    this.makeWeights();
+  }
+
+  for (let i = 0; i < this.weights.length; i++) {
+    let pLayer = this.Layers[i];
+
+    let layerObj = this.Layers[i + 1];
+
+    layerObj.layer = Matrix.mult(this.weights[i], pLayer.layer);
+    layerObj.layer.add(this.biases[i]);
+    layerObj.layer.map(layerObj.actfunc);
+  }
+
+  this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
+  let out = this.outs;
+  if (showLog === true) {
+    if (roundData === true) {
+      out = out.map((x) => round(x * dec) / dec);
+    }
+    if (table === true) {
+      console.log('Prediction: ');
+      console.table(out);
+    } else {
+      console.log('Prediction: ');
+      console.log(out);
+    }
+  }
+  return out;
+};
+Dann.prototype.feed = function feed(inputs, options) {
+  return this.feedForward(inputs, options);
+};
+
+/**
+ * @module Dann
+ * @submodule Interact
+ */
+/**
+ * Displays information about the model in the console.
+ * @method log
+ * @param {Object} [options] An object including specific properties.
+ * <table>
+ * <thead>
+ * <tr>
+ * <th>Property</th>
+ * <th>Type</th>
+ * <th>Function</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td>details</td>
+ * <td>Boolean</td>
+ * <td>If set to true, the function will log more advanced details about the model.</td>
+ * </tr>
+ * <tr>
+ * <td>decimals</td>
+ * <td>integer</td>
+ * <td>The number of decimals the logged data is going to have. It is set to 3 by default.</td>
+ * </tr>
+ * <tr>
+ * <td>table</td>
+ * <td>Boolean</td>
+ * <td>Whether or not we want to print our matrices in the form of a table or Matrix object log.</td>
+ * </tr>
+ * <tr>
+ * <td>gradients</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the gradients of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>biases</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the biases of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>weights</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the weights of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>struct</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the structure of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>errors</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the errors of the model.</td>
+ * </tr>
+ * <tr>
+ * <td>misc</td>
+ * <td>Boolean</td>
+ * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function.</td>
+ * </tr>
+ * </tbody>
+ * </table>
+ *
+ * @example
+ * <code>
+ * const nn = new Dann(24, 2);
+ * nn.log();
+ * </code>
+ */
+Dann.prototype.log = function log(
+  options = {
+    struct: true,
+    misc: true,
+  }
+) {
+  //Optional parameters values:
+  let showWeights = options.weights || false;
+  let showGradients = options.gradients || false;
+  let showErrors = options.errors || false;
+  let showBiases = options.biases || false;
+  let showBaseSettings = options.struct || false;
+  let showOther = options.misc || false;
+  let showDetailedLayers = options.layers || false;
+  let table = options.table || false;
+  let decimals = 1000;
+
+  // Limit decimals to maximum of 21
+  if (options.decimals > 21) {
+    DannError.error('Maximum number of decimals is 21.', 'Dann.prototype.log');
+    decimals = pow(10, 21);
+  } else {
+    decimals = pow(10, options.decimals) || decimals;
+  }
+
+  // Details sets all values to true.
+  if (options.details) {
+    let v = options.details;
+    showGradients = v;
+    showWeights = v;
+    showErrors = v;
+    showBiases = v;
+    showBaseSettings = v;
+    showOther = v;
+    showDetailedLayers = v;
+  }
+
+  // Initiate weights if they weren't initiated allready.
+  if (this.weights.length === 0) {
+    this.makeWeights();
+  }
+  if (showBaseSettings === true) {
+    console.log('Dann Model:');
+  }
+  if (showBaseSettings) {
+    console.log('Layers:');
+    for (let i = 0; i < this.Layers.length; i++) {
+      let layerObj = this.Layers[i];
+      let str = layerObj.type + ' Layer: ';
+      let afunc = '';
+      if (i === 0) {
+        str = 'input Layer:   ';
+        afunc = '       ';
+      } else if (i === layerObj.length - 1) {
+        str = 'output Layer:  ';
+        afunc = '  (' + layerObj.actname + ')';
+      } else {
+        afunc = '  (' + layerObj.actname + ')';
+      }
+      console.log('\t' + str + layerObj.size + afunc);
+      if (showDetailedLayers) {
+        console.log(this.Layers[i]);
+      }
+    }
+  }
+  if (showErrors) {
+    console.log('Errors:');
+    for (let i = 0; i < this.errors.length; i++) {
+      let e = Matrix.toArray(this.errors[i]);
+      let er = [];
+      for (let j = 0; j < e.length; j++) {
+        er[j] = round(e[j] * decimals) / decimals;
+      }
+      console.log(er);
+    }
+  }
+  if (showGradients) {
+    console.log('Gradients:');
+    for (let i = 0; i < this.gradients.length; i++) {
+      let g = Matrix.toArray(this.gradients[i]);
+      let gr = [];
+      for (let j = 0; j < g.length; j++) {
+        gr[j] = round(g[j] * decimals) / decimals;
+      }
+      console.log(gr);
+    }
+  }
+  if (showWeights) {
+    console.log('Weights:');
+    for (let i = 0; i < this.weights.length; i++) {
+      let w = this.weights[i];
+      w.log({ decimals: options.decimals, table: table });
+    }
+  }
+  if (showBiases) {
+    console.log('Biases:');
+    for (let i = 0; i < this.biases.length; i++) {
+      let b = Matrix.toArray(this.biases[i]);
+      let br = [];
+      for (let j = 0; j < b.length; j++) {
+        br[j] = round(b[j] * decimals) / decimals;
+      }
+      console.log(br);
+    }
+  }
+  if (showOther) {
+    console.log('Other Values: ');
+
+    console.log('\t' + 'Learning rate: ' + this.lr);
+    console.log('\t' + 'Loss Function: ' + this.lossfunc_s);
+    console.log('\t' + 'Current Epoch: ' + this.epoch);
+    console.log('\t' + 'Latest Loss: ' + this.loss);
+  }
+  console.log(' ');
+  return;
+};
+
+/**
+ * @module Dann
+ * @submodule Train
+ */
+/**
  * Backpropagate trough a Dann model in order to train the weights.
+ *
  * @method backpropagate
- * @for Dann
  * @param {Array} inputs Array of input data.
  * @param {Array} target Array of expected output.
  * @param {Object} [options] Object including specific properties.
@@ -2093,9 +2564,116 @@ Dann.prototype.train = function train(inputs, target, options) {
 };
 
 /**
+ * @module Dann
+ * @submodule Train
+ */
+/**
+ * This method maps the weights of a Dann model. It is usefull for neuroevolution simulations where you would map the weights with an equation containing a random factor.
+ * @method mapWeights
+ * @param {Function} f the function to map the weights with.
+ * @example
+ * <code>
+ * const nn = new Dann(2, 2);
+ * nn.makeWeights(-1, 1);
+ * nn.log({weights:true});
+ * nn.mapWeights((x)=>{
+ *   return (Math.random()*0.1)+x;
+ * });
+ * nn.log({weights:true})
+ * </code>
+ */
+Dann.prototype.mapWeights = function mapWeights(f) {
+  if (typeof f === 'function') {
+    for (let i = 0; i < this.weights.length; i++) {
+      this.weights[i].map(f);
+    }
+  } else {
+    DannError.error('Argument must be a function', 'Dann.prototype.mapWeights');
+  }
+};
+
+/**
+ * @module Dann
+ * @submodule Train
+ */
+/**
+ * This function mutates the weights by taking a percentage of the weight & adding it to the weight. This is for Neuroevolution tasks.
+ * @method mutateAdd
+ * @param {Number} randomFactor Percentage to add to each weight. Generally in 0 and 1.
+ * @example
+ * <code>
+ * const nn = new Dann(4, 2);
+ * nn.makeWeights();
+ * nn.log({weights:true, table:true})
+ * // weights add 5% of themselves.
+ * nn.mutateAdd(0.05);
+ * nn.log({weights:true,table:true});
+ * </code>
+ */
+Dann.prototype.mutateAdd = function mutateAdd(randomFactor) {
+  if (typeof randomFactor !== 'number') {
+    DannError.error(
+      'randomFactor argument must be a number.',
+      'Dann.prototype.mutateAdd'
+    );
+    return;
+  } else {
+    for (let i = 0; i < this.weights.length; i++) {
+      this.weights[i].addPercent(randomFactor);
+    }
+  }
+};
+
+/**
+ * @module Dann
+ * @submodule Train
+ */
+/**
+ * This function mutates each weights randomly. This is for Neuroevolution tasks.
+ * @method mutateRandom
+ * @param {Number} range This will multiply with a random number from -range to range and add to each weight.
+ * @param {Number} [probability] The probability of a weight being affected by a random mutation. Ranging from 0 to 1. Setting this value to 1 would mutate all the model's weights.
+ * @example
+ * <code>
+ * const nn = new Dann(4, 2);
+ * nn.makeWeights();
+ * nn.log({weights:true, table:true});
+ * // adding (weight*random(-0.1, 0.1)) to 50% of the weights.
+ * nn.mutateRandom(0.1, 0.5);
+ * nn.log({weights:true, table:true});
+ * </code>
+ */
+Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
+  if (typeof range !== 'number') {
+    DannError.error(
+      'Range argument must be a number.',
+      'Dann.prototype.mutateRandom'
+    );
+    return;
+  }
+  if (probability !== undefined) {
+    if (typeof probability !== 'number') {
+      DannError.error(
+        'Probability argument must be a number.',
+        'Dann.prototype.mutateRandom'
+      );
+      return;
+    }
+  } else {
+    probability = 1;
+  }
+  for (let i = 0; i < this.weights.length; i++) {
+    this.weights[i].addRandom(range, probability);
+  }
+};
+
+/**
+ * @module Dann
+ * @submodule Share
+ */
+/**
  * Creates a Dann model from a json object.
  * @method createFromJSON
- * @for Dann
  * @static
  * @param {Object} data model data json object, you can get this object from a yourmodel.toJSON(); See docs <a href="https://dannjs.org">here</a>.
  * @return {Dann} A Dann model.
@@ -2116,113 +2694,12 @@ Dann.createFromJSON = function createFromJSON(data) {
 };
 
 /**
- * Feed data through the model to obtain an output or prediction.
- * @method feedForward
- * @for Dann
- * @param {Array} inputs Array of input data.
- * @param {Object} [options] Object including specific properties.
- * <table>
- * <thead>
- * <tr>
- * <th>Property</th>
- * <th>Type</th>
- * <th>Function</th>
- * </tr>
- * </thead>
- * <tbody>
- * <tr>
- * <td>log</td>
- * <td>Boolean</td>
- * <td>If set to true, it will log a report in the console.</td>
- * </tr>
- * <tr>
- * <td>table</td>
- * <td>Boolean</td>
- * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
- * </tr>
- * <tr>
- * <td>decimals</td>
- * <td>Integer</td>
- * <td>If used, the output of this function will be rounded to the number of decimals specified.</td>
- * </tr>
- * </tbody>
- * </table>
- *
- * @return {Array} Array of output predictions.
- * @example
- * <code>
- * const nn = new Dann(4, 2);
- * nn.makeWeights();
- * let prediction = nn.feedForward([0,0,0,1], {log:true});
- * //outputs an array of length 2
- * console.log(prediction);
- * </code>
+ * @module Dann
+ * @submodule Share
  */
-
-Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
-  //optional parameter values:
-  let showLog = options.log || false;
-  let table = options.table || false;
-  let roundData = false;
-  let dec = pow(10, options.decimals) || 1000;
-  if (options.decimals !== undefined) {
-    roundData = true;
-  }
-
-  if (inputs.length === this.i) {
-    this.Layers[0].layer = Matrix.fromArray(inputs);
-  } else {
-    for (let i = 0; i < this.o; i++) {
-      this.outs[i] = 0;
-    }
-    DannError.error(
-      'The input array length does not match the number of inputs the dannjs model has.',
-      'Dann.prototype.feedForward'
-    );
-    return this.outs;
-  }
-  if (this.weights.length === 0) {
-    DannError.warn(
-      'The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.',
-      'Dann.prototype.feedForward'
-    );
-    this.makeWeights();
-  }
-
-  for (let i = 0; i < this.weights.length; i++) {
-    let pLayer = this.Layers[i];
-
-    let layerObj = this.Layers[i + 1];
-
-    layerObj.layer = Matrix.mult(this.weights[i], pLayer.layer);
-    layerObj.layer.add(this.biases[i]);
-    layerObj.layer.map(layerObj.actfunc);
-  }
-
-  this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
-  let out = this.outs;
-  if (showLog === true) {
-    if (roundData === true) {
-      out = out.map((x) => round(x * dec) / dec);
-    }
-    if (table === true) {
-      console.log('Prediction: ');
-      console.table(out);
-    } else {
-      console.log('Prediction: ');
-      console.log(out);
-    }
-  }
-  return out;
-};
-Dann.prototype.feed = function feed(inputs, options) {
-  return this.feedForward(inputs, options);
-};
-
 /**
  * Applies a json object to a Dann model.
  * @method fromJSON
- * @for Dann
  * @param {Object} data model data json object, you can get this object from a yourmodel.toJSON(); See docs <a href="https:/dannjs.org">here</a>.
  * @return {Dann} A Dann model.
  * @example
@@ -2283,21 +2760,19 @@ Dann.prototype.fromJSON = function fromJSON(data) {
   return this;
 };
 
-/**
+/*
  * (Browser)
  * When this function is called, an input tag requesting a file appears on screen. When clicked, it opens a local file dialogue. Once the appropriate file is selected the dann data automatically uploads. The filename argument is not required for this version since the browser dialog takes care of it.
  * @method load
- * @for Dann
  * @deprecated Use fromJSON or createFromJSON, Removed in 2.2.6
  * @param {String} name The name of the variable that holds the dann model.
  * @param {String} arg2 The ID of the HTML element in which to place the input dom element. If left undefined, the input dom element is appended to the body element.
  * @param {Function} arg3 A function to be called when the model finished loading.
  */
-/**
+/*
  * (Nodejs)
  * Load a previously saved json file from ./savedDanns/. If the network's architechture is not the same, it is going to overwrite the Dann object.
  * @method load
- * @for Dann
  * @deprecated Use fromJSON or createFromJSON, Removed in 2.2.6
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
@@ -2345,436 +2820,19 @@ Dann.prototype.fromJSON = function fromJSON(data) {
 //   }
 // };
 
-/**
- * Displays information about the model in the console.
- * @method log
- * @for Dann
- * @param {Object} [options] An object including specific properties.
- * <table>
- * <thead>
- * <tr>
- * <th>Property</th>
- * <th>Type</th>
- * <th>Function</th>
- * </tr>
- * </thead>
- * <tbody>
- * <tr>
- * <td>details</td>
- * <td>Boolean</td>
- * <td>If set to true, the function will log more advanced details about the model.</td>
- * </tr>
- * <tr>
- * <td>decimals</td>
- * <td>integer</td>
- * <td>The number of decimals the logged data is going to have. It is set to 3 by default.</td>
- * </tr>
- * <tr>
- * <td>table</td>
- * <td>Boolean</td>
- * <td>Whether or not we want to print our matrices in the form of a table or Matrix object log.</td>
- * </tr>
- * <tr>
- * <td>gradients</td>
- * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the gradients of the model.</td>
- * </tr>
- * <tr>
- * <td>biases</td>
- * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the biases of the model.</td>
- * </tr>
- * <tr>
- * <td>weights</td>
- * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the weights of the model.</td>
- * </tr>
- * <tr>
- * <td>struct</td>
- * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the structure of the model.</td>
- * </tr>
- * <tr>
- * <td>errors</td>
- * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the errors of the model.</td>
- * </tr>
- * <tr>
- * <td>misc</td>
- * <td>Boolean</td>
- * <td>If this is set to true, the the function will log the loss of the model, the learning rate of the model and the loss function.</td>
- * </tr>
- * </tbody>
- * </table>
- * @example
- * <code>
- * const nn = new Dann(24, 2);
- * nn.log();
- * </code>
- */
-Dann.prototype.log = function log(
-  options = {
-    struct: true,
-    misc: true,
-  }
-) {
-  //Optional parameters values:
-  let showWeights = options.weights || false;
-  let showGradients = options.gradients || false;
-  let showErrors = options.errors || false;
-  let showBiases = options.biases || false;
-  let showBaseSettings = options.struct || false;
-  let showOther = options.misc || false;
-  let showDetailedLayers = options.layers || false;
-  let table = options.table || false;
-  let decimals = 1000;
-
-  // Limit decimals to maximum of 21
-  if (options.decimals > 21) {
-    DannError.error('Maximum number of decimals is 21.', 'Dann.prototype.log');
-    decimals = pow(10, 21);
-  } else {
-    decimals = pow(10, options.decimals) || decimals;
-  }
-
-  // Details sets all values to true.
-  if (options.details) {
-    let v = options.details;
-    showGradients = v;
-    showWeights = v;
-    showErrors = v;
-    showBiases = v;
-    showBaseSettings = v;
-    showOther = v;
-    showDetailedLayers = v;
-  }
-
-  // Initiate weights if they weren't initiated allready.
-  if (this.weights.length === 0) {
-    this.makeWeights();
-  }
-  if (showBaseSettings === true) {
-    console.log('Dann Model:');
-  }
-  if (showBaseSettings) {
-    console.log('Layers:');
-    for (let i = 0; i < this.Layers.length; i++) {
-      let layerObj = this.Layers[i];
-      let str = layerObj.type + ' Layer: ';
-      let afunc = '';
-      if (i === 0) {
-        str = 'input Layer:   ';
-        afunc = '       ';
-      } else if (i === layerObj.length - 1) {
-        str = 'output Layer:  ';
-        afunc = '  (' + layerObj.actname + ')';
-      } else {
-        afunc = '  (' + layerObj.actname + ')';
-      }
-      console.log('\t' + str + layerObj.size + afunc);
-      if (showDetailedLayers) {
-        console.log(this.Layers[i]);
-      }
-    }
-  }
-  if (showErrors) {
-    console.log('Errors:');
-    for (let i = 0; i < this.errors.length; i++) {
-      let e = Matrix.toArray(this.errors[i]);
-      let er = [];
-      for (let j = 0; j < e.length; j++) {
-        er[j] = round(e[j] * decimals) / decimals;
-      }
-      console.log(er);
-    }
-  }
-  if (showGradients) {
-    console.log('Gradients:');
-    for (let i = 0; i < this.gradients.length; i++) {
-      let g = Matrix.toArray(this.gradients[i]);
-      let gr = [];
-      for (let j = 0; j < g.length; j++) {
-        gr[j] = round(g[j] * decimals) / decimals;
-      }
-      console.log(gr);
-    }
-  }
-  if (showWeights) {
-    console.log('Weights:');
-    for (let i = 0; i < this.weights.length; i++) {
-      let w = this.weights[i];
-      w.log({ decimals: options.decimals, table: table });
-    }
-  }
-  if (showBiases) {
-    console.log('Biases:');
-    for (let i = 0; i < this.biases.length; i++) {
-      let b = Matrix.toArray(this.biases[i]);
-      let br = [];
-      for (let j = 0; j < b.length; j++) {
-        br[j] = round(b[j] * decimals) / decimals;
-      }
-      console.log(br);
-    }
-  }
-  if (showOther) {
-    console.log('Other Values: ');
-
-    console.log('\t' + 'Learning rate: ' + this.lr);
-    console.log('\t' + 'Loss Function: ' + this.lossfunc_s);
-    console.log('\t' + 'Current Epoch: ' + this.epoch);
-    console.log('\t' + 'Latest Loss: ' + this.loss);
-  }
-  console.log(' ');
-  return;
-};
-
-/**
- * Creates the weights. This function should be called after all the hidden layers were added. The optional parameters determine the range in which starting weights are going to be set randomly. If no arguments are specified, weights are going to be set in between -1 and 1.
- * @method makeWeights
- * @for Dann
- * @param {Number} [arg1] The minimum range value.
- * @param {Number} [arg2] The maximum range value.
- * @example
- * <code>
- * const nn = new Dann(2, 2);
- * // initiate the Weights
- * nn.makeWeights();
- * // log weights
- * nn.log({weights:true, table:true});
- * // add a layer & re-initiate weights in a range of (-0.1, 0.1)
- * nn.addHiddenLayer(4, 'sigmoid');
- * nn.makeWeights(-0.1, 0.1);
- * // log weights
- * console.log('New re-initiated weights:');
- * nn.log({weights:true, table:true});
- * </code>
- */
-Dann.prototype.makeWeights = function makeWeights(arg1, arg2) {
-  let min = -1;
-  let max = 1;
-  if (arg1 !== undefined && arg2 !== undefined) {
-    min = arg1;
-    max = arg2;
-  }
-  for (let i = 0; i < this.Layers.length - 1; i++) {
-    let previousLayerObj = this.Layers[i];
-    let layerObj = this.Layers[i + 1];
-
-    let weights = new Matrix(layerObj.layer.rows, previousLayerObj.layer.rows);
-    let biases = new Matrix(layerObj.layer.rows, 1);
-
-    weights.randomize(min, max);
-    biases.randomize(1, -1);
-    this.weights[i] = weights;
-    this.biases[i] = biases;
-
-    this.errors[i] = new Matrix(layerObj.layer.rows, 1);
-    this.gradients[i] = new Matrix(layerObj.layer.rows, 1);
-
-    if (layerObj.actfunc === undefined) {
-      layerObj.setFunc('sigmoid');
-    }
-  }
-  for (let i = 0; i < this.Layers.length; i++) {
-    let layerObj = this.Layers[i];
-    this.arch[i] = layerObj.layer.rows;
-  }
-};
-
-/**
- * This method maps the weights of a Dann model. It is usefull for neuroevolution simulations where you would map the weights with an equation containing a random factor.
- * @method mapWeights
- * @param {Function} f the function to map the weights with.
- * @example
- * <code>
- * const nn = new Dann(2, 2);
- * nn.makeWeights(-1, 1);
- * nn.log({weights:true});
- * nn.mapWeights((x)=>{
- *   return (Math.random()*0.1)+x;
- * });
- * nn.log({weights:true})
- * </code>
- */
-Dann.prototype.mapWeights = function mapWeights(f) {
-  if (typeof f === 'function') {
-    for (let i = 0; i < this.weights.length; i++) {
-      this.weights[i].map(f);
-    }
-  } else {
-    DannError.error('Argument must be a function', 'Dann.prototype.mapWeights');
-  }
-};
-
-/**
- * This function mutates the weights by taking a percentage of the weight & adding it to the weight. This is for Neuroevolution tasks.
- * @method mutateAdd
- * @for Dann
- * @param {Number} randomFactor Percentage to add to each weight. Generally in 0 and 1.
- * @example
- * <code>
- * const nn = new Dann(4, 2);
- * nn.makeWeights();
- * nn.log({weights:true, table:true})
- * // weights add 5% of themselves.
- * nn.mutateAdd(0.05);
- * nn.log({weights:true,table:true});
- * </code>
- */
-Dann.prototype.mutateAdd = function mutateAdd(randomFactor) {
-  if (typeof randomFactor !== 'number') {
-    DannError.error(
-      'randomFactor argument must be a number.',
-      'Dann.prototype.mutateAdd'
-    );
-    return;
-  } else {
-    for (let i = 0; i < this.weights.length; i++) {
-      this.weights[i].addPercent(randomFactor);
-    }
-  }
-};
-
-/**
- * This function mutates each weights randomly. This is for Neuroevolution tasks.
- * @method mutateRandom
- * @for Dann
- * @param {Number} range This will multiply with a random number from -range to range and add to each weight.
- * @param {Number} [probability] The probability of a weight being affected by a random mutation. Ranging from 0 to 1. Setting this value to 1 would mutate all the model's weights.
- * @example
- * <code>
- * const nn = new Dann(4, 2);
- * nn.makeWeights();
- * nn.log({weights:true, table:true});
- * // adding (weight*random(-0.1, 0.1)) to 50% of the weights.
- * nn.mutateRandom(0.1, 0.5);
- * nn.log({weights:true, table:true});
- * </code>
- */
-Dann.prototype.mutateRandom = function mutateRandom(range, probability) {
-  if (typeof range !== 'number') {
-    DannError.error(
-      'Range argument must be a number.',
-      'Dann.prototype.mutateRandom'
-    );
-    return;
-  }
-  if (probability !== undefined) {
-    if (typeof probability !== 'number') {
-      DannError.error(
-        'Probability argument must be a number.',
-        'Dann.prototype.mutateRandom'
-      );
-      return;
-    }
-  } else {
-    probability = 1;
-  }
-  for (let i = 0; i < this.weights.length; i++) {
-    this.weights[i].addRandom(range, probability);
-  }
-};
-
-/**
- * Sets the activation function of the output.
- * @method outputActivation
- * @for Dann
- * @param {String} act Takes a string of the activation function's name. If this function is not called, the activation function will be set to 'sigmoid' by default. See available activation functions <a target="_blank" href="https://dannjs.org">here</a>.
- * <table>
- * <thead>
- *   <tr>
- *     <th>Name</th>
- *     <th>Desmos</th>
- *   </tr>
- * </thead>
- * <tbody>
- *   <tr>
- *     <td>Sigmoid</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/so8eiigug4">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>leakyReLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/pxqqqxd3tz">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>reLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/jdb8dfof6x">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>siLU</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/f4nhtck5dr">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>tanH</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/eai4bialus">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>binary</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/zq8s1ixyp8">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>softsign</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/vmuhohc3da">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>sinc</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/6u4ioz8lhs">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>softplus</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/aegpfcyniu">See graph</a></td>
- *   </tr>
- * </tbody>
- * </table>
- * <br/>
- * See how to add more <a href="./Add.html#method_activation">Here</a>
- * @example
- * <code>
- * const nn = new Dann(4, 2);
- * nn.addHiddenLayer(8, 'sigmoid');
- * nn.makeWeights();
- * console.log('Before changing the output activation');
- * nn.log({struct:true});
- * nn.outputActivation('tanH');
- * console.log('After changing the output activation');
- * nn.log({struct:true});
- * </code>
- */
-Dann.prototype.outputActivation = function outputActivation(act) {
-  if (activations[act] === undefined && !isBrowser) {
-    if (typeof act === 'string') {
-      DannError.error(
-        "'" +
-          act +
-          "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
-        'Dann.prototype.outputActivation'
-      );
-      return;
-    } else {
-      DannError.error(
-        "Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.",
-        'Dann.prototype.outputActivation'
-      );
-      return;
-    }
-  }
-  this.Layers[this.Layers.length - 1].setFunc(act);
-};
-
-/**
+/*
  * (Browser)
  * saves a json file containing information about the network and its current state. When the function is called, a local file dialogue is opened by the browser.
  * @method save
- * @for Dann
+ * @module Share
  * @deprecated Use toJSON, Removed in 2.2.6
  * @param {String} name The name of the json file.
  */
-/**
+/*
  * (Nodejs)
  * saves a json file containing information about the network and its current state in ./savedDanns/name/dannData.json.
  * @method save
- * @for Dann
+ * @module Share
  * @deprecated Use toJSON, Removed in 2.2.6
  * @param {String} name The name of the json file.
  * @param {Object} [options] An object containing options on the save process.
@@ -2869,109 +2927,9 @@ Dann.prototype.outputActivation = function outputActivation(act) {
 // };
 
 /**
- * Set the loss function of a Dann model
- * @method setLossFunction
- * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
- * @param {Number} [percentile] Some loss functions like the Quantile loss will need a percentile value. Ranges between 0 and 1.
- * <table>
- * <thead>
- *   <tr>
- *     <th>Name</th>
- *     <th>Desmos</th>
- *   </tr>
- * </thead>
- * <tbody>
- *   <tr>
- *     <td>mse</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/msg3bebyhe">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>mae</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/sqyudacjzb">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>lcl</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/ropuc3y6sa">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>mbe</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/xzp1hr0vin">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>mael</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/dimqieesut">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>rmse</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/x7efwdfada">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>mce</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/bzlqe7bafx">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>bce</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/ri1bj9gw4l">See graph</a></td>
- *   </tr>
- *   <tr>
- *     <td>quantile</td>
- *     <td><a target="_blank" href="https://www.desmos.com/calculator/7rsvaivrat">See graph</a></td>
- *   </tr>
- * </tbody>
- * </table>
- * <br/>
- * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
- * @example
- * <code>
- * const nn = new Dann(4, 2);
- * nn.addHiddenLayer(8, 'sigmoid');
- * nn.makeWeights();
- * //Before changing the loss function
- * console.log(nn.lossfunc);
- * nn.setLossFunction('mael');
- * //After changing the loss function
- * console.log(nn.lossfunc);
- * </code>
- * @example
- * <code>
- * const nn = new Dann(4, 4);
- * nn.addHiddenLayer(16, 'sigmoid');
- * nn.makeWeights();
- * //Before changing the loss function
- * console.log(nn.lossfunc);
- * // Quantile loss with 40 percentile
- * nn.setLossFunction('quantile', 0.4);
- * //After changing the loss function
- * console.log(nn.lossfunc);
- * </code>
+ * @module Dann
+ * @submodule Share
  */
-Dann.prototype.setLossFunction = function setLossFunction(
-  name,
-  percentile = 0.5
-) {
-  this.percentile = percentile;
-  let func = lossfuncs[name];
-  if (func === undefined) {
-    if (typeof name === 'string') {
-      DannError.error(
-        "'" +
-          name +
-          "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
-        'Dann.prototype.setLossFunction'
-      );
-      return;
-    } else {
-      DannError.error(
-        "Did not detect string value, as a result, the loss function is set to 'mse' by default.",
-        'Dann.prototype.setLossFunction'
-      );
-      return;
-    }
-  }
-  this.lossfunc_s = name;
-  this.lossfunc = func;
-};
-
 /**
  * This method allows for a Dann model to be converted into a minified javascript function that can run independently, which means you don't need to import the library for it to work. The function generated acts as a Dann.feedForward().
  * @method toFunction
@@ -3134,9 +3092,12 @@ function toEs6(func) {
 }
 
 /**
+ * @module Dann
+ * @submodule Share
+ */
+/**
  * Gets a dannData object.
  * @method toJSON
- * @for Dann
  * @return {Object} A dannData object.
  * @example
  * <code>
@@ -3196,6 +3157,97 @@ Dann.prototype.toJSON = function toJSON() {
     per: this.percentile,
   };
   return data;
+};
+
+/**
+ * Add a new custom function to Dannjs.
+ * @class Add
+ */
+Add = function Add() {};
+
+/**
+ * Add a custom activation function.
+ * @method activation
+ * @param {string} name the name of the new activation function.
+ * @param {function} activation the activation function.
+ * @param {function} derivative the derivative of this activation function.
+ * @example
+ * <code>
+ * Add.activation('myfunc',
+ *   (x) => {
+ *     if (x <= 0) {
+ *       return 0;
+ *     } else {
+ *       return 1;
+ *     }
+ *   },
+ *   (x) => {
+ *     return 0;
+ *   }
+ * );
+ * let nn = new Dann();
+ * nn.outputActivation('myfunc');
+ * nn.log();
+ * </code>
+ */
+Add.activation = function (name, activation, derivative) {
+  if (typeof name !== 'string') {
+    DannError.error('The name argument is not a string.', 'Add.activation');
+    return;
+  }
+  if (activation.length !== 1 || derivative.length !== 1) {
+    DannError.error(
+      'One of the functions specified does not have only 1 argument.',
+      'Add.activation'
+    );
+    return;
+  } else {
+    activations[name] = activation;
+    activations[name + '_d'] = derivative;
+    return;
+  }
+};
+
+/**
+ * Add a custom loss function.
+ * @method loss
+ * @param {string} name the name of the new loss function.
+ * @param {function} loss the loss function.
+ * @example
+ * <code>
+ * Add.loss('myfunc',
+ *   (predictions, target) => {
+ *     let sum = 0;
+ *     let ans = 0;
+ *     let n = target.length;
+ *     for (let i = 0; i < n; i++) {
+ *       let y = target[i];
+ *       let yHat = predictions[i];
+ *       sum += abs(y - yHat);
+ *     }
+ *     ans = sum / n;
+ *     return ans;
+ *   }
+ * );
+ * let nn = new Dann();
+ * nn.setLossFunction('myfunc');
+ * nn.log();
+ * </code>
+ */
+Add.loss = function (name, loss) {
+  if (typeof name !== 'string') {
+    DannError.error('The name argument is not a string.', 'Add.loss');
+    return;
+  }
+  if (loss.length === 2) {
+    lossfuncs[name] = loss;
+  } else {
+    DannError.error(
+      'The loss function specified can only have 2 argument.',
+      'newActivation'
+    );
+    return;
+  }
 };
 
 //Node Module Exports:
