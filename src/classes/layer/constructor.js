@@ -1,16 +1,17 @@
 /**
- * @module Layer
- */
-
-/**
- * A way to descript downsampling layers.
+ * A way to describe downsampling layers.
  * @class Layer
+ * @for Layer
  * @constructor
  * @param {String} type A string representing the type of this layer.
  * @param {Number} Size The size of the downsampling layer.
  * @param {Number} Sample The size of the 2d sample iterating trough the array.
  * @param {Number} Stride The number of jumps the sample is going to perform for each iteration.
  * @example
+ * <code>
+ * const Dannjs = require('dannjs');
+ * const Layer = Dannjs.layer;
+ * </code>
  * <code>
  * const l1 = new Layer('avgpool', 16, 2, 2);
  * l1.log();

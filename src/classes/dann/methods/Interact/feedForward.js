@@ -1,7 +1,10 @@
 /**
+ * @module Dann
+ * @submodule Interact
+ */
+/**
  * Feed data through the model to obtain an output or prediction.
  * @method feedForward
- * @for Dann
  * @param {Array} inputs Array of input data.
  * @param {Object} [options] Object including specific properties.
  * <table>

@@ -1,8 +1,12 @@
 /**
- * Sets the activation function of the output.
- * @method outputActivation
- * @for Dann
- * @param {String} act Takes a string of the activation function's name. If this function is not called, the activation function will be set to 'sigmoid' by default. See available activation functions <a target="_blank" href="https://dannjs.org">here</a>.
+ * @module Dann
+ * @submodule Create
+ */
+/**
+ * Add a Hidden Neuron Layer to a Dann neural network.
+ * @method addHiddenLayer
+ * @param {Number} size Layer size, the number of neurons in the layer.
+ * @param {String} [act] Takes a string of the activation function's name. If left empty, the activation function will be set to 'sigmoid' by default. See available activation functions below.
  * <table>
  * <thead>
  *   <tr>
@@ -49,37 +53,39 @@
  *   </tr>
  * </tbody>
  * </table>
- * <br/>
- * See how to add more <a href="./Add.html#method_activation">Here</a>
+ * <a href="./Add.html#method_activation"><p>See how to add more </p></a>
  * @example
  * <code>
- * const nn = new Dann(4, 2);
+ * const nn = new Dann(10, 2);
+ * //Add a layer
  * nn.addHiddenLayer(8, 'sigmoid');
- * nn.makeWeights();
- * console.log('Before changing the output activation');
+ * //console log
+ * console.log('Added first hidden layer: ');
  * nn.log({struct:true});
- * nn.outputActivation('tanH');
- * console.log('After changing the output activation');
+ * //Add a layer
+ * nn.addHiddenLayer(4, 'tanH');
+ * //console log
+ * console.log('Added a second hidden layer: ');
  * nn.log({struct:true});
  * </code>
  */
-Dann.prototype.outputActivation = function outputActivation(act) {
-  if (activations[act] === undefined && !isBrowser) {
-    if (typeof act === 'string') {
-      DannError.error(
-        "'" +
+Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
+  if (act !== undefined) {
+    if (activations[act] === undefined) {
+      if (typeof act === 'string') {
+        DannError.error(
+          "'" +
           act +
-          "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
-        'Dann.prototype.outputActivation'
-      );
-      return;
-    } else {
-      DannError.error(
-        "Did not detect a string value, as a result, the activation function is set to 'sigmoid' by default.",
-        'Dann.prototype.outputActivation'
-      );
-      return;
+          "' is not a valid activation function, as a result, the activation function was set to 'sigmoid'.",
+          'Dann.prototype.addHiddenLayer'
+        );
+      }
+      act = 'sigmoid';
     }
+  } else {
+    act = 'sigmoid';
   }
-  this.Layers[this.Layers.length - 1].setFunc(act);
+  this.arch.splice(this.arch.length - 1, 0, size);
+  let layer = new Layer('hidden', size, act);
+  this.Layers.splice(this.Layers.length - 1, 0, layer);
 };

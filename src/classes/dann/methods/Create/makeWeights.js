@@ -1,7 +1,10 @@
 /**
+ * @module Dann
+ * @submodule Create
+ */
+/**
  * Creates the weights. This function should be called after all the hidden layers were added. The optional parameters determine the range in which starting weights are going to be set randomly. If no arguments are specified, weights are going to be set in between -1 and 1.
  * @method makeWeights
- * @for Dann
  * @param {Number} [arg1] The minimum range value.
  * @param {Number} [arg2] The maximum range value.
  * @example

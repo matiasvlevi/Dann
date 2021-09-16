@@ -1,7 +1,10 @@
 /**
+ * @module Dann
+ * @submodule Share
+ */
+/**
  * Applies a json object to a Dann model.
  * @method fromJSON
- * @for Dann
  * @param {Object} data model data json object, you can get this object from a yourmodel.toJSON(); See docs <a href="https:/dannjs.org">here</a>.
  * @return {Dann} A Dann model.
  * @example

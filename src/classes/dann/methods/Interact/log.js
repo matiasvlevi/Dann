@@ -1,7 +1,10 @@
 /**
+ * @module Dann
+ * @submodule Interact
+ */
+/**
  * Displays information about the model in the console.
  * @method log
- * @for Dann
  * @param {Object} [options] An object including specific properties.
  * <table>
  * <thead>
@@ -59,6 +62,7 @@
  * </tr>
  * </tbody>
  * </table>
+ *
  * @example
  * <code>
  * const nn = new Dann(24, 2);

@@ -1,7 +1,11 @@
 /**
- * Backpropagate trough a Dann model in order to train the weights.
+ * @module Dann
+ * @submodule Train
+ */
+/**
+ * Backpropagate through a Dann model in order to train the weights.
+ *
  * @method backpropagate
- * @for Dann
  * @param {Array} inputs Array of input data.
  * @param {Array} target Array of expected output.
  * @param {Object} [options] Object including specific properties.

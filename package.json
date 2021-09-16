@@ -52,7 +52,8 @@
     "browser": "start test/manual-tests/browser/empty-example/browser.html",
     "doc:show": "start docs/documentation/index.html",
     "contrib": "npx all-contributors generate",
-    "sig": "npx vlev"
+    "sig": "npx vlev",
+    "serve": "node docs/serve.js"
   },
   "version": "2.3.13",
   "keywords": [
@@ -71,6 +72,7 @@
     "chai": "^4.3.4",
     "eslint-config-prettier": "2.7.0",
     "eslint-plugin-prettier": "2.3.1",
+    "express": "^4.17.1",
     "grunt": "^1.4.0",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
@@ -83,6 +85,7 @@
     "log-symbols": "^4.0.0",
     "marked": "^0.7.0",
     "mocha": "^9.0.1",
+    "path": "^0.12.7",
     "prettier": "^2.3.2",
     "terser": "^5.7.0"
   }

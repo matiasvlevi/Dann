@@ -1,4 +1,8 @@
 /**
+ * @module Dann
+ * @submodule Share
+ */
+/**
  * This method allows for a Dann model to be converted into a minified javascript function that can run independently, which means you don't need to import the library for it to work. The function generated acts as a Dann.feedForward().
  * @method toFunction
  * @param {String} [name] the name of the function, set to 'myDannFunction' by default.

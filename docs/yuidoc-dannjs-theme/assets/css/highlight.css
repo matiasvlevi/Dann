@@ -18,13 +18,22 @@ hue-6-2: #e6c07b
 .hljs {
   display: block;
   overflow-x: hidden;
-  padding-left: 14px;
-  font-size: 16px;
   color: #abb2bf;
-  background: #383e56;
-  padding-top: 0px;
-  padding-bottom:24px;
-  border-radius: 4px;
+  background: var(--dark);
+  font-weight: lighter;
+  padding-top: none;
+  padding-left: 1em;
+  padding-bottom: 1.5em;
+  border-radius: 12px;
+}
+
+pre,
+code {
+  white-space: normal;
+}
+
+.js {
+  font-size: 18px;
 }
 
 .hljs-comment,
@@ -62,6 +71,7 @@ hue-6-2: #e6c07b
 .hljs-built_in {
   color: #abb2bf;
 }
+
 .hljs-class,
 .hljs-title {
   color: #e6c07b;

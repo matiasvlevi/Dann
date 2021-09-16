@@ -1,7 +1,7 @@
 /**
  * @module Dann
+ * @submodule Create
  */
-
 /**
  * Deep Neural Network object. Can be trained with data or by neuro-evolution.
  * @class Dann
@@ -10,8 +10,12 @@
  * @param {Number} [output] the number of output neurons.
  * @example
  * <code>
- * // 2 input, 1 output model
- * const nn = new Dann(2, 1);
+ * const Dannjs = require('dannjs');
+ * const Dann = Dannjs.dann;
+ * </code>
+ * <code>
+ * // 784 input, 2 output model
+ * const nn = new Dann(784, 2);
  * nn.log();
  * </code>
  */

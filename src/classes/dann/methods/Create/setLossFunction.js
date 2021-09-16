@@ -1,4 +1,8 @@
 /**
+ * @module Dann
+ * @submodule Create
+ */
+/**
  * Set the loss function of a Dann model
  * @method setLossFunction
  * @param {String} name Takes a string of the loss function's name. If this function is not called, the loss function will be set to 'mse' by default. See available loss functions <a target="_blank" href="dannjs.org">Here</a>.
@@ -49,8 +53,7 @@
  *   </tr>
  * </tbody>
  * </table>
- * <br/>
- * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
+ * <a href="./Add.html#method_loss"><p>See how to add more </p></a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
@@ -85,8 +88,8 @@ Dann.prototype.setLossFunction = function setLossFunction(
     if (typeof name === 'string') {
       DannError.error(
         "'" +
-          name +
-          "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
+        name +
+        "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
         'Dann.prototype.setLossFunction'
       );
       return;

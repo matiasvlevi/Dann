@@ -1,4 +1,8 @@
 /**
+ * @module Dann
+ * @submodule Train
+ */
+/**
  * This method maps the weights of a Dann model. It is usefull for neuroevolution simulations where you would map the weights with an equation containing a random factor.
  * @method mapWeights
  * @param {Function} f the function to map the weights with.

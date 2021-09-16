@@ -1,7 +1,10 @@
 /**
+ * @module Dann
+ * @submodule Share
+ */
+/**
  * Gets a dannData object.
  * @method toJSON
- * @for Dann
  * @return {Object} A dannData object.
  * @example
  * <code>

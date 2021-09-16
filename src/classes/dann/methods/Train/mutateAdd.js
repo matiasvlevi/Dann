@@ -1,7 +1,10 @@
 /**
+ * @module Dann
+ * @submodule Train
+ */
+/**
  * This function mutates the weights by taking a percentage of the weight & adding it to the weight. This is for Neuroevolution tasks.
  * @method mutateAdd
- * @for Dann
  * @param {Number} randomFactor Percentage to add to each weight. Generally in 0 and 1.
  * @example
  * <code>
