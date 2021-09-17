@@ -1642,6 +1642,7 @@ Layer.prototype.getSubtype = function getSubtype() {
 /**
  * Deep Neural Network object. Can be trained with data or by neuro-evolution.
  * @class Dann
+ * @method constructor
  * @constructor
  * @param {Number} [input] the number of input neurons.
  * @param {Number} [output] the number of output neurons.
@@ -1807,8 +1808,7 @@ Dann.prototype.addDropout = function addDropout(rate) {
  *   </tr>
  * </tbody>
  * </table>
- * <br/>
- * See how to add more <a href="./Add.html#method_activation">Here</a>
+ * <a href="./Add.html#method_activation"><p>See how to add more </p></a>
  * @example
  * <code>
  * const nn = new Dann(10, 2);
@@ -1955,8 +1955,7 @@ Dann.prototype.makeWeights = function makeWeights(arg1, arg2) {
  *   </tr>
  * </tbody>
  * </table>
- * <br/>
- * See how to add more <a href="./Add.html#method_activation">Here</a>
+ * <a href="./Add.html#method_activation"><p>See how to add more </p></a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
@@ -2045,8 +2044,7 @@ Dann.prototype.outputActivation = function outputActivation(act) {
  *   </tr>
  * </tbody>
  * </table>
- * <br/>
- * See how to add more <a class="hyperlink" href="./Add.html#method_loss">Here</a>
+ * <a href="./Add.html#method_loss"><p>See how to add more </p></a>
  * @example
  * <code>
  * const nn = new Dann(4, 2);
@@ -2398,7 +2396,7 @@ Dann.prototype.log = function log(
  * @submodule Train
  */
 /**
- * Backpropagate trough a Dann model in order to train the weights.
+ * Backpropagate through a Dann model in order to train the weights.
  *
  * @method backpropagate
  * @param {Array} inputs Array of input data.

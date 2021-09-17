@@ -1,0 +1,19 @@
+
+{{#is_constructor}}
+<li class="index-item method{{#if access}} {{access}}{{/if}}{{#if overwritten_from}}{{#if deprecated}} deprecated{{/if}} inherited{{/if}}{{#if extended_from}} inherited{{/if}}">
+    <a class="no-underline" href="#method_{{name}}">{{name}}</a>
+</li>
+{{/is_constructor}}
+
+{{#methods}}
+    <li class="index-item method{{#if access}} {{access}}{{/if}}{{#if overwritten_from}}{{#if deprecated}} deprecated{{/if}} inherited{{/if}}{{#if extended_from}} inherited{{/if}}">
+        <a class="no-underline" href="#method_{{name}}">{{name}}</a>
+
+        {{#if static}}
+            <span class="flag static">static</span>
+        {{/if}}
+        {{#if deprecated}}
+            <span class="flag deprecated">deprecated</span>
+        {{/if}}
+    </li>
+{{/methods}}

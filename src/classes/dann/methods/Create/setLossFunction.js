@@ -88,8 +88,8 @@ Dann.prototype.setLossFunction = function setLossFunction(
     if (typeof name === 'string') {
       DannError.error(
         "'" +
-        name +
-        "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
+          name +
+          "' is not a valid loss function, as a result, the model's loss function is set to 'mse' by default.",
         'Dann.prototype.setLossFunction'
       );
       return;

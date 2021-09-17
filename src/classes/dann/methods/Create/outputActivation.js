@@ -70,8 +70,8 @@ Dann.prototype.outputActivation = function outputActivation(act) {
     if (typeof act === 'string') {
       DannError.error(
         "'" +
-        act +
-        "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
+          act +
+          "' is not a valid activation function, as a result, the activation function is set to 'sigmoid' by default.",
         'Dann.prototype.outputActivation'
       );
       return;

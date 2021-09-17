@@ -75,8 +75,8 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
       if (typeof act === 'string') {
         DannError.error(
           "'" +
-          act +
-          "' is not a valid activation function, as a result, the activation function was set to 'sigmoid'.",
+            act +
+            "' is not a valid activation function, as a result, the activation function was set to 'sigmoid'.",
           'Dann.prototype.addHiddenLayer'
         );
       }

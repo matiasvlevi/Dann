@@ -5,6 +5,7 @@
 /**
  * Deep Neural Network object. Can be trained with data or by neuro-evolution.
  * @class Dann
+ * @method constructor
  * @constructor
  * @param {Number} [input] the number of input neurons.
  * @param {Number} [output] the number of output neurons.

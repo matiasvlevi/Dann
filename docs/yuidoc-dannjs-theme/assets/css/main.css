@@ -110,8 +110,8 @@ table {
 
 .main-title {
   margin-left: 4%;
-  position: absolute;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
 }
 
 .main-header {
@@ -144,7 +144,7 @@ ul {
   margin: 0px;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-content: stretch;
   position: relative;
 }
@@ -195,7 +195,8 @@ ul {
   #top {
     width: 100%;
     height: 40%;
-    min-height: 40%;
+    height: auto;
+    min-height: fit-content;
     border: 2px solid var(--bg)
   }
   #bottom {
@@ -286,10 +287,10 @@ ul {
     text-decoration: none;
     margin-left: none;
   }
-  li:first-child {
+  .index-item:first-child {
     margin-top: 3rem;
   }
-  li:not(:last-child) {
+  .index-item:not(:last-child) {
     margin-bottom: 3rem;
   }
   #table-contents {
@@ -298,9 +299,7 @@ ul {
   .back {
     width: 50%;
     height: 50%;
-    position: absolute;
-    top: 8%;
-    left: 5%;
+    margin: 3rem;
   }
   .main-body {
     width: 100%;
@@ -309,19 +308,34 @@ ul {
   #readme {
     display: none;
   }
+  .args {
+    display: none;
+  }
+  .index-top {
+    min-height: fit-content !important;
+    height: fit-content !important;
+  }
 }
 
 
 /* Desktop */
 
-@media only screen and (min-width: 1092px) {
+@media only screen and (min-width: 990px) {
   .js {
     font-size: 14px;
+  }
+  img[Attributes Style] {
+    width: 50%;
   }
   #top {
     width: 100%;
     height: 18%;
-    min-height: 18%;
+    min-height: fit-content !important;
+    height: fit-content !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-bottom: 0.4rem;
   }
   .param-description {
     font-size: 14px;
@@ -345,10 +359,10 @@ ul {
     margin-top: 2rem;
     min-width: 100%;
   }
-  li:first-child {
+  .index-item:first-child {
     margin-top: 1.4rem;
   }
-  li:not(:last-child) {
+  .index-item:not(:last-child) {
     margin-bottom: 1.4rem;
   }
   table,
@@ -364,14 +378,15 @@ ul {
   }
   .main-title {
     padding-top: 0%;
-    margin-left: 10%;
+    margin-top: 1rem;
+  }
+  #backImg {
+    width: 40%;
   }
   .back {
-    width: 12%;
-    height: 12%;
-    position: absolute;
-    top: 50%;
-    left: 3%;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0rem;
   }
   h1 {
     font-size: 100px;
@@ -393,6 +408,7 @@ ul {
     border-radius: 12px;
     display: block;
     padding: 2rem;
+    max-width: 60%;
   }
   #readme>pre>.hljs {
     padding-top: 1rem;
@@ -443,8 +459,8 @@ ul {
     background-color: var(--dark);
   }
   #methods-wrap {
-    max-width: 70%;
-    min-width: 70%;
+    max-width: 60%;
+    min-width: 60%;
   }
   .content-table {
     width: fit-content;
@@ -489,5 +505,34 @@ ul {
     padding-left: 0.6em;
     padding-right: 0.6em;
     margin: 0.25em;
+  }
+  .name {
+    display: flex;
+  }
+  .args {
+    display: flex;
+  }
+  .arg {
+    margin-top: 0.2rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    display: flex;
+  }
+  .args-list {
+    display: flex;
+  }
+  .paren {
+    display: flex;
+  }
+  .paren:first {
+    display: flex;
+    margin-left: 0.3rem;
+  }
+  .arg:after {
+    content: ",";
+    margin-left: 0.2rem;
+  }
+  .arg:last-child:after {
+    content: "";
   }
 }

@@ -1,13 +1,8 @@
 
 
 <div id="top">
-  <a href="../index.html">
-    <div class="back">
-      <img src="../assets/arrow.svg" alt="" id="backImg" width="25%">
-    </div>
-  </a>
+  {{>back-button}}
   <h1 class="main-title">{{name}} Class</h1>
-
 </div>
 
 <div id="bottom">
@@ -16,38 +11,16 @@
     <div id="table-contents">
       <div class="module-wrap side" id="{{name}}">
         <ul class="content-table">
-
-
-
-            {{#methods}}
-                <li class="index-item method{{#if access}} {{access}}{{/if}}{{#if overwritten_from}}{{#if deprecated}} deprecated{{/if}} inherited{{/if}}{{#if extended_from}} inherited{{/if}}">
-                    <a class="no-underline" href="#method_{{name}}">{{name}}</a>
-
-                    {{#if static}}
-                        <span class="flag static">static</span>
-                    {{/if}}
-                    {{#if deprecated}}
-                        <span class="flag deprecated">deprecated</span>
-                    {{/if}}
-                </li>
-            {{/methods}}
-
-
-        {{#methods}}
-            {{#is_constructor}}
-              <a class="no-underline" href="#{{name}}"><li class="no-underline" >{{name}}</li></a>
-            {{/is_constructor}}
-
-          
-        {{/methods}}
-      <ul>
+          {{>table}}
+        <ul>
     </div>
     </div>
 
     <div id="methods-wrap">
-{{#methods}}
 {{>method}}
-{{/methods}}
+      {{#methods}}
+{{>method}}
+      {{/methods}}
     </div>
 
   </div>
