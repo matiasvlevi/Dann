@@ -1,35 +1,14 @@
 <div id="method_{{name}}" class="module-wrap" >
     {{!-- <h3  class="name">{{name}}</h3> --}}
 
-    <h3 class="name">
-    {{#if is_constructor}}
-    <code>new {{name}}</code>
-    {{else}}
-    <code>{{name}}</code>
-    {{/if}}
-
-
-    {{#if params}}
-        <div class="args">
-            <code class="paren">(</code><ul class="args-list inline commas">
-            {{#params}}
-                <li class="arg">
-                    {{#if optional}}
-                          <code class="optional">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code>
-                    {{else}}
-                        <code>{{name}}</code>
-                    {{/if}}
-                </li>
-            {{/params}}
-            </ul><code class="paren">)</code>
-        </div>
-    {{else}}
-        <span class="paren">( )</span>
-    {{/if}}
-    </h3>
+    {{>method-name}}
 
     <div id="desc">
-      <p>{{{methodDescription}}}</p>
+        {{#if is_constructor}}
+            <p>{{description}}</p>
+        {{else}}
+            <p>{{{methodDescription}}}</p>
+        {{/if}}
     </div>
       <ul id="param-list">
       {{#params}}
