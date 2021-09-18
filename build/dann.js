@@ -476,7 +476,7 @@ let poolfuncs = {
 };
 
 /**
- * A way to describe matrices and perform operations with them.
+ * Matrix component.
  * @class Matrix
  * @for Matrix
  * @constructor
@@ -1291,7 +1291,7 @@ Matrix.transpose = function transpose(m) {
 };
 
 /**
- * A way to describe downsampling layers.
+ * Downsampling layer component
  * @class Layer
  * @for Layer
  * @constructor
@@ -1640,10 +1640,10 @@ Layer.prototype.getSubtype = function getSubtype() {
  * @submodule Create
  */
 /**
- * Deep Neural Network object. Can be trained with data or by neuro-evolution.
+ * Deep Neural Network component. Can be trained with data or by neuro-evolution.
  * @class Dann
- * @method constructor
  * @constructor
+ * @method constructor
  * @param {Number} [input] the number of input neurons.
  * @param {Number} [output] the number of output neurons.
  * @example
