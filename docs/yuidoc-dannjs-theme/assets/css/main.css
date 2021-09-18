@@ -263,7 +263,7 @@ ul {
   table,
   th,
   td {
-    border: 1px solid var(--dark);
+    border: 3px solid var(--dark);
     color: var(--main);
     font-size: 36px;
     font-family: 'light';
@@ -300,6 +300,7 @@ ul {
     width: 50%;
     height: 50%;
     margin: 3rem;
+    margin-bottom: 5rem;
   }
   .main-body {
     width: 100%;
@@ -323,9 +324,6 @@ ul {
 @media only screen and (min-width: 990px) {
   .js {
     font-size: 14px;
-  }
-  img[Attributes Style] {
-    width: 50%;
   }
   #top {
     width: 100%;
