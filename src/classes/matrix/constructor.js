@@ -1,5 +1,5 @@
 /**
- * A way to describe matrices and perform operations with them.
+ * Matrix component.
  * @class Matrix
  * @for Matrix
  * @constructor

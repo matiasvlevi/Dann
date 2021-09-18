@@ -3,10 +3,10 @@
  * @submodule Create
  */
 /**
- * Deep Neural Network object. Can be trained with data or by neuro-evolution.
+ * Deep Neural Network component. Can be trained with data or by neuro-evolution.
  * @class Dann
- * @method constructor
  * @constructor
+ * @method constructor
  * @param {Number} [input] the number of input neurons.
  * @param {Number} [output] the number of output neurons.
  * @example

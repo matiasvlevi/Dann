@@ -1,5 +1,5 @@
 /**
- * A way to describe downsampling layers.
+ * Downsampling layer component
  * @class Layer
  * @for Layer
  * @constructor
