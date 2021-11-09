@@ -45,29 +45,27 @@
  * </code>
  */
 
-Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
-  //optional parameter values:
-  let showLog = options.log || false;
-  let table = options.table || false;
-  let roundData = false;
+Dann.prototype.feedForward = function feedForward(
+  inputs,
+  options = Dann.ffwDefaults()
+) {
+  // Convert decimals to a scalar value
+  let roundData = options.decimals !== undefined ? true : false;
   let dec = pow(10, options.decimals) || 1000;
-  if (options.decimals !== undefined) {
-    roundData = true;
-  }
 
-  if (inputs.length === this.i) {
+  // Abort if input length is not the same as specified input.
+  if (this.checkArrayLength(inputs, this.i)) {
     this.Layers[0].layer = Matrix.fromArray(inputs);
   } else {
-    for (let i = 0; i < this.o; i++) {
-      this.outs[i] = 0;
-    }
     DannError.error(
-      'The input array length does not match the number of inputs the dannjs model has.',
+      `The input array length does not match the number of inputs the dannjs model has.`,
       'Dann.prototype.feedForward'
     );
-    return this.outs;
+    return;
   }
-  if (this.weights.length === 0) {
+
+  // Create weights matrices if they were not initiated & throw a warning
+  if (this.checkArrayLength(this.weights, 0)) {
     DannError.warn(
       'The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.',
       'Dann.prototype.feedForward'
@@ -75,6 +73,7 @@ Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
     this.makeWeights();
   }
 
+  // Forward propagation
   for (let i = 0; i < this.weights.length; i++) {
     let pLayer = this.Layers[i];
 
@@ -84,23 +83,20 @@ Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
     layerObj.layer.add(this.biases[i]);
     layerObj.layer.map(layerObj.actfunc);
   }
-
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
+
+  // Optional logs
   let out = this.outs;
-  if (showLog === true) {
+  if (options.log === true) {
     if (roundData === true) {
       out = out.map((x) => round(x * dec) / dec);
     }
-    if (table === true) {
-      console.log('Prediction: ');
-      console.table(out);
-    } else {
-      console.log('Prediction: ');
-      console.log(out);
-    }
+    Dann.print('Prediction: ');
+    Dann.print(out, options.table);
   }
   return out;
 };
-Dann.prototype.feed = function feed(inputs, options) {
-  return this.feedForward(inputs, options);
+// Alias
+Dann.prototype.feed = function feed() {
+  return this.feedForward.apply(this, arguments);
 };

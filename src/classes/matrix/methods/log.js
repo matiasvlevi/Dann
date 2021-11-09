@@ -13,16 +13,35 @@
  * m.log({decimals:3});
  * </code>
  */
-Matrix.prototype.log = function log(options) {
-  let table = false;
-  if (options !== undefined) {
-    if (options.table) {
-      table = options.table;
-    }
+Matrix.prototype.log = function log(
+  options = {
+    table: false,
+    decimals: 21,
   }
-  if (table) {
-    console.table(this.matrix);
+) {
+  // Limit decimals to maximum of 21
+  let dec = 1000;
+  if (options.decimals > 21) {
+    DannError.error(
+      'Maximum number of decimals is 21.',
+      'Matrix.prototype.log'
+    );
+    dec = pow(10, 21);
   } else {
-    console.log(this);
+    dec = pow(10, options.decimals) || dec;
+  }
+
+  // Copy matrix
+  let m = new Matrix(this.rows, this.cols);
+  m.set(this.matrix);
+
+  // round the values
+  m.map((x) => round(x * dec) / dec);
+
+  // Log
+  if (options.table) {
+    console.table(m.matrix);
+  } else {
+    console.log(m);
   }
 };

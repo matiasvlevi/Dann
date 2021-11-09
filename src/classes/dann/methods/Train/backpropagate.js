@@ -52,34 +52,39 @@
 Dann.prototype.backpropagate = function backpropagate(
   inputs,
   target,
-  options = {}
+  options = Dann.bckDefaults()
 ) {
-  //optional parameter values:
-  let showLog = options.log || false;
-  let mode = options.mode || 'cpu';
-  let recordLoss = options.saveLoss || false;
-  let table = options.table || false;
-  let dropout = options.dropout || undefined;
-
-  let targets = new Matrix(0, 0);
-  if (target.length === this.o) {
+  // Create expected target matrix if it has the same length as the output layer.
+  let targets;
+  if (this.checkArrayLength(target, this.o)) {
     targets = Matrix.fromArray(target);
   } else {
     DannError.error(
-      'The target array length does not match the number of ouputs the dannjs model has.',
-      'Dann.prototype.backpropagate'
-    );
-    return;
-  }
-  if (typeof this.lr !== 'number') {
-    DannError.error(
-      'The learning rate specified (Dann.lr property) is not a number.',
+      `The target array length does not match the number of ouputs the dannjs model has.`,
       'Dann.prototype.backpropagate'
     );
     return;
   }
 
-  this.outs = this.feedForward(inputs, { log: false, mode: mode });
+  // Stop if learning rate is not valid.
+  if (!this.checkLearningRate()) {
+    return;
+  }
+
+  // Create dropout matrices if they were specified
+  if (options.dropout !== undefined) {
+    // Check if valid or else abort
+    if (this.checkDropoutRate(options.dropout)) {
+      this.addDropout(options.dropout);
+    } else {
+      return;
+    }
+  }
+
+  // Forward propagation
+  this.outs = this.feedForward(inputs, { log: false, mode: options.mode });
+
+  // Backwards propagation
   this.errors[this.errors.length - 1] = Matrix.sub(
     targets,
     this.Layers[this.Layers.length - 1].layer
@@ -87,36 +92,17 @@ Dann.prototype.backpropagate = function backpropagate(
   this.gradients[this.gradients.length - 1] = Matrix.map(
     this.Layers[this.Layers.length - 1].layer,
     this.Layers[this.Layers.length - 1].actfunc_d
-  );
-  this.gradients[this.gradients.length - 1].mult(
-    this.errors[this.errors.length - 1]
-  );
-  this.gradients[this.gradients.length - 1].mult(this.lr);
-
-  if (dropout !== undefined) {
-    if (dropout >= 1) {
-      DannError.error(
-        'The probability value can not be bigger or equal to 1',
-        'Dann.prototype.backpropagate'
-      );
-      return;
-    } else if (dropout <= 0) {
-      DannError.error(
-        'The probability value can not be smaller or equal to 0',
-        'Dann.prototype.backpropagate'
-      );
-      return;
-    }
-    // init Dropout here.
-    this.addDropout(dropout);
-  }
+  )
+    .mult(this.errors[this.errors.length - 1])
+    .mult(this.lr);
 
   for (let i = this.weights.length - 1; i > 0; i--) {
-    let h_t = Matrix.transpose(this.Layers[i].layer);
-    let weights_deltas = Matrix.mult(this.gradients[i], h_t);
+    let weights_deltas = Matrix.mult(
+      this.gradients[i],
+      Matrix.transpose(this.Layers[i].layer)
+    );
 
-    if (dropout !== undefined) {
-      // Compute dropout
+    if (options.dropout !== undefined) {
       weights_deltas = weights_deltas.mult(this.dropout[i]);
     }
 
@@ -128,42 +114,37 @@ Dann.prototype.backpropagate = function backpropagate(
     this.gradients[i - 1] = Matrix.map(
       this.Layers[i].layer,
       this.Layers[i].actfunc_d
-    );
-    this.gradients[i - 1].mult(this.errors[i - 1]);
-    this.gradients[i - 1].mult(this.lr);
+    )
+      .mult(this.errors[i - 1])
+      .mult(this.lr);
   }
 
   let i_t = Matrix.transpose(this.Layers[0].layer);
   let weights_deltas = Matrix.mult(this.gradients[0], i_t);
 
-  if (dropout !== undefined) {
-    // Add dropout here
+  if (options.dropout !== undefined) {
     weights_deltas = weights_deltas.mult(this.dropout[0]);
   }
 
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
 
+  // Compute loss value
   this.loss = this.lossfunc(this.outs, target, this.percentile);
-  if (recordLoss === true) {
+  if (options.saveLoss === true) {
     this.losses.push(this.loss);
   }
-  if (showLog === true) {
-    console.log('Prediction: ');
-    if (table) {
-      console.table(this.outs);
-    } else {
-      console.log(this.outs);
-    }
-    console.log('target: ');
-    if (table) {
-      console.table(target);
-    } else {
-      console.log(target);
-    }
-    console.log('Loss: ', this.loss);
+
+  // Optional logs
+  if (options.log === true) {
+    Dann.print('Prediction: ');
+    Dann.print(this.outs, options.table);
+    Dann.print('target: ');
+    Dann.print(target, options.table);
+    Dann.print(`Loss: ${this.loss}`);
   }
 };
-Dann.prototype.train = function train(inputs, target, options) {
-  return this.backpropagate(inputs, target, options);
+// Alias
+Dann.prototype.train = function train() {
+  return this.backpropagate.apply(this, arguments);
 };
