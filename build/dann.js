@@ -832,17 +832,36 @@ Matrix.prototype.insert = function insert(value, x, y) {
  * m.log({decimals:3});
  * </code>
  */
-Matrix.prototype.log = function log(options) {
-  let table = false;
-  if (options !== undefined) {
-    if (options.table) {
-      table = options.table;
-    }
+Matrix.prototype.log = function log(
+  options = {
+    table: false,
+    decimals: 21,
   }
-  if (table) {
-    console.table(this.matrix);
+) {
+  // Limit decimals to maximum of 21
+  let dec = 1000;
+  if (options.decimals > 21) {
+    DannError.error(
+      'Maximum number of decimals is 21.',
+      'Matrix.prototype.log'
+    );
+    dec = pow(10, 21);
   } else {
-    console.log(this);
+    dec = pow(10, options.decimals) || dec;
+  }
+
+  // Copy matrix
+  let m = new Matrix(this.rows, this.cols);
+  m.set(this.matrix);
+
+  // round the values
+  m.map((x) => round(x * dec) / dec);
+
+  // Log
+  if (options.table) {
+    console.table(m.matrix);
+  } else {
+    console.log(m);
   }
 };
 
@@ -1685,6 +1704,90 @@ Dann = function Dann(i = 1, o = 1) {
   this.percentile = 0.5;
 };
 
+Dann.logDefaults = function logDefaults() {
+  return {
+    struct: true,
+    misc: true,
+    weights: false,
+    gradients: false,
+    errors: false,
+    layers: false,
+    table: false,
+    decimals: 3,
+    details: false,
+  };
+};
+
+Dann.ffwDefaults = function ffwDefaults() {
+  return {
+    log: false,
+    table: false,
+    decimals: undefined,
+  };
+};
+
+Dann.bckDefaults = function bckDefaults() {
+  return {
+    log: false,
+    mode: 'cpu',
+    saveLoss: false,
+    table: false,
+    dropout: undefined,
+  };
+};
+
+Dann.print = function print(v, option = false) {
+  if (option) {
+    console.table(v);
+  } else {
+    console.log(v);
+  }
+};
+
+Dann.prototype.checkArrayLength = function checkArrayLength(arr, n) {
+  if (arr.length === n) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Dann.prototype.checkLearningRate = function checkLearningRate() {
+  if (typeof this.lr !== 'number') {
+    DannError.error(
+      'The learning rate specified (Dann.lr property) is not a number.',
+      'Dann.prototype.backpropagate'
+    );
+    return false;
+  } else {
+    if (this.lr >= 1) {
+      DannError.error(
+        'The learning rate specified is greater or equal to 1',
+        'Dann.prototype.backpropagate'
+      );
+      return false;
+    }
+  }
+  return true;
+};
+
+Dann.prototype.checkDropoutRate = function (dropout = undefined) {
+  if (dropout >= 1) {
+    DannError.error(
+      'The probability value can not be bigger or equal to 1',
+      'Dann.prototype.backpropagate'
+    );
+    return false;
+  } else if (dropout <= 0) {
+    DannError.error(
+      'The probability value can not be smaller or equal to 0',
+      'Dann.prototype.backpropagate'
+    );
+    return false;
+  }
+  return true;
+};
+
 /*
  * Undisplayed documentation
  * Creates dropout matrices
@@ -2143,29 +2246,27 @@ Dann.prototype.setLossFunction = function setLossFunction(
  * </code>
  */
 
-Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
-  //optional parameter values:
-  let showLog = options.log || false;
-  let table = options.table || false;
-  let roundData = false;
+Dann.prototype.feedForward = function feedForward(
+  inputs,
+  options = Dann.ffwDefaults()
+) {
+  // Convert decimals to a scalar value
+  let roundData = options.decimals !== undefined ? true : false;
   let dec = pow(10, options.decimals) || 1000;
-  if (options.decimals !== undefined) {
-    roundData = true;
-  }
 
-  if (inputs.length === this.i) {
+  // Abort if input length is not the same as specified input.
+  if (this.checkArrayLength(inputs, this.i)) {
     this.Layers[0].layer = Matrix.fromArray(inputs);
   } else {
-    for (let i = 0; i < this.o; i++) {
-      this.outs[i] = 0;
-    }
     DannError.error(
-      'The input array length does not match the number of inputs the dannjs model has.',
+      `The input array length does not match the number of inputs the dannjs model has.`,
       'Dann.prototype.feedForward'
     );
-    return this.outs;
+    return;
   }
-  if (this.weights.length === 0) {
+
+  // Create weights matrices if they were not initiated & throw a warning
+  if (this.checkArrayLength(this.weights, 0)) {
     DannError.warn(
       'The weights were not initiated. Please use the Dann.makeWeights(); function after the initialization of the layers.',
       'Dann.prototype.feedForward'
@@ -2173,6 +2274,7 @@ Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
     this.makeWeights();
   }
 
+  // Forward propagation
   for (let i = 0; i < this.weights.length; i++) {
     let pLayer = this.Layers[i];
 
@@ -2182,25 +2284,22 @@ Dann.prototype.feedForward = function feedForward(inputs, options = {}) {
     layerObj.layer.add(this.biases[i]);
     layerObj.layer.map(layerObj.actfunc);
   }
-
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
+
+  // Optional logs
   let out = this.outs;
-  if (showLog === true) {
+  if (options.log === true) {
     if (roundData === true) {
       out = out.map((x) => round(x * dec) / dec);
     }
-    if (table === true) {
-      console.log('Prediction: ');
-      console.table(out);
-    } else {
-      console.log('Prediction: ');
-      console.log(out);
-    }
+    Dann.print('Prediction: ');
+    Dann.print(out, options.table);
   }
   return out;
 };
-Dann.prototype.feed = function feed(inputs, options) {
-  return this.feedForward(inputs, options);
+// Alias
+Dann.prototype.feed = function feed() {
+  return this.feedForward.apply(this, arguments);
 };
 
 /**
@@ -2274,24 +2373,9 @@ Dann.prototype.feed = function feed(inputs, options) {
  * nn.log();
  * </code>
  */
-Dann.prototype.log = function log(
-  options = {
-    struct: true,
-    misc: true,
-  }
-) {
-  //Optional parameters values:
-  let showWeights = options.weights || false;
-  let showGradients = options.gradients || false;
-  let showErrors = options.errors || false;
-  let showBiases = options.biases || false;
-  let showBaseSettings = options.struct || false;
-  let showOther = options.misc || false;
-  let showDetailedLayers = options.layers || false;
-  let table = options.table || false;
-  let decimals = 1000;
-
+Dann.prototype.log = function log(options = Dann.logDefaults()) {
   // Limit decimals to maximum of 21
+  let decimals = 1000;
   if (options.decimals > 21) {
     DannError.error('Maximum number of decimals is 21.', 'Dann.prototype.log');
     decimals = pow(10, 21);
@@ -2302,92 +2386,79 @@ Dann.prototype.log = function log(
   // Details sets all values to true.
   if (options.details) {
     let v = options.details;
-    showGradients = v;
-    showWeights = v;
-    showErrors = v;
-    showBiases = v;
-    showBaseSettings = v;
-    showOther = v;
-    showDetailedLayers = v;
+    options.gradients = v;
+    options.weights = v;
+    options.errors = v;
+    options.biases = v;
+    options.struct = v;
+    options.misc = v;
+    options.layers = v;
   }
 
   // Initiate weights if they weren't initiated allready.
   if (this.weights.length === 0) {
     this.makeWeights();
   }
-  if (showBaseSettings === true) {
+  if (options.struct) {
     console.log('Dann Model:');
-  }
-  if (showBaseSettings) {
     console.log('Layers:');
     for (let i = 0; i < this.Layers.length; i++) {
       let layerObj = this.Layers[i];
-      let str = layerObj.type + ' Layer: ';
+      let str = `${layerObj.type} Layer:`;
       let afunc = '';
       if (i === 0) {
-        str = 'input Layer:   ';
+        str = 'input Layer:';
         afunc = '       ';
-      } else if (i === layerObj.length - 1) {
-        str = 'output Layer:  ';
-        afunc = '  (' + layerObj.actname + ')';
+      } else if (i === this.Layers.length - 1) {
+        str = 'output Layer:';
+        afunc = `  (${layerObj.actname})`;
       } else {
-        afunc = '  (' + layerObj.actname + ')';
+        afunc = `  (${layerObj.actname})`;
       }
-      console.log('\t' + str + layerObj.size + afunc);
-      if (showDetailedLayers) {
+      let space = '  ';
+      console.log(`\t${str}${space}${layerObj.size}${afunc}`);
+      if (options.layers) {
         console.log(this.Layers[i]);
       }
     }
   }
-  if (showErrors) {
+  if (options.errors) {
     console.log('Errors:');
     for (let i = 0; i < this.errors.length; i++) {
-      let e = Matrix.toArray(this.errors[i]);
-      let er = [];
-      for (let j = 0; j < e.length; j++) {
-        er[j] = round(e[j] * decimals) / decimals;
-      }
-      console.log(er);
+      let e = this.errors[i];
+      e.log({ decimals: options.decimals, table: options.table });
     }
   }
-  if (showGradients) {
+  if (options.gradients) {
     console.log('Gradients:');
     for (let i = 0; i < this.gradients.length; i++) {
-      let g = Matrix.toArray(this.gradients[i]);
-      let gr = [];
-      for (let j = 0; j < g.length; j++) {
-        gr[j] = round(g[j] * decimals) / decimals;
-      }
-      console.log(gr);
+      let g = this.gradients[i];
+      g.log({ decimals: options.decimals, table: options.table });
     }
   }
-  if (showWeights) {
+  if (options.weights) {
     console.log('Weights:');
     for (let i = 0; i < this.weights.length; i++) {
       let w = this.weights[i];
-      w.log({ decimals: options.decimals, table: table });
+      w.log({ decimals: options.decimals, table: options.table });
     }
   }
-  if (showBiases) {
+  if (options.biases) {
     console.log('Biases:');
     for (let i = 0; i < this.biases.length; i++) {
-      let b = Matrix.toArray(this.biases[i]);
-      let br = [];
-      for (let j = 0; j < b.length; j++) {
-        br[j] = round(b[j] * decimals) / decimals;
-      }
-      console.log(br);
+      let b = this.biases[i];
+      b.log({ decimals: options.decimals, table: options.table });
     }
   }
-  if (showOther) {
+  if (options.misc) {
     console.log('Other Values: ');
 
-    console.log('\t' + 'Learning rate: ' + this.lr);
-    console.log('\t' + 'Loss Function: ' + this.lossfunc_s);
-    console.log('\t' + 'Current Epoch: ' + this.epoch);
-    console.log('\t' + 'Latest Loss: ' + this.loss);
+    console.log('\t' + `Learning rate: ${this.lr}`);
+    console.log('\t' + `Loss Function: ${this.lossfunc_s}`);
+    console.log('\t' + `Current Epoch: ${this.epoch}`);
+    console.log('\t' + `Latest Loss: ${this.loss}`);
   }
-  console.log(' ');
+  console.log('\n');
   return;
 };
 
@@ -2445,34 +2516,39 @@ Dann.prototype.log = function log(
 Dann.prototype.backpropagate = function backpropagate(
   inputs,
   target,
-  options = {}
+  options = Dann.bckDefaults()
 ) {
-  //optional parameter values:
-  let showLog = options.log || false;
-  let mode = options.mode || 'cpu';
-  let recordLoss = options.saveLoss || false;
-  let table = options.table || false;
-  let dropout = options.dropout || undefined;
-
-  let targets = new Matrix(0, 0);
-  if (target.length === this.o) {
+  // Create expected target matrix if it has the same length as the output layer.
+  let targets;
+  if (this.checkArrayLength(target, this.o)) {
     targets = Matrix.fromArray(target);
   } else {
     DannError.error(
-      'The target array length does not match the number of ouputs the dannjs model has.',
-      'Dann.prototype.backpropagate'
-    );
-    return;
-  }
-  if (typeof this.lr !== 'number') {
-    DannError.error(
-      'The learning rate specified (Dann.lr property) is not a number.',
+      `The target array length does not match the number of ouputs the dannjs model has.`,
       'Dann.prototype.backpropagate'
     );
     return;
   }
 
-  this.outs = this.feedForward(inputs, { log: false, mode: mode });
+  // Stop if learning rate is not valid.
+  if (!this.checkLearningRate()) {
+    return;
+  }
+
+  // Create dropout matrices if they were specified
+  if (options.dropout !== undefined) {
+    // Check if valid or else abort
+    if (this.checkDropoutRate(options.dropout)) {
+      this.addDropout(options.dropout);
+    } else {
+      return;
+    }
+  }
+
+  // Forward propagation
+  this.outs = this.feedForward(inputs, { log: false, mode: options.mode });
+
+  // Backwards propagation
   this.errors[this.errors.length - 1] = Matrix.sub(
     targets,
     this.Layers[this.Layers.length - 1].layer
@@ -2480,36 +2556,17 @@ Dann.prototype.backpropagate = function backpropagate(
   this.gradients[this.gradients.length - 1] = Matrix.map(
     this.Layers[this.Layers.length - 1].layer,
     this.Layers[this.Layers.length - 1].actfunc_d
-  );
-  this.gradients[this.gradients.length - 1].mult(
-    this.errors[this.errors.length - 1]
-  );
-  this.gradients[this.gradients.length - 1].mult(this.lr);
-
-  if (dropout !== undefined) {
-    if (dropout >= 1) {
-      DannError.error(
-        'The probability value can not be bigger or equal to 1',
-        'Dann.prototype.backpropagate'
-      );
-      return;
-    } else if (dropout <= 0) {
-      DannError.error(
-        'The probability value can not be smaller or equal to 0',
-        'Dann.prototype.backpropagate'
-      );
-      return;
-    }
-    // init Dropout here.
-    this.addDropout(dropout);
-  }
+  )
+    .mult(this.errors[this.errors.length - 1])
+    .mult(this.lr);
 
   for (let i = this.weights.length - 1; i > 0; i--) {
-    let h_t = Matrix.transpose(this.Layers[i].layer);
-    let weights_deltas = Matrix.mult(this.gradients[i], h_t);
+    let weights_deltas = Matrix.mult(
+      this.gradients[i],
+      Matrix.transpose(this.Layers[i].layer)
+    );
 
-    if (dropout !== undefined) {
-      // Compute dropout
+    if (options.dropout !== undefined) {
       weights_deltas = weights_deltas.mult(this.dropout[i]);
     }
 
@@ -2521,44 +2578,39 @@ Dann.prototype.backpropagate = function backpropagate(
     this.gradients[i - 1] = Matrix.map(
       this.Layers[i].layer,
       this.Layers[i].actfunc_d
-    );
-    this.gradients[i - 1].mult(this.errors[i - 1]);
-    this.gradients[i - 1].mult(this.lr);
+    )
+      .mult(this.errors[i - 1])
+      .mult(this.lr);
   }
 
   let i_t = Matrix.transpose(this.Layers[0].layer);
   let weights_deltas = Matrix.mult(this.gradients[0], i_t);
 
-  if (dropout !== undefined) {
-    // Add dropout here
+  if (options.dropout !== undefined) {
     weights_deltas = weights_deltas.mult(this.dropout[0]);
   }
 
   this.weights[0].add(weights_deltas);
   this.biases[0].add(this.gradients[0]);
 
+  // Compute loss value
   this.loss = this.lossfunc(this.outs, target, this.percentile);
-  if (recordLoss === true) {
+  if (options.saveLoss === true) {
     this.losses.push(this.loss);
   }
-  if (showLog === true) {
-    console.log('Prediction: ');
-    if (table) {
-      console.table(this.outs);
-    } else {
-      console.log(this.outs);
-    }
-    console.log('target: ');
-    if (table) {
-      console.table(target);
-    } else {
-      console.log(target);
-    }
-    console.log('Loss: ', this.loss);
+
+  // Optional logs
+  if (options.log === true) {
+    Dann.print('Prediction: ');
+    Dann.print(this.outs, options.table);
+    Dann.print('target: ');
+    Dann.print(target, options.table);
+    Dann.print(`Loss: ${this.loss}`);
   }
 };
-Dann.prototype.train = function train(inputs, target, options) {
-  return this.backpropagate(inputs, target, options);
+// Alias
+Dann.prototype.train = function train() {
+  return this.backpropagate.apply(this, arguments);
 };
 
 /**
