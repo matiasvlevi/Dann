@@ -16,6 +16,7 @@ module.exports = [
 
   // Dann
   'src/classes/dann/constructor.js',
+  'src/classes/dann/methods/Core/*.js',
   'src/classes/dann/methods/Create/*.js',
   'src/classes/dann/methods/Interact/*.js',
   'src/classes/dann/methods/Train/*.js',
