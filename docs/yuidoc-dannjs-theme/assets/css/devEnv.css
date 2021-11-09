@@ -1,0 +1,73 @@
+@font-face {
+  font-family: 'light';
+  src: URL('../fonts/Comfortaa-Light.ttf') format("truetype");
+}
+
+
+h1, h2, h3 {
+  color: #f69e7b;
+  font-family: 'light';
+  margin:1em 0 15px;
+  padding:0;
+  font-weight:bold;
+  line-height:1.2;
+  cursor:text;
+  outline: none;
+  position:relative;
+}
+h1 {
+  font-size:2.5em;
+  border-bottom:2px solid #2d3245;
+  color: #f69e7b;
+  font-family: 'light';
+}
+
+h2 {
+  font-size:2em;
+}
+.main-header h1.project-name {
+  display: inline;
+  padding: 0;
+  font-size: 24px;
+  color: #f69e7b;
+  border: none;
+  padding-right: 8px;
+  font-family: 'light';
+
+}
+
+.project-name {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  cursor: pointer;
+}
+
+p, span {
+  font-family: 'light';
+  color: #f69e7b;
+}
+
+.main-body .content {
+  padding: 28px 18px;
+}
+
+.main-body .content>h1 {
+  margin-top: 0;
+}
+.main-header .project-title {
+  position: relative;
+  top: 8px;
+  padding-left: 84px;
+  transition: padding 0.5s, top 0.5s;
+  transition-delay: 0.2s, 0s;
+  float: left;
+}
+
+.main-header.compact .project-title {
+  top: 2px;
+  padding-left: 10px;
+  transition-delay: 0.25s, 0s;
+}
