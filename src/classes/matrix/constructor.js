@@ -7,8 +7,7 @@
  * @param {Number} cols the number of columns.
  * @example
  * <code>
- * const Dannjs = require('dannjs');
- * const Matrix = Dannjs.matrix;
+ * const { Matrix } = require('dannjs');
  * </code>
  * <code>
  * const m = new Matrix(3,4);

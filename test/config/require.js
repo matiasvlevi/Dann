@@ -1,14 +1,19 @@
 //Dannjs imports
-const Dannjs = require('../build/dann.js');
-const Dann = Dannjs.dann;
-const Matrix = Dannjs.matrix;
-const Layer = Dannjs.layer;
-const XOR = Dannjs.xor;
-const makeXOR = Dannjs.makeXOR;
-const act = Dannjs.activations;
-const lossfuncs = Dannjs.lossfuncs;
-const poolfuncs = Dannjs.poolfuncs;
-const Add = Dannjs.add;
+const {
+  Dann,
+  Layer,
+  Matrix,
+  Add,
+  XOR,
+  makeXOR,
+  makeBinary,
+  activations,
+  lossfuncs,
+  poolfuncs,
+} = require('../build/dann.js');
+
+console.log(XOR);
+
 //Chai imports
 const assert = require('chai').assert;
 const expect = require('chai').expect;

@@ -11,8 +11,7 @@
  * @param {Number} [output] the number of output neurons.
  * @example
  * <code>
- * const Dannjs = require('dannjs');
- * const Dann = Dannjs.dann;
+ * const { Dann } = require('dannjs');
  * </code>
  * <code>
  * // 784 input, 2 output model

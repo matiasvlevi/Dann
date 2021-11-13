@@ -484,8 +484,7 @@ let poolfuncs = {
  * @param {Number} cols the number of columns.
  * @example
  * <code>
- * const Dannjs = require('dannjs');
- * const Matrix = Dannjs.matrix;
+ * const { Matrix } = require('dannjs');
  * </code>
  * <code>
  * const m = new Matrix(3,4);
@@ -1320,8 +1319,7 @@ Matrix.transpose = function transpose(m) {
  * @param {Number} Stride The number of jumps the sample is going to perform for each iteration.
  * @example
  * <code>
- * const Dannjs = require('dannjs');
- * const Layer = Dannjs.layer;
+ * const { Layer } = require('dannjs');
  * </code>
  * <code>
  * const l1 = new Layer('avgpool', 16, 2, 2);
@@ -1667,8 +1665,7 @@ Layer.prototype.getSubtype = function getSubtype() {
  * @param {Number} [output] the number of output neurons.
  * @example
  * <code>
- * const Dannjs = require('dannjs');
- * const Dann = Dannjs.dann;
+ * const { Dann } = require('dannjs');
  * </code>
  * <code>
  * // 784 input, 2 output model
@@ -3303,15 +3300,23 @@ Add.loss = function (name, loss) {
 //Node Module Exports:
 if (!isBrowser) {
   module.exports = {
-    dann: Dann,
-    layer: Layer,
-    matrix: Matrix,
+    Dann,
+    Layer,
+    Matrix,
+    Add,
     activations: activations,
     lossfuncs: lossfuncs,
     poolfuncs: poolfuncs,
-    xor: XOR,
+    XOR,
     makeXOR: makeXOR,
     makeBinary: makeBinary,
+
+    // Leaving old exports for compatibility with older versions
+    // Deprecated as of v2.4.0
+    dann: Dann,
+    layer: Layer,
+    matrix: Matrix,
     add: Add,
+    xor: XOR,
   };
 }

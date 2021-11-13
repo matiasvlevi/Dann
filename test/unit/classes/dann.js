@@ -25,8 +25,8 @@ suite('Dann Object', function () {
       test('Should have initiated an output layer with sigmoid', function () {
         assert.equal('sigmoid', nn.Layers[1].actname);
         assert.equal('sigmoid_d', nn.Layers[1].actname_d);
-        assert.equal(act.sigmoid, nn.Layers[1].actfunc);
-        assert.equal(act.sigmoid_d, nn.Layers[1].actfunc_d);
+        assert.equal(activations.sigmoid, nn.Layers[1].actfunc);
+        assert.equal(activations.sigmoid_d, nn.Layers[1].actfunc_d);
       });
     });
     suite('With arguments & makeWeights', function () {
@@ -55,8 +55,8 @@ suite('Dann Object', function () {
       test('Should have initiated an output layer with sigmoid', function () {
         assert.equal('sigmoid', nn.Layers[1].actname);
         assert.equal('sigmoid_d', nn.Layers[1].actname_d);
-        assert.equal(act.sigmoid, nn.Layers[1].actfunc);
-        assert.equal(act.sigmoid_d, nn.Layers[1].actfunc_d);
+        assert.equal(activations.sigmoid, nn.Layers[1].actfunc);
+        assert.equal(activations.sigmoid_d, nn.Layers[1].actfunc_d);
       });
       test('Should have initiated errors matrices', function () {
         for (let i = 0; i < 1; i++) {
@@ -186,8 +186,8 @@ suite('Dann Object', function () {
           let derivative = name + '_d';
           assert.equal(name, nn.Layers[i].actname);
           assert.equal(derivative, nn.Layers[i].actname_d);
-          assert.equal(act[name], nn.Layers[i].actfunc);
-          assert.equal(act[derivative], nn.Layers[i].actfunc_d);
+          assert.equal(activations[name], nn.Layers[i].actfunc);
+          assert.equal(activations[derivative], nn.Layers[i].actfunc_d);
         }
       });
       test('Should have initiated errors matrices', function () {
@@ -319,8 +319,8 @@ suite('Dann Object', function () {
       test('Should have initiated a tanH activation', function () {
         assert.equal('tanH', nn.Layers[1].actname);
         assert.equal('tanH_d', nn.Layers[1].actname_d);
-        assert.equal(act.tanH, nn.Layers[1].actfunc);
-        assert.equal(act.tanH_d, nn.Layers[1].actfunc_d);
+        assert.equal(activations.tanH, nn.Layers[1].actfunc);
+        assert.equal(activations.tanH_d, nn.Layers[1].actfunc_d);
       });
       test('Should have initiated matrix', function () {
         assert.instanceOf(nn.Layers[1].layer, Matrix);
@@ -366,8 +366,8 @@ suite('Dann Object', function () {
           let derivative = name + '_d';
           assert.equal(name, nn.Layers[i].actname);
           assert.equal(derivative, nn.Layers[i].actname_d);
-          assert.equal(act[name], nn.Layers[i].actfunc);
-          assert.equal(act[derivative], nn.Layers[i].actfunc_d);
+          assert.equal(activations[name], nn.Layers[i].actfunc);
+          assert.equal(activations[derivative], nn.Layers[i].actfunc_d);
         }
       });
     });
@@ -440,8 +440,8 @@ suite('Dann Object', function () {
         let derivative = name + '_d';
         assert.equal(name, nn.Layers[2].actname);
         assert.equal(derivative, nn.Layers[2].actname_d);
-        assert.equal(act[name], nn.Layers[2].actfunc);
-        assert.equal(act[derivative], nn.Layers[2].actfunc_d);
+        assert.equal(activations[name], nn.Layers[2].actfunc);
+        assert.equal(activations[derivative], nn.Layers[2].actfunc_d);
       });
     });
   });
@@ -462,9 +462,7 @@ suite('Dann Object', function () {
     });
     suite('XOR Training', function () {
       let nn;
-      let dataset;
       setup(function () {
-        dataset = XOR;
         nn = new Dann(2, 1);
         nn.addHiddenLayer(12, 'leakyReLU');
         nn.outputActivation('sigmoid');
@@ -472,7 +470,7 @@ suite('Dann Object', function () {
         nn.lr = 0.12;
       });
       test('Should output a prediction without any training', function () {
-        for (data of dataset) {
+        for (data of XOR) {
           let pred = nn.feedForward(data.input);
           assert.typeOf(pred[0], 'Number');
           assert.instanceOf(pred, Array);
@@ -480,11 +478,11 @@ suite('Dann Object', function () {
       });
       test('Should output a prediction after 5000 epochs (99% accuracy required to pass)', function () {
         for (let e = 0; e < 5000; e++) {
-          for (data of dataset) {
+          for (data of XOR) {
             nn.backpropagate(data.input, data.output);
           }
         }
-        for (data of dataset) {
+        for (data of XOR) {
           let pred = nn.feedForward(data.input);
           assert.typeOf(pred[0], 'Number');
           assert.instanceOf(pred, Array);
@@ -540,8 +538,8 @@ suite('Dann Object', function () {
           let derivative = name + '_d';
           assert.equal(name, nn1.Layers[i].actname);
           assert.equal(derivative, nn1.Layers[i].actname_d);
-          assert.equal(act[name], nn1.Layers[i].actfunc);
-          assert.equal(act[derivative], nn1.Layers[i].actfunc_d);
+          assert.equal(activations[name], nn1.Layers[i].actfunc);
+          assert.equal(activations[derivative], nn1.Layers[i].actfunc_d);
         }
       });
       test('Should have loaded errors matrices', function () {
@@ -698,8 +696,8 @@ suite('Dann Object', function () {
           let derivative = name + '_d';
           assert.equal(name, nn1.Layers[i].actname);
           assert.equal(derivative, nn1.Layers[i].actname_d);
-          assert.equal(act[name], nn1.Layers[i].actfunc);
-          assert.equal(act[derivative], nn1.Layers[i].actfunc_d);
+          assert.equal(activations[name], nn1.Layers[i].actfunc);
+          assert.equal(activations[derivative], nn1.Layers[i].actfunc_d);
         }
       });
       test('Should have loaded errors matrices', function () {

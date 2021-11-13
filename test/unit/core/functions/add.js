@@ -9,17 +9,17 @@ suite('', function () {
       });
       test('Sould have added an activation', function () {
         Add.activation('mynewfunc', func, func_d);
-        assert.exists(act.mynewfunc);
-        assert.exists(act.mynewfunc_d);
-        assert.equal(act.mynewfunc(3), func(3));
-        assert.equal(act.mynewfunc_d(3), func_d(3));
+        assert.exists(activations.mynewfunc);
+        assert.exists(activations.mynewfunc_d);
+        assert.equal(activations.mynewfunc(3), func(3));
+        assert.equal(activations.mynewfunc_d(3), func_d(3));
       });
       test('Should not work with more than one argument for activation', function () {
         let func_twoargs = (x, y) => x * x;
         let func_twoargs_d = (x) => 2 * x;
         Add.activation('mynewfunc2', func_twoargs, func_twoargs_d);
-        assert.notExists(act.mynewfunc2);
-        assert.notExists(act.mynewfunc2_d);
+        assert.notExists(activations.mynewfunc2);
+        assert.notExists(activations.mynewfunc2_d);
       });
       test('Should apply to a Dann model', function () {
         const nn = new Dann();

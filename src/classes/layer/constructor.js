@@ -9,8 +9,7 @@
  * @param {Number} Stride The number of jumps the sample is going to perform for each iteration.
  * @example
  * <code>
- * const Dannjs = require('dannjs');
- * const Layer = Dannjs.layer;
+ * const { Layer } = require('dannjs');
  * </code>
  * <code>
  * const l1 = new Layer('avgpool', 16, 2, 2);
