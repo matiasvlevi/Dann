@@ -1768,7 +1768,7 @@ Dann.prototype.checkLearningRate = function checkLearningRate() {
   return true;
 };
 
-Dann.prototype.checkDropoutRate = function (dropout = undefined) {
+Dann.prototype.checkDropoutRate = function (dropout) {
   if (dropout >= 1) {
     DannError.error(
       'The probability value can not be bigger or equal to 1',
@@ -2285,10 +2285,10 @@ Dann.prototype.feedForward = function feedForward(
 
   // Optional logs
   let out = this.outs;
+  if (roundData === true) {
+    out = out.map((x) => round(x * dec) / dec);
+  }
   if (options.log === true) {
-    if (roundData === true) {
-      out = out.map((x) => round(x * dec) / dec);
-    }
     Dann.print('Prediction: ');
     Dann.print(out, options.table);
   }

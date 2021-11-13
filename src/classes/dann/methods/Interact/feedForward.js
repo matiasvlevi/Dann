@@ -87,10 +87,10 @@ Dann.prototype.feedForward = function feedForward(
 
   // Optional logs
   let out = this.outs;
+  if (roundData === true) {
+    out = out.map((x) => round(x * dec) / dec);
+  }
   if (options.log === true) {
-    if (roundData === true) {
-      out = out.map((x) => round(x * dec) / dec);
-    }
     Dann.print('Prediction: ');
     Dann.print(out, options.table);
   }
