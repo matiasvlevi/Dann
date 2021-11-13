@@ -4,20 +4,20 @@ For more info [see the project's README](https://github.com/matiasvlevi/Dann/blo
 <br/>
 ## What to contribute?
 
-Testing the library and reporting feedback on what you think about is already enough.
+Testing the library and reporting feedback on what you think about it is already enough.
 Adding issues on GitHub suggesting changes/addons are more than welcome.
 
-If you want to actually make the changes source yourself, nothing is stopping you, just follow the steps below! Changes you make might be added to the `master` branch.
+If you want to actually make the changes in the source yourself, nothing is stopping you, just follow the steps below! Changes you make might be added to the `master` branch.
 
 <br/>
 
 
 ## Setup
 
-Create a Dannjs fork & clone the repository on your machine.
+Create a Dannjs fork & clone your fork on your machine.
 
 ```
-git clone https://github.com/matiasvlevi/Dann.git
+git clone https://github.com/username/Dann.git
 ```
 
 Install dev dependencies with :
