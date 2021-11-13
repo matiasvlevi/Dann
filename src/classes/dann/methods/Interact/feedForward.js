@@ -22,6 +22,11 @@
  * <td>If set to true, it will log a report in the console.</td>
  * </tr>
  * <tr>
+ * <td>asLabel</td>
+ * <td>Boolean</td>
+ * <td>If set to true, the function will output the index of the neuron with the highest value.</td>
+ * </tr>
+ * <tr>
  * <td>table</td>
  * <td>Boolean</td>
  * <td>If the &#39;log&#39; option is set to true, setting this value to true will print the arrays of this function in tables.</td>
@@ -87,7 +92,16 @@ Dann.prototype.feedForward = function feedForward(
 
   // Optional logs
   let out = this.outs;
-  if (roundData === true) {
+  if (roundData && options.asLabel) {
+    DannError.warn(
+      'Cannot round if output is a label',
+      'Dann.prototype.feedForward'
+    );
+  }
+  if (options.asLabel === true) {
+    out = Dann.asLabel(out);
+  }
+  if (roundData === true && options.asLabel !== true) {
     out = out.map((x) => round(x * dec) / dec);
   }
   if (options.log === true) {
