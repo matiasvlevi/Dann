@@ -17,6 +17,7 @@ Dann.ffwDefaults = function ffwDefaults() {
     log: false,
     table: false,
     decimals: undefined,
+    asLabel: false,
   };
 };
 
