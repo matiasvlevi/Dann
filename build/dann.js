@@ -1,6 +1,6 @@
 /*! Dann.js */
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.3.14';
+const VERSION = 'v2.4.0';
 
 /*
  * Undisplayed documentation
@@ -834,27 +834,27 @@ Matrix.prototype.insert = function insert(value, x, y) {
 Matrix.prototype.log = function log(
   options = {
     table: false,
-    decimals: 21,
+    decimals: undefined,
   }
 ) {
-  // Limit decimals to maximum of 21
-  let dec = 1000;
-  if (options.decimals > 21) {
-    DannError.error(
-      'Maximum number of decimals is 21.',
-      'Matrix.prototype.log'
-    );
-    dec = pow(10, 21);
-  } else {
-    dec = pow(10, options.decimals) || dec;
-  }
-
   // Copy matrix
   let m = new Matrix(this.rows, this.cols);
   m.set(this.matrix);
 
   // round the values
-  m.map((x) => round(x * dec) / dec);
+  if (options.decimals !== undefined) {
+    let dec = 1000;
+    if (options.decimals > 21) {
+      DannError.warn(
+        'Maximum number of decimals is 21.',
+        'Matrix.prototype.log'
+      );
+      dec = pow(10, 21);
+    } else {
+      dec = pow(10, options.decimals) || dec;
+    }
+    m.map((x) => round(x * dec) / dec);
+  }
 
   // Log
   if (options.table) {
@@ -1122,9 +1122,12 @@ Matrix.prototype.set = function set(matrix) {
     typeof matrix[0].length === 'number' &&
     typeof matrix === 'object'
   ) {
-    this.matrix = matrix;
     this.rows = matrix.length;
     this.cols = matrix[0].length;
+
+    for (let i = 0; i < this.rows; i++) {
+      this.matrix[i] = [...matrix[i]];
+    }
   } else {
     DannError.error(
       'the argument of set(); must be an array within an array. Here is an example: [[1,0],[0,1]]',
@@ -1714,7 +1717,7 @@ Dann.logDefaults = function logDefaults() {
     errors: false,
     layers: false,
     table: false,
-    decimals: 3,
+    decimals: undefined,
     details: false,
   };
 };
@@ -2291,22 +2294,23 @@ Dann.prototype.feedForward = function feedForward(
     layerObj.layer.add(this.biases[i]);
     layerObj.layer.map(layerObj.actfunc);
   }
+  // Untransformed output
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
 
-  // Optional logs
+  // Output transformations
   let out = this.outs;
   if (roundData && options.asLabel) {
     DannError.warn(
       'Cannot round if output is a label',
       'Dann.prototype.feedForward'
     );
-  }
-  if (options.asLabel === true) {
+  } else if (options.asLabel) {
     out = Dann.asLabel(out);
-  }
-  if (roundData === true && options.asLabel !== true) {
+  } else if (roundData && !options.asLabel) {
     out = out.map((x) => round(x * dec) / dec);
   }
+
+  // Optional logs
   if (options.log === true) {
     Dann.print('Prediction: ');
     Dann.print(out, options.table);
