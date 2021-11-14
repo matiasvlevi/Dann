@@ -88,22 +88,23 @@ Dann.prototype.feedForward = function feedForward(
     layerObj.layer.add(this.biases[i]);
     layerObj.layer.map(layerObj.actfunc);
   }
+  // Untransformed output
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
 
-  // Optional logs
+  // Output transformations
   let out = this.outs;
   if (roundData && options.asLabel) {
     DannError.warn(
       'Cannot round if output is a label',
       'Dann.prototype.feedForward'
     );
-  }
-  if (options.asLabel === true) {
+  } else if (options.asLabel) {
     out = Dann.asLabel(out);
-  }
-  if (roundData === true && options.asLabel !== true) {
+  } else if (roundData && !options.asLabel) {
     out = out.map((x) => round(x * dec) / dec);
   }
+
+  // Optional logs
   if (options.log === true) {
     Dann.print('Prediction: ');
     Dann.print(out, options.table);

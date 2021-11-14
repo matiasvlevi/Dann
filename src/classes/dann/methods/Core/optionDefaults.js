@@ -7,7 +7,7 @@ Dann.logDefaults = function logDefaults() {
     errors: false,
     layers: false,
     table: false,
-    decimals: 3,
+    decimals: undefined,
     details: false,
   };
 };

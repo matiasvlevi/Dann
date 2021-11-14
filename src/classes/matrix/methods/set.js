@@ -19,9 +19,12 @@ Matrix.prototype.set = function set(matrix) {
     typeof matrix[0].length === 'number' &&
     typeof matrix === 'object'
   ) {
-    this.matrix = matrix;
     this.rows = matrix.length;
     this.cols = matrix[0].length;
+
+    for (let i = 0; i < this.rows; i++) {
+      this.matrix[i] = [...matrix[i]];
+    }
   } else {
     DannError.error(
       'the argument of set(); must be an array within an array. Here is an example: [[1,0],[0,1]]',

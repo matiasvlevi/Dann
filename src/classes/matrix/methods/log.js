@@ -16,27 +16,27 @@
 Matrix.prototype.log = function log(
   options = {
     table: false,
-    decimals: 21,
+    decimals: undefined,
   }
 ) {
-  // Limit decimals to maximum of 21
-  let dec = 1000;
-  if (options.decimals > 21) {
-    DannError.error(
-      'Maximum number of decimals is 21.',
-      'Matrix.prototype.log'
-    );
-    dec = pow(10, 21);
-  } else {
-    dec = pow(10, options.decimals) || dec;
-  }
-
   // Copy matrix
   let m = new Matrix(this.rows, this.cols);
   m.set(this.matrix);
 
   // round the values
-  m.map((x) => round(x * dec) / dec);
+  if (options.decimals !== undefined) {
+    let dec = 1000;
+    if (options.decimals > 21) {
+      DannError.warn(
+        'Maximum number of decimals is 21.',
+        'Matrix.prototype.log'
+      );
+      dec = pow(10, 21);
+    } else {
+      dec = pow(10, options.decimals) || dec;
+    }
+    m.map((x) => round(x * dec) / dec);
+  }
 
   // Log
   if (options.table) {
