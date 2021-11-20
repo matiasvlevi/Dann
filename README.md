@@ -47,8 +47,7 @@ npm i dannjs
 
 Object types from the library can be imported like this
 ```js
-const Dannjs = require('dannjs');
-const Dann = Dannjs.dann;
+const { Dann } = require('dannjs');
  ```
 
 <br/>
