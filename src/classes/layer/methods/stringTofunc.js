@@ -18,7 +18,7 @@ Layer.stringTofunc = function stringTofunc(str) {
       return { name: act, name_d: der, func: func, func_d: func_d };
     } else {
       DannError.error(
-        "Dann Error: You need to create the derivative of your custom function. The activation function specified '" +
+        "You need to create the derivative of your custom function. The activation function specified '" +
           str +
           "' does not have a derivative assigned. The activation function was set to the default 'sigmoid'.",
         'Layer.stringTofunc'
@@ -27,7 +27,7 @@ Layer.stringTofunc = function stringTofunc(str) {
     }
   } else {
     DannError.error(
-      "Dann Error: the activation function '" +
+      "the activation function '" +
         str +
         "' is not a valid activation function. The activation function was set to the default 'sigmoid'.",
       'Layer.stringTofunc'
