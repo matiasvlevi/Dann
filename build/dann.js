@@ -279,7 +279,7 @@ let activations = {
     return Math.log(1 + Math.exp(x));
   },
   softplus_d(x) {
-    return this.sigmoid(x);
+    return 1 / (1 + Math.exp(-x));
   },
   // Experimental
   leakyReLUCapped(x) {
@@ -304,8 +304,7 @@ let activations = {
     return 1 / (1 + Math.exp(-x)) + x / 100;
   },
   leakySigmoid_d(x) {
-    let x1 = leakySigmoid(x);
-    return x1 * (1 - x1);
+    return Math.exp(-x) / Math.pow(Math.exp(-x) + 1, 2) + 1 / 100;
   },
 };
 
@@ -1607,7 +1606,7 @@ Layer.stringTofunc = function stringTofunc(str) {
       return { name: act, name_d: der, func: func, func_d: func_d };
     } else {
       DannError.error(
-        "Dann Error: You need to create the derivative of your custom function. The activation function specified '" +
+        "You need to create the derivative of your custom function. The activation function specified '" +
           str +
           "' does not have a derivative assigned. The activation function was set to the default 'sigmoid'.",
         'Layer.stringTofunc'
@@ -1616,7 +1615,7 @@ Layer.stringTofunc = function stringTofunc(str) {
     }
   } else {
     DannError.error(
-      "Dann Error: the activation function '" +
+      "the activation function '" +
         str +
         "' is not a valid activation function. The activation function was set to the default 'sigmoid'.",
       'Layer.stringTofunc'
