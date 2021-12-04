@@ -12,8 +12,6 @@ const {
   poolfuncs,
 } = require('../build/dann.js');
 
-console.log(XOR);
-
 //Chai imports
 const assert = require('chai').assert;
 const expect = require('chai').expect;
