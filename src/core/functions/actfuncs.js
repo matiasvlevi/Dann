@@ -83,7 +83,7 @@ let activations = {
     return Math.log(1 + Math.exp(x));
   },
   softplus_d(x) {
-    return this.sigmoid(x);
+    return 1 / (1 + Math.exp(-x));
   },
   // Experimental
   leakyReLUCapped(x) {
@@ -108,7 +108,6 @@ let activations = {
     return 1 / (1 + Math.exp(-x)) + x / 100;
   },
   leakySigmoid_d(x) {
-    let x1 = leakySigmoid(x);
-    return x1 * (1 - x1);
+    return Math.exp(-x) / Math.pow(Math.exp(-x) + 1, 2) + 1 / 100;
   },
 };
