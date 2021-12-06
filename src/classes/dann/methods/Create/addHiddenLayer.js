@@ -71,7 +71,8 @@
  */
 Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
   if (act !== undefined) {
-    if (activations[act] === undefined) {
+    const lowerCaseAct = act.toLocaleLowerCase();
+    if (activations[lowerCaseAct] === undefined) {
       if (typeof act === 'string') {
         DannError.error(
           "'" +
@@ -85,6 +86,7 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
   } else {
     act = 'sigmoid';
   }
+
   this.arch.splice(this.arch.length - 1, 0, size);
   let layer = new Layer('hidden', size, act);
   this.Layers.splice(this.Layers.length - 1, 0, layer);

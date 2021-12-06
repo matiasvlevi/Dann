@@ -5,7 +5,8 @@
  * @param {String} act The activation function name
  */
 Layer.prototype.setFunc = function setFunc(act) {
-  let obj = Layer.stringTofunc(act);
+  const lowerCaseAct = act.toLocaleLowerCase();
+  let obj = Layer.stringTofunc(lowerCaseAct);
   if (obj !== undefined) {
     this.actname = obj.name;
     this.actname_d = obj.name_d;

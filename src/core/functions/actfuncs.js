@@ -10,38 +10,38 @@ let activations = {
     let x1 = 1 / (1 + Math.exp(-x));
     return x1 * (1 - x1);
   },
-  siLU(x) {
+  silu(x) {
     return x / (1 + Math.exp(-x));
   },
-  siLU_d(x) {
+  silu_d(x) {
     let top = 1 + Math.exp(-x) + x * Math.exp(-x);
     let down = Math.pow(1 + Math.exp(-x), 2);
     return top / down;
   },
-  tanH(x) {
+  tanh(x) {
     let top = Math.exp(x) - Math.exp(-x);
     let down = Math.exp(x) + Math.exp(-x);
     return top / down;
   },
-  tanH_d(x) {
+  tanh_d(x) {
     let numer = Math.pow(Math.exp(2 * x) - 1, 2);
     let denom = Math.pow(Math.exp(2 * x) + 1, 2);
     return 1 - numer / denom;
   },
-  leakyReLU(x) {
+  leakyrelu(x) {
     return Math.max(x, x * 0.01);
   },
-  leakyReLU_d(x) {
+  leakyrelu_d(x) {
     if (x >= 0) {
       return 1;
     } else {
       return 0.01;
     }
   },
-  reLU(x) {
+  relu(x) {
     return Math.max(x, 0);
   },
-  reLU_d(x) {
+  relu_d(x) {
     if (x >= 0) {
       return 1;
     } else {
@@ -86,7 +86,7 @@ let activations = {
     return 1 / (1 + Math.exp(-x));
   },
   // Experimental
-  leakyReLUCapped(x) {
+  leakyrelucapped(x) {
     if (x >= 0 && x <= 6) {
       return x;
     } else if (x < 0) {
@@ -95,7 +95,7 @@ let activations = {
       return 6;
     }
   },
-  leakyReLUCapped_d(x) {
+  leakyrelucapped_d(x) {
     if (x >= 0 && x <= 6) {
       return 1;
     } else if (x < 0) {
@@ -104,10 +104,10 @@ let activations = {
       return 0;
     }
   },
-  leakySigmoid(x) {
+  leakysigmoid(x) {
     return 1 / (1 + Math.exp(-x)) + x / 100;
   },
-  leakySigmoid_d(x) {
+  leakysigmoid_d(x) {
     return Math.exp(-x) / Math.pow(Math.exp(-x) + 1, 2) + 1 / 100;
   },
 };

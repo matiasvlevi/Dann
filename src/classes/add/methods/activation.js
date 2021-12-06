@@ -35,8 +35,9 @@ Add.activation = function (name, activation, derivative) {
     );
     return;
   } else {
-    activations[name] = activation;
-    activations[name + '_d'] = derivative;
+    const lowerCaseAct = name.toLocaleLowerCase();
+    activations[lowerCaseAct] = activation;
+    activations[lowerCaseAct + '_d'] = derivative;
     return;
   }
 };

@@ -66,7 +66,8 @@
  * </code>
  */
 Dann.prototype.outputActivation = function outputActivation(act) {
-  if (activations[act] === undefined && !isBrowser) {
+  const lowerCaseAct = act.toLocaleLowerCase();
+  if (activations[lowerCaseAct] === undefined && !isBrowser) {
     if (typeof act === 'string') {
       DannError.error(
         "'" +
@@ -83,5 +84,6 @@ Dann.prototype.outputActivation = function outputActivation(act) {
       return;
     }
   }
+
   this.Layers[this.Layers.length - 1].setFunc(act);
 };

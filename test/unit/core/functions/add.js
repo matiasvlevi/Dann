@@ -7,7 +7,14 @@ suite('', function () {
         func = (x) => x * x;
         func_d = (x) => 2 * x;
       });
-      test('Sould have added an activation', function () {
+      test('Should have added case insensitive activation', function () {
+        Add.activation('myNewFunc', func, func_d);
+        assert.exists(activations.mynewfunc);
+        assert.exists(activations.mynewfunc_d);
+        assert.equal(activations.mynewfunc(3), func(3));
+        assert.equal(activations.mynewfunc_d(3), func_d(3));
+      });
+      test('Should have added an activation', function () {
         Add.activation('mynewfunc', func, func_d);
         assert.exists(activations.mynewfunc);
         assert.exists(activations.mynewfunc_d);
@@ -35,7 +42,7 @@ suite('', function () {
       setup(function () {
         func = (x, y) => x[0] - y[0];
       });
-      test('Sould have added a loss function', function () {
+      test('Should have added a loss function', function () {
         Add.loss('mynewfunc', func);
         assert.exists(lossfuncs.mynewfunc);
         assert.equal(lossfuncs.mynewfunc([4], [2]), func([4], [2]));
