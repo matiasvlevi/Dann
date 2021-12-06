@@ -206,38 +206,38 @@ let activations = {
     let x1 = 1 / (1 + Math.exp(-x));
     return x1 * (1 - x1);
   },
-  siLU(x) {
+  silu(x) {
     return x / (1 + Math.exp(-x));
   },
-  siLU_d(x) {
+  silu_d(x) {
     let top = 1 + Math.exp(-x) + x * Math.exp(-x);
     let down = Math.pow(1 + Math.exp(-x), 2);
     return top / down;
   },
-  tanH(x) {
+  tanh(x) {
     let top = Math.exp(x) - Math.exp(-x);
     let down = Math.exp(x) + Math.exp(-x);
     return top / down;
   },
-  tanH_d(x) {
+  tanh_d(x) {
     let numer = Math.pow(Math.exp(2 * x) - 1, 2);
     let denom = Math.pow(Math.exp(2 * x) + 1, 2);
     return 1 - numer / denom;
   },
-  leakyReLU(x) {
+  leakyrelu(x) {
     return Math.max(x, x * 0.01);
   },
-  leakyReLU_d(x) {
+  leakyrelu_d(x) {
     if (x >= 0) {
       return 1;
     } else {
       return 0.01;
     }
   },
-  reLU(x) {
+  relu(x) {
     return Math.max(x, 0);
   },
-  reLU_d(x) {
+  relu_d(x) {
     if (x >= 0) {
       return 1;
     } else {
@@ -282,7 +282,7 @@ let activations = {
     return 1 / (1 + Math.exp(-x));
   },
   // Experimental
-  leakyReLUCapped(x) {
+  leakyrelucapped(x) {
     if (x >= 0 && x <= 6) {
       return x;
     } else if (x < 0) {
@@ -291,7 +291,7 @@ let activations = {
       return 6;
     }
   },
-  leakyReLUCapped_d(x) {
+  leakyrelucapped_d(x) {
     if (x >= 0 && x <= 6) {
       return 1;
     } else if (x < 0) {
@@ -300,10 +300,10 @@ let activations = {
       return 0;
     }
   },
-  leakySigmoid(x) {
+  leakysigmoid(x) {
     return 1 / (1 + Math.exp(-x)) + x / 100;
   },
-  leakySigmoid_d(x) {
+  leakysigmoid_d(x) {
     return Math.exp(-x) / Math.pow(Math.exp(-x) + 1, 2) + 1 / 100;
   },
 };
@@ -1574,7 +1574,8 @@ Layer.selectPools = function selectPools(arr, f, s, w, h) {
  * @param {String} act The activation function name
  */
 Layer.prototype.setFunc = function setFunc(act) {
-  let obj = Layer.stringTofunc(act);
+  const lowerCaseAct = act.toLocaleLowerCase();
+  let obj = Layer.stringTofunc(lowerCaseAct);
   if (obj !== undefined) {
     this.actname = obj.name;
     this.actname_d = obj.name_d;
@@ -1594,7 +1595,7 @@ Layer.prototype.setFunc = function setFunc(act) {
  * @return {Object} Object containing information about an activation function.
  */
 Layer.stringTofunc = function stringTofunc(str) {
-  let act = str;
+  let act = str.toLocaleLowerCase();
   let der = act + '_d';
   let func;
   let func_d;
@@ -1933,7 +1934,8 @@ Dann.prototype.addDropout = function addDropout(rate) {
  */
 Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
   if (act !== undefined) {
-    if (activations[act] === undefined) {
+    const lowerCaseAct = act.toLocaleLowerCase();
+    if (activations[lowerCaseAct] === undefined) {
       if (typeof act === 'string') {
         DannError.error(
           "'" +
@@ -1947,6 +1949,7 @@ Dann.prototype.addHiddenLayer = function addHiddenLayer(size, act) {
   } else {
     act = 'sigmoid';
   }
+
   this.arch.splice(this.arch.length - 1, 0, size);
   let layer = new Layer('hidden', size, act);
   this.Layers.splice(this.Layers.length - 1, 0, layer);
@@ -2076,7 +2079,8 @@ Dann.prototype.makeWeights = function makeWeights(arg1, arg2) {
  * </code>
  */
 Dann.prototype.outputActivation = function outputActivation(act) {
-  if (activations[act] === undefined && !isBrowser) {
+  const lowerCaseAct = act.toLocaleLowerCase();
+  if (activations[lowerCaseAct] === undefined && !isBrowser) {
     if (typeof act === 'string') {
       DannError.error(
         "'" +
@@ -2093,6 +2097,7 @@ Dann.prototype.outputActivation = function outputActivation(act) {
       return;
     }
   }
+
   this.Layers[this.Layers.length - 1].setFunc(act);
 };
 
@@ -3271,8 +3276,9 @@ Add.activation = function (name, activation, derivative) {
     );
     return;
   } else {
-    activations[name] = activation;
-    activations[name + '_d'] = derivative;
+    const lowerCaseAct = name.toLocaleLowerCase();
+    activations[lowerCaseAct] = activation;
+    activations[lowerCaseAct + '_d'] = derivative;
     return;
   }
 };

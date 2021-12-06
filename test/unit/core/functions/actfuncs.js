@@ -29,7 +29,7 @@ suite('', function () {
         let pointsX = [-4, -2, 0, 2, 4];
         let ans_hardcoded = [-0.999, -0.964, 0, 0.964, 0.999];
         for (let i = 0; i < pointsX.length; i++) {
-          assert.closeTo(activations.tanH(pointsX[i]), ans_hardcoded[i], 0.01);
+          assert.closeTo(activations.tanh(pointsX[i]), ans_hardcoded[i], 0.01);
         }
       });
       test("Testing 'tanH_d' activation function", function () {
@@ -37,7 +37,7 @@ suite('', function () {
         let ans_hardcoded = [0.001, 0.071, 1, 0.071, 0.001];
         for (let i = 0; i < pointsX.length; i++) {
           assert.closeTo(
-            activations.tanH_d(pointsX[i]),
+            activations.tanh_d(pointsX[i]),
             ans_hardcoded[i],
             0.01
           );
@@ -49,7 +49,7 @@ suite('', function () {
         let pointsX = [-4, -2, 0, 2, 4];
         let ans_hardcoded = [-0.072, -0.238, 0, 1.762, 3.928];
         for (let i = 0; i < pointsX.length; i++) {
-          assert.closeTo(activations.siLU(pointsX[i]), ans_hardcoded[i], 0.01);
+          assert.closeTo(activations.silu(pointsX[i]), ans_hardcoded[i], 0.01);
         }
       });
       test("Testing 'siLU_d' activation function", function () {
@@ -57,7 +57,7 @@ suite('', function () {
         let ans_hardcoded = [-0.053, -0.091, 0.5, 1.091, 1.053];
         for (let i = 0; i < pointsX.length; i++) {
           assert.closeTo(
-            activations.siLU_d(pointsX[i]),
+            activations.silu_d(pointsX[i]),
             ans_hardcoded[i],
             0.01
           );
@@ -70,7 +70,7 @@ suite('', function () {
         let ans_hardcoded = [-0.04, -0.02, 0, 2, 4];
         for (let i = 0; i < pointsX.length; i++) {
           assert.closeTo(
-            activations.leakyReLU(pointsX[i]),
+            activations.leakyrelu(pointsX[i]),
             ans_hardcoded[i],
             0.01
           );
@@ -81,7 +81,7 @@ suite('', function () {
         let ans_hardcoded = [0.01, 0.01, 1, 1, 1];
         for (let i = 0; i < pointsX.length; i++) {
           assert.closeTo(
-            activations.leakyReLU_d(pointsX[i]),
+            activations.leakyrelu_d(pointsX[i]),
             ans_hardcoded[i],
             0.01
           );
@@ -93,7 +93,7 @@ suite('', function () {
         let pointsX = [-4, -2, 0, 2, 4];
         let ans_hardcoded = [0, 0, 0, 2, 4];
         for (let i = 0; i < pointsX.length; i++) {
-          assert.closeTo(activations.reLU(pointsX[i]), ans_hardcoded[i], 0.01);
+          assert.closeTo(activations.relu(pointsX[i]), ans_hardcoded[i], 0.01);
         }
       });
       test("Testing 'reLU_d' activation function", function () {
@@ -101,7 +101,7 @@ suite('', function () {
         let ans_hardcoded = [0, 0, 1, 1, 1];
         for (let i = 0; i < pointsX.length; i++) {
           assert.closeTo(
-            activations.reLU_d(pointsX[i]),
+            activations.relu_d(pointsX[i]),
             ans_hardcoded[i],
             0.01
           );

@@ -6,7 +6,7 @@
  * @return {Object} Object containing information about an activation function.
  */
 Layer.stringTofunc = function stringTofunc(str) {
-  let act = str;
+  let act = str.toLocaleLowerCase();
   let der = act + '_d';
   let func;
   let func_d;

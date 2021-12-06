@@ -179,7 +179,7 @@ suite('Dann Object', function () {
         }
       });
       test('Should have initiated an output layer with sigmoid', function () {
-        let acts = ['leakyReLU', 'leakyReLU', 'leakyReLU', 'tanH'];
+        let acts = ['leakyrelu', 'leakyrelu', 'leakyrelu', 'tanh'];
         //starts at one to ignore input
         for (let i = 1; i < acts.length; i++) {
           let name = acts[i - 1];
@@ -317,10 +317,10 @@ suite('Dann Object', function () {
         assert.equal(nn.Layers[1].size, 16);
       });
       test('Should have initiated a tanH activation', function () {
-        assert.equal('tanH', nn.Layers[1].actname);
-        assert.equal('tanH_d', nn.Layers[1].actname_d);
-        assert.equal(activations.tanH, nn.Layers[1].actfunc);
-        assert.equal(activations.tanH_d, nn.Layers[1].actfunc_d);
+        assert.equal('tanh', nn.Layers[1].actname);
+        assert.equal('tanh_d', nn.Layers[1].actname_d);
+        assert.equal(activations.tanh, nn.Layers[1].actfunc);
+        assert.equal(activations.tanh_d, nn.Layers[1].actfunc_d);
       });
       test('Should have initiated matrix', function () {
         assert.instanceOf(nn.Layers[1].layer, Matrix);
@@ -436,7 +436,7 @@ suite('Dann Object', function () {
         nn.outputActivation('reLU');
       });
       test('Should have initiated a reLU activation function for the output', function () {
-        let name = 'reLU';
+        let name = 'relu';
         let derivative = name + '_d';
         assert.equal(name, nn.Layers[2].actname);
         assert.equal(derivative, nn.Layers[2].actname_d);
@@ -531,7 +531,7 @@ suite('Dann Object', function () {
         assert.typeOf(nn.epoch, 'Number');
       });
       test('Should have loaded layers activations', function () {
-        let acts = ['siLU', 'tanH'];
+        let acts = ['silu', 'tanh'];
         //starts at one to ignore input
         for (let i = 1; i < acts.length; i++) {
           let name = acts[i - 1];
@@ -689,7 +689,7 @@ suite('Dann Object', function () {
         assert.typeOf(nn.epoch, 'Number');
       });
       test('Should have loaded layers activations', function () {
-        let acts = ['leakyReLU', 'tanH'];
+        let acts = ['leakyrelu', 'tanh'];
         //starts at one to ignore input
         for (let i = 1; i < acts.length; i++) {
           let name = acts[i - 1];
