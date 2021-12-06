@@ -6,8 +6,7 @@
   "contributorsPerLine": 7,
   "contributorsSortAlphabetically": false,
   "skipCi": true,
-  "contributors": [
-    {
+  "contributors": [{
       "login": "matiasvlevi",
       "name": "Matias Vazquez-Levi",
       "avatar_url": "https://avatars.githubusercontent.com/u/50473168?v=4",
@@ -76,6 +75,16 @@
       "profile": "https://github.com/viabhinav",
       "contributions": [
         "tutorial"
+      ]
+    },
+    {
+      "login": "and1can",
+      "name": "and1can",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7698330?v=4",
+      "profile": "https://github.com/and1can",
+      "contributions": [
+        "code",
+        "test"
       ]
     }
   ],
