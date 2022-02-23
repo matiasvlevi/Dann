@@ -57,7 +57,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
   }
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
   this.loss = data.loss;
-  this.losses = [];
   this.lr = data.lrate;
   this.arch = data.arch;
   this.epoch = data.e;

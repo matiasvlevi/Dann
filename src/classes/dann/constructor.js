@@ -35,7 +35,6 @@ Dann = function Dann(i = 1, o = 1) {
 
   this.outs = [];
   this.loss = 0;
-  this.losses = [];
   this.lr = 0.001;
   this.arch = [i, o];
 

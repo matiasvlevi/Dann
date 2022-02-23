@@ -25,7 +25,6 @@ Dann.bckDefaults = function bckDefaults() {
   return {
     log: false,
     mode: 'cpu',
-    saveLoss: false,
     table: false,
     dropout: undefined,
   };
