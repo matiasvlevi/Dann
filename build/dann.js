@@ -1692,7 +1692,6 @@ Dann = function Dann(i = 1, o = 1) {
 
   this.outs = [];
   this.loss = 0;
-  this.losses = [];
   this.lr = 0.001;
   this.arch = [i, o];
 
@@ -1735,7 +1734,6 @@ Dann.bckDefaults = function bckDefaults() {
   return {
     log: false,
     mode: 'cpu',
-    saveLoss: false,
     table: false,
     dropout: undefined,
   };
@@ -2555,18 +2553,13 @@ Dann.prototype.backpropagate = function backpropagate(
   }
 
   // Stop if learning rate is not valid.
-  if (!this.checkLearningRate()) {
-    return;
-  }
+  if (!this.checkLearningRate()) return;
 
   // Create dropout matrices if they were specified
   if (options.dropout !== undefined) {
     // Check if valid or else abort
-    if (this.checkDropoutRate(options.dropout)) {
-      this.addDropout(options.dropout);
-    } else {
-      return;
-    }
+    if (!this.checkDropoutRate(options.dropout)) return;
+    this.addDropout(options.dropout);
   }
 
   // Forward propagation
@@ -2619,9 +2612,6 @@ Dann.prototype.backpropagate = function backpropagate(
 
   // Compute loss value
   this.loss = this.lossfunc(this.outs, target, this.percentile);
-  if (options.saveLoss === true) {
-    this.losses.push(this.loss);
-  }
 
   // Optional logs
   if (options.log === true) {
@@ -2826,7 +2816,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
   }
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
   this.loss = data.loss;
-  this.losses = [];
   this.lr = data.lrate;
   this.arch = data.arch;
   this.epoch = data.e;
