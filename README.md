@@ -44,7 +44,7 @@ npm i dannjs
 
 ### Require package
 
-Object types from the library can be imported like this
+Components from the library can be imported like this
 ```js
 const { Dann } = require('dannjs');
  ```
