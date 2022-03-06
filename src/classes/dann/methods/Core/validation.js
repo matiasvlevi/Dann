@@ -1,9 +1,5 @@
 Dann.prototype.checkArrayLength = function checkArrayLength(arr, n) {
-  if (arr.length === n) {
-    return true;
-  } else {
-    return false;
-  }
+  return arr.length === n
 };
 
 Dann.prototype.checkLearningRate = function checkLearningRate() {
