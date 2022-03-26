@@ -1748,11 +1748,7 @@ Dann.print = function print(v, option = false) {
 };
 
 Dann.prototype.checkArrayLength = function checkArrayLength(arr, n) {
-  if (arr.length === n) {
-    return true;
-  } else {
-    return false;
-  }
+  return arr.length === n;
 };
 
 Dann.prototype.checkLearningRate = function checkLearningRate() {
@@ -3028,7 +3024,7 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   for (let i = 1; i < this.Layers.length; i++) {
     let actname = this.Layers[i].actname;
     if (i !== 0) {
-      let actfunc = toEs6(activations[actname]).toString().split('\n');
+      let actfunc = toEs6(activations[actname].toString());
       let minfunction = '';
       for (let u = 0; u < actfunc.length; u++) {
         minfunction += actfunc[u];
@@ -3103,55 +3099,63 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   //minify
   return minify(stringfunc);
 };
+
+/*
+ * Replace all regex matches
+ */
+function matchReplace(value, reg, desired) {
+  let matches = value.match(reg);
+  if (matches === null) return value;
+  matches.forEach((match, i) => {
+    value = value.replace(match, desired);
+  });
+  return value;
+}
+
 /*
  * minify code
  */
 function minify(string) {
-  string = string.replace(/ = /g, '=');
-  string = string.replace(/ \+ /g, '+');
-  string = string.replace(/ - /g, '-');
-  string = string.replace(/ \* /g, '*');
-  string = string.replace(/ \/ /g, '/');
-  string = string.replace(/for \(/g, 'for(');
-  string = string.replace(/; /g, ';');
-  string = string.replace(/\) {/g, '){');
-  string = string.replace(/ < /g, '<');
-  string = string.replace(/ > /g, '>');
-  string = string.replace(/ \+= /g, '+=');
-  string = string.replace(/;\}/g, '}');
-  for (let i = 0; i < 5; i++) {
-    string = string.replace(/\{ /g, '{');
-    string = string.replace(/ \{/g, '{');
-    string = string.replace(/\} /g, '}');
-    string = string.replace(/\t/g, '');
-    string = string.replace(/\n/g, '');
-  }
-  for (let i = 0; i < 5; i++) {
-    string = string.replace(/; /g, ';');
-  }
+  string = matchReplace(string, / = /g, '=');
+  string = matchReplace(string, / \+ /g, '+');
+  string = matchReplace(string, / - /g, '-');
+  string = matchReplace(string, / \* /g, '*');
+  string = matchReplace(string, / \/ /g, '/');
+  string = matchReplace(string, /for \(/g, 'for(');
+  string = matchReplace(string, /; /g, ';');
+
+  string = matchReplace(string, /\) {/g, '){');
+  string = matchReplace(string, / < /g, '<');
+  string = matchReplace(string, / > /g, '>');
+  string = matchReplace(string, / \+= /g, '+=');
+  string = matchReplace(string, /;\}/g, '}');
+
+  string = matchReplace(string, /\{ /g, '{');
+  string = matchReplace(string, / \{/g, '{');
+  string = matchReplace(string, /\} /g, '}');
+  string = matchReplace(string, /\t/g, '');
+  string = matchReplace(string, /\n/g, '');
+  string = matchReplace(string, /; /g, ';');
+
+  string = matchReplace(string, /[ ]{2,}/g, ' ');
+
   return string;
 }
-/*
- * Slice string by index but keep both segments.
- */
-function slicestring(str, index) {
-  return [str.slice(0, index + 1), str.slice(index + 1, str.length)];
-}
+
 /*
  * Transform a stringified function to a stringified es6 syntax in order to save space.
  */
 function toEs6(func) {
-  let str = func.toString();
-  let index = str.indexOf('(');
-  let rstr = slicestring(str, index)[1];
-  index = rstr.indexOf(')');
-  let funcarr = slicestring(rstr, index - 1);
-  let args = funcarr[0];
-  index = funcarr[1].indexOf(')');
-  let content = slicestring(funcarr[1], index)[1];
-  let funcstr = '(' + args + ')=>' + content;
-  let minfuncstr = minify(funcstr);
-  return minfuncstr;
+  let args = func.match(/\(.*\)/gm)[0];
+  let implementation = func
+    .split('\n')
+    .join('')
+    .match(/{.*?}/)[0]
+    .trimEnd()
+    .trimStart();
+  implementation = matchReplace(implementation, /{ /g, '{');
+  implementation = matchReplace(implementation, / }/g, '}');
+  return `${args}=>${implementation}`;
 }
 
 /**
