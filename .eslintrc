@@ -10,10 +10,11 @@
     "sourceType": "module"
   },
   "root": true,
-  "extends": ["eslint:recommended", "prettier"],
+  "extends":["eslint:recommended", "prettier"],
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": ["error"],
+
     "no-cond-assign": [2, "except-parens"],
     "eqeqeq": ["error", "smart"],
     "no-use-before-define": [
@@ -22,6 +23,9 @@
         "functions": false
       }
     ],
+    "overrides":{
+      "no-control-regex": "off"
+    },
     "new-cap": 0,
     "no-caller": 2,
     "no-undef": 0,
