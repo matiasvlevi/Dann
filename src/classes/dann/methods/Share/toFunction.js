@@ -37,7 +37,7 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   for (let i = 1; i < this.Layers.length; i++) {
     let actname = this.Layers[i].actname;
     if (i !== 0) {
-      let actfunc = toEs6(minify(activations[actname].toString()));
+      let actfunc = toES6(minify(activations[actname].toString()));
       let minfunction = '';
       for (let u = 0; u < actfunc.length; u++) {
         minfunction += actfunc[u];
@@ -156,12 +156,22 @@ function minify(string) {
 }
 
 /*
+ * Detect if a function is an ES6 function.
+ */
+function isES6(fn) {
+  let s = fn.match(/([a-z]=>).*/gm);
+  if (s !== null) return true;
+  return false;
+}
+
+/*
  * Transform a stringified function to a stringified es6 syntax in order to save space.
  */
-function toEs6(func) {
-  let args = func.match(/\(.*?\)/gm)[0];
-  let slinefunc = func.split('\n').join('');
-  let matches = slinefunc.match(/{.*?}/);
+function toES6(fn) {
+  if (isES6(fn)) return fn;
+
+  let args = fn.match(/\(.*?\)/gm)[0];
+  let matches = fn.split('\n').join('').match(/{.*?}/);
   let implementation = '';
 
   if (matches !== null) {
