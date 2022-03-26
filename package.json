@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.4.1b",
+  "_id": "dannjs@2.4.1c",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -55,7 +55,7 @@
     "sig": "npx vlev",
     "serve": "node docs/serve.js"
   },
-  "version": "2.4.1b",
+  "version": "2.4.1c",
   "keywords": [
     "dann",
     "dannjs",
