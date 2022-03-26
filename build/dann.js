@@ -3147,12 +3147,19 @@ function minify(string) {
  */
 function toEs6(func) {
   let args = func.match(/\(.*\)/gm)[0];
-  let implementation = func
-    .split('\n')
-    .join('')
-    .match(/{.*?}/)[0]
-    .trimEnd()
-    .trimStart();
+  let slinefunc = func.split('\n').join('');
+  let matches = slinefunc.match(/{.*?}/);
+  let implementation = '';
+
+  if (matches !== null) {
+    implementation = matches[0].trimEnd().trimStart();
+  } else {
+    DannError.error(
+      `Something went wrong, we couldn't find the function definition. \n Problematic function: ${slinefunc}`,
+      `toFunction call to toES6`
+    );
+  }
+
   implementation = matchReplace(implementation, /{ /g, '{');
   implementation = matchReplace(implementation, / }/g, '}');
   return `${args}=>${implementation}`;
