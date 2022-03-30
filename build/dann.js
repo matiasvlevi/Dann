@@ -3165,7 +3165,7 @@ function toES6(fn) {
     implementation = matches[0].trimEnd().trimStart();
   } else {
     DannError.error(
-      `Something went wrong, we couldn't find the function definition. \n Problematic function: ${slinefunc}`,
+      `Something went wrong, we couldn't find the function definition. `,
       `toFunction call to toES6`
     );
   }
