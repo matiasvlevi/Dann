@@ -84,7 +84,7 @@
     "grunt-terser": "^2.0.0",
     "grunt-text-replace": "^0.4.0",
     "log-symbols": "^4.0.0",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "mocha": "^9.0.1",
     "octokit": "^1.7.1",
     "path-parse": "1.0.7",
