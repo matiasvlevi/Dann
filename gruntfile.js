@@ -58,10 +58,12 @@ module.exports = (grunt) => {
     },
     terser: {
       src: {
-        files: [{
-          src: 'build/dann.js',
-          dest: 'build/dann.min.js',
-        }, ],
+        files: [
+          {
+            src: 'build/dann.js',
+            dest: 'build/dann.min.js',
+          },
+        ],
       },
     },
     clean: {
@@ -87,8 +89,8 @@ module.exports = (grunt) => {
     },
     makechangelog: {
       targets: {
-        path: 'CHANGES.md'
-      }
+        path: 'CHANGES.md',
+      },
     },
     yuidoc: {
       compile: {
@@ -113,10 +115,12 @@ module.exports = (grunt) => {
     },
     rename: {
       main: {
-        files: [{
-          src: ['docs/documentation/markdown/README.html'],
-          dest: 'docs/' + theme + '/partials/readme.handlebars',
-        }, ],
+        files: [
+          {
+            src: ['docs/documentation/markdown/README.html'],
+            dest: 'docs/' + theme + '/partials/readme.handlebars',
+          },
+        ],
       },
     },
     sampleTest: {
@@ -138,15 +142,18 @@ module.exports = (grunt) => {
           'docs/documentation/classes/*.html',
         ],
         overwrite: true,
-        replacements: [{
-          from: /<li><a class="type" href="\.*\/classes\/Add\.html">Add<\/a><\/li>/gm,
-          to: '',
-        }, ],
+        replacements: [
+          {
+            from: /<li><a class="type" href="\.*\/classes\/Add\.html">Add<\/a><\/li>/gm,
+            to: '',
+          },
+        ],
       },
       index: {
         src: ['docs/documentation/*.html'],
         overwrite: true,
-        replacements: [{
+        replacements: [
+          {
             from: /\.\.\/index\.html/gm,
             to: '/',
           },
@@ -159,15 +166,18 @@ module.exports = (grunt) => {
       constant: {
         src: ['src/io/head.js'],
         overwrite: true,
-        replacements: [{
-          from: /VERSION = '.*'/gm,
-          to: "VERSION = 'v<%= grunt.option('ver') %>'",
-        }, ],
+        replacements: [
+          {
+            from: /VERSION = '.*'/gm,
+            to: "VERSION = 'v<%= grunt.option('ver') %>'",
+          },
+        ],
       },
       version: {
         src: ['package.json'],
         overwrite: true,
-        replacements: [{
+        replacements: [
+          {
             from: /"_id": "dannjs@.*"/gm,
             to: '"_id": "dannjs@<%= grunt.option("ver") %>"',
           },
@@ -180,31 +190,38 @@ module.exports = (grunt) => {
       testversion: {
         src: ['test/manual-tests/browser/*/*.html'],
         overwrite: true,
-        replacements: [{
-          from: /<span class="project-version">.*<\/span>/gm,
-          to: '<span class="project-version"><%= grunt.option("ver")%></span>',
-        }, ],
+        replacements: [
+          {
+            from: /<span class="project-version">.*<\/span>/gm,
+            to: '<span class="project-version"><%= grunt.option("ver")%></span>',
+          },
+        ],
       },
       readmeversion: {
         src: ['README.md'],
         overwrite: true,
-        replacements: [{
-          from: /dann@v.*\/build/gm,
-          to: 'dann@v<%= grunt.option("ver") %>/build',
-        }, ],
+        replacements: [
+          {
+            from: /dann@v.*\/build/gm,
+            to: 'dann@v<%= grunt.option("ver") %>/build',
+          },
+        ],
       },
       hljsdocs: {
         src: ['docs/documentation/classes/*.html'],
         overwrite: true,
-        replacements: [{
-          from: /\.\.\/highlight\/hljs\.min\.js/gm,
-          to: '../../highlight/hljs.min.js',
-        }, ],
+        replacements: [
+          {
+            from: /\.\.\/highlight\/hljs\.min\.js/gm,
+            to: '../../highlight/hljs.min.js',
+          },
+        ],
       },
       hljsdocsIndex: {
         src: ['docs/documentation/index.html'],
         overwrite: true,
-        replacements: [{
+        replacements: [
+          {
             from: /\.\.\/assets\//gm,
             to: './assets/',
           },
@@ -245,20 +262,20 @@ module.exports = (grunt) => {
     'formatExamples',
     'clean:unused',
     'replace:addClass',
-    'replace:hljsdocsIndex'
+    'replace:hljsdocsIndex',
   ]);
   grunt.registerTask('tag', [
     'replace:version',
     'replace:testversion',
     'replace:readmeversion',
     'replace:constant',
-    'build-fix'
+    'build-fix',
   ]);
   grunt.registerTask('test', [
     'doc-compile',
     'build-unit',
     'sampleTest:samples',
-    'mochaTest:test'
+    'mochaTest:test',
   ]);
   grunt.registerTask('prod', ['build-fix', 'doc-compile', 'test']);
 };

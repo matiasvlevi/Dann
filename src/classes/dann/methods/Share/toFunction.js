@@ -12,9 +12,9 @@
  * const nn = new Dann(4, 4);
  * nn.addHiddenLayer(8);
  * nn.makeWeights();
- * let stringFunction = nn.toFunction();
+ *
  * // Copy & paste the string function!
- * console.log(stringFunction);
+ * console.log(nn.toFunction());
  * </code>
  */
 Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
@@ -159,7 +159,7 @@ function minify(string) {
  * Detect if a function is an ES6 function.
  */
 function isES6(fn) {
-  let s = fn.match(/([a-z]=>).*/gm);
+  let s = fn.match(/([a-z] {0,1}=> {0,1}).*/gm);
   if (s !== null) return true;
   return false;
 }
@@ -171,7 +171,7 @@ function toES6(fn) {
   if (isES6(fn)) return fn;
 
   let args = fn.match(/\(.*?\)/gm)[0];
-  let matches = fn.split('\n').join('').match(/{.*?}/);
+  let matches = fn.match(/{.*?}/);
   let implementation = '';
 
   if (matches !== null) {

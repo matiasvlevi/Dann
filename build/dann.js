@@ -1,6 +1,6 @@
 /*! Dann.js */
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.4.1c';
+const VERSION = 'v2.4.1d';
 
 /*
  * Undisplayed documentation
@@ -2836,48 +2836,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * @param {String} name The name of the saved directory that holds the dann model.
  * @param {Function} arg2 A function to be called when the model finished loading.
  */
-// Dann.prototype.load = function load(name, arg2, arg3) {
-//   if (isBrowser) {
-//     upload(name, arg2, arg3);
-//   } else {
-//     let path = './savedDanns/' + name + '/dannData.json';
-//     if (fs.existsSync(path)) {
-//       let text = fs.readFileSync(path, 'utf8');
-//       let xdata = JSON.parse(text);
-
-//       let newNN = xdata;
-//       this.applyToModel(newNN);
-//       if (typeof arg2 === 'function') {
-//         arg2(false);
-//       } else {
-//         let type = typeof arg2;
-//         DannError.error(
-//           "callback specified is not a function, the function recieved a '" +
-//             type +
-//             "' instead",
-//           'Dann.prototype.load'
-//         );
-//         return;
-//       }
-//     } else {
-//       if (typeof arg2 === 'function') {
-//         arg2(true);
-//       } else if (typeof arg2 !== 'function') {
-//         let type = typeof arg2;
-//         DannError.error(
-//           'Callback specified is not a function, the function recieved a ' +
-//             type +
-//             ' instead',
-//           'Dann.prototype.load'
-//         );
-//         return;
-//       } else {
-//         DannError.error('File not found', 'Dann.prototype.load');
-//         return;
-//       }
-//     }
-//   }
-// };
 
 /*
  * (Browser)
@@ -2896,94 +2854,6 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * @param {String} name The name of the json file.
  * @param {Object} [options] An object containing options on the save process.
  */
-// Dann.prototype.save = function save(name, options) {
-//   let path;
-//   let overwritten = false;
-//   let report = false;
-//   let result = 0;
-//   let rstr = 'none';
-//   //options
-//   if (options !== undefined) {
-//     if (options.report !== undefined) {
-//       report = options.report;
-//     }
-//     if (options.test !== undefined) {
-//       if (typeof options.test === 'function') {
-//         let testfunc = options.test;
-//         result = testfunc() * 100;
-//         rstr = result + '%';
-//       } else {
-//         console.error('Dann Error: the test option can only be a function.');
-//         console.trace();
-//       }
-//     }
-//   }
-//   let dataOBJ = this.dataObject();
-
-//   if (isBrowser) {
-//     downloadSTR(dataOBJ, name);
-//   } else {
-//     path = './savedDanns/' + name + '/dannData.json';
-//     if (fs.existsSync(path)) {
-//       overwritten = true;
-//     }
-//     if (!fs.existsSync('./savedDanns')) {
-//       fs.mkdirSync('./savedDanns');
-//     }
-//     if (!fs.existsSync('./savedDanns/' + name)) {
-//       fs.mkdirSync('./savedDanns/' + name);
-//     }
-//     if (report === true) {
-//       let acts = [];
-//       for (let i = 1; i < this.arch.length; i++) {
-//         acts[i - 1] = this.Layers[i].actname;
-//       }
-//       let csvFile = [];
-//       csvFile.push(['Dann', 'train report']);
-//       csvFile.push(['Arch: ', this.arch]);
-//       csvFile.push(['Acts: ', acts]);
-//       csvFile.push(['Lr: ', this.lr]);
-//       csvFile.push(['Epoch:', this.epoch]);
-
-//       if (typeof options.test === 'function') {
-//         csvFile.push(['Accuracy:', rstr]);
-//       }
-//       csvFile.push(['Index', 'AvgLoss']);
-//       for (let i = 0; i < this.losses.length; i++) {
-//         csvFile.push([i + 1, this.losses[i]]);
-//       }
-
-//       w.writeToPath('./savedDanns/' + name + '/report.csv', csvFile)
-//         .on('error', (err) => console.error(err))
-//         .on('finish', () =>
-//           console.log(
-//             'saved training report at ' + './savedDanns/' + name + '/report.csv'
-//           )
-//         );
-//     }
-
-//     fs.writeFileSync(path, JSON.stringify(dataOBJ));
-//     if (overwritten === true) {
-//       console.log('\x1b[32m', '');
-//       this.log();
-//       console.log(
-//         'Succesfully overwritten the Dann Model at ./savedDanns/' +
-//           name +
-//           '/dannData.json '
-//       );
-//       console.log('\x1b[0m', '');
-//     } else {
-//       console.log('\x1b[32m', '');
-//       this.log();
-//       console.log(
-//         'Succesfully saved the Dann Model at ./savedDanns/' +
-//           name +
-//           '/dannData.json '
-//       );
-//       console.log('\x1b[0m', '');
-//     }
-//   }
-// };
 
 /**
  * @module Dann
@@ -2999,9 +2869,9 @@ Dann.prototype.fromJSON = function fromJSON(data) {
  * const nn = new Dann(4, 4);
  * nn.addHiddenLayer(8);
  * nn.makeWeights();
- * let stringFunction = nn.toFunction();
+ *
  * // Copy & paste the string function!
- * console.log(stringFunction);
+ * console.log(nn.toFunction());
  * </code>
  */
 Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
@@ -3146,7 +3016,7 @@ function minify(string) {
  * Detect if a function is an ES6 function.
  */
 function isES6(fn) {
-  let s = fn.match(/([a-z]=>).*/gm);
+  let s = fn.match(/([a-z] {0,1}=> {0,1}).*/gm);
   if (s !== null) return true;
   return false;
 }
@@ -3158,7 +3028,7 @@ function toES6(fn) {
   if (isES6(fn)) return fn;
 
   let args = fn.match(/\(.*?\)/gm)[0];
-  let matches = fn.split('\n').join('').match(/{.*?}/);
+  let matches = fn.match(/{.*?}/);
   let implementation = '';
 
   if (matches !== null) {
