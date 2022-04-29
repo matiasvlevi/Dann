@@ -1,6 +1,6 @@
 {
   "_from": "dannjs",
-  "_id": "dannjs@2.4.1d",
+  "_id": "dannjs@2.4.1e",
   "_inBundle": false,
   "_integrity": "sha512-+Do7tE1EtLn/UMqyIy0V6dgLo43Wq6tj2vAY8oZTMHAY+ysYLJ2sT32H9DgZViL/B59XTIKN6BO8WEbn5pv8XA==",
   "_location": "/dannjs",
@@ -56,7 +56,7 @@
     "doc-server": "node docs/serve.js",
     "makechangelog": "grunt makechangelog"
   },
-  "version": "2.4.1d",
+  "version": "2.4.1e",
   "keywords": [
     "dann",
     "dannjs",

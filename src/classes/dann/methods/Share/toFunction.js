@@ -37,7 +37,7 @@ Dann.prototype.toFunction = function toFunction(name = 'myDannFunction') {
   for (let i = 1; i < this.Layers.length; i++) {
     let actname = this.Layers[i].actname;
     if (i !== 0) {
-      let actfunc = toES6(minify(activations[actname].toString()));
+      let actfunc = toES6(activations[actname].toString());
       let minfunction = '';
       for (let u = 0; u < actfunc.length; u++) {
         minfunction += actfunc[u];
@@ -171,7 +171,7 @@ function toES6(fn) {
   if (isES6(fn)) return fn;
 
   let args = fn.match(/\(.*?\)/gm)[0];
-  let matches = fn.match(/{.*?}/);
+  let matches = fn.split('\r').join('').split('\n').join('').match(/{.*?}/);
   let implementation = '';
 
   if (matches !== null) {
