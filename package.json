@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/matiasvlevi/Dann/issues"
   },
-  "bundleDependencies": false,
+  "bundleDependencies": [],
   "deprecated": false,
   "description": "Deep Neural Network Library for JavaScript.",
   "homepage": "https://dannjs.org",
@@ -52,7 +52,6 @@
     "browser": "start test/manual-tests/browser/empty-example/browser.html",
     "doc:show": "start docs/documentation/index.html",
     "contrib": "npx all-contributors generate",
-    "sig": "npx vlev",
     "doc-server": "node docs/serve.js",
     "makechangelog": "grunt makechangelog"
   },
@@ -78,7 +77,7 @@
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-rename": "^0.2.0",
-    "grunt-contrib-yuidoc": "1.0.0",
+    "grunt-contrib-yuidoc": "^1.0.0",
     "grunt-eslint": "^20.2.0",
     "grunt-mocha-test": "^0.13.3",
     "grunt-terser": "^2.0.0",

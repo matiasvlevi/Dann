@@ -4,7 +4,7 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('marked', 'Convert README to html', function () {
     let readMe = grunt.file.read(this.data.path);
     marked.defaults.langPrefix = 'rmcode ';
-    let markdownReadMe = marked(readMe, marked.defaults);
+    let markdownReadMe = marked.parse(readMe, marked.defaults);
     grunt.file.write(this.data.outdir, markdownReadMe);
     grunt.log.writeln(
       'Converted markdown file ' +
