@@ -89,5 +89,8 @@
     "path-parse": "1.0.7",
     "prettier": "^2.3.2",
     "terser": "^5.7.0"
+  },
+  "dependencies": {
+    "cuno": "file:.."
   }
 }

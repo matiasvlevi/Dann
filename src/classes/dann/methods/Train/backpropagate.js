@@ -138,5 +138,11 @@ Dann.prototype.backpropagate = function backpropagate(
 };
 // Alias
 Dann.prototype.train = function train() {
+  if (arguments[1] !== undefined) {
+    if (arguments[1].gpu) {
+      this.kernel_train.apply(this, arguments);
+      return;
+    }
+  }
   return this.backpropagate.apply(this, arguments);
 };
