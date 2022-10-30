@@ -2651,14 +2651,8 @@ Dann.prototype.kernel_train = function kernel_train(data, options) {
 
   data = data.map((point) => Object.values(point));
 
-  console.log(this.arch, weights, biases, data, options.epoch);
-  let debug = global.Cuno.train(
-    this.arch,
-    weights,
-    biases,
-    data,
-    options.epoch
-  );
+  console.log(this);
+  let debug = global.Cuno.train(this);
 
   console.log(debug);
 };
