@@ -1704,6 +1704,8 @@ Dann = function Dann(i = 1, o = 1) {
   this.percentile = 0.5;
 };
 
+Dann.Cuno = global.Cuno;
+
 Dann.asLabel = function asLabel(array) {
   return array.indexOf(Math.max(...array));
 };
@@ -2259,6 +2261,10 @@ Dann.prototype.feedForward = function feedForward(
   inputs,
   options = Dann.ffwDefaults()
 ) {
+  if (options.gpu === true) {
+    return Dann.Cuno.ffw(this, inputs);
+  }
+
   // Convert decimals to a scalar value
   let roundData = options.decimals !== undefined ? true : false;
   let dec = pow(10, options.decimals) || 1000;
@@ -2285,13 +2291,13 @@ Dann.prototype.feedForward = function feedForward(
 
   // Forward propagation
   for (let i = 0; i < this.weights.length; i++) {
-    let pLayer = this.Layers[i];
+    this.Layers[i + 1].layer = Matrix.mult(
+      this.weights[i],
+      this.Layers[i].layer
+    );
 
-    let layerObj = this.Layers[i + 1];
-
-    layerObj.layer = Matrix.mult(this.weights[i], pLayer.layer);
-    layerObj.layer.add(this.biases[i]);
-    layerObj.layer.map(layerObj.actfunc);
+    this.Layers[i + 1].layer.add(this.biases[i]);
+    this.Layers[i + 1].layer.map(this.Layers[i + 1].actfunc);
   }
   // Untransformed output
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
@@ -2631,30 +2637,10 @@ Dann.prototype.train = function train() {
 };
 
 Dann.prototype.kernel_train = function kernel_train(data, options) {
-  let weights = [];
-  for (let k = 0; k < this.weights.length; k++) {
-    let weight_set = [];
-    for (let i = 0; i < this.weights[k].rows; i++) {
-      weight_set = weight_set.concat(this.weights[k].matrix[i]);
-    }
-    weights.push(weight_set);
-  }
-
-  let biases = [];
-  for (let k = 0; k < this.biases.length; k++) {
-    let biases_set = [];
-    for (let i = 0; i < this.biases[k].rows; i++) {
-      biases_set = biases_set.concat(this.biases[k].matrix[i]);
-    }
-    biases.push(biases_set);
-  }
-
   data = data.map((point) => Object.values(point));
 
-  console.log(this);
-  let debug = global.Cuno.train(this);
-
-  console.log(debug);
+  console.log(this); // DEBUG
+  console.log(global.Cuno.train(this)[0]); // DEBUG
 };
 
 /**

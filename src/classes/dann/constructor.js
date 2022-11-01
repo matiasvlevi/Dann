@@ -45,3 +45,5 @@ Dann = function Dann(i = 1, o = 1) {
   this.lossfunc_s = this.lossfunc.name;
   this.percentile = 0.5;
 };
+
+Dann.Cuno = global.Cuno;

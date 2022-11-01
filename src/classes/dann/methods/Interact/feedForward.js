@@ -54,6 +54,10 @@ Dann.prototype.feedForward = function feedForward(
   inputs,
   options = Dann.ffwDefaults()
 ) {
+  if (options.gpu === true) {
+    return Dann.Cuno.ffw(this, inputs);
+  }
+
   // Convert decimals to a scalar value
   let roundData = options.decimals !== undefined ? true : false;
   let dec = pow(10, options.decimals) || 1000;
@@ -80,13 +84,13 @@ Dann.prototype.feedForward = function feedForward(
 
   // Forward propagation
   for (let i = 0; i < this.weights.length; i++) {
-    let pLayer = this.Layers[i];
+    this.Layers[i + 1].layer = Matrix.mult(
+      this.weights[i],
+      this.Layers[i].layer
+    );
 
-    let layerObj = this.Layers[i + 1];
-
-    layerObj.layer = Matrix.mult(this.weights[i], pLayer.layer);
-    layerObj.layer.add(this.biases[i]);
-    layerObj.layer.map(layerObj.actfunc);
+    this.Layers[i + 1].layer.add(this.biases[i]);
+    this.Layers[i + 1].layer.map(this.Layers[i + 1].actfunc);
   }
   // Untransformed output
   this.outs = Matrix.toArray(this.Layers[this.Layers.length - 1].layer);
