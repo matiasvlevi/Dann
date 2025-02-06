@@ -1,7 +1,7 @@
 
 <p align="center">
   <a href="https://dannjs.org/">
-    <img src="https://dannjs.org/transparentlogo.png" alt="Dannjs" height="150" />
+    <img src="./docs/yuidoc-dannjs-theme/assets/logo.png" alt="Dannjs" height="150" />
   </a>
 </p>
 
