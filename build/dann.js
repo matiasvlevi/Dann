@@ -1,6 +1,6 @@
 /*! Dann.js */
 const isBrowser = typeof process !== 'object';
-const VERSION = 'v2.4.1e';
+const DANNVERSION = 'v2.4.1e';
 
 /*
  * Undisplayed documentation

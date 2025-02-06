@@ -168,8 +168,8 @@ module.exports = (grunt) => {
         overwrite: true,
         replacements: [
           {
-            from: /VERSION = '.*'/gm,
-            to: "VERSION = 'v<%= grunt.option('ver') %>'",
+            from: /DANNVERSION = '.*'/gm,
+            to: "DANNVERSION = 'v<%= grunt.option('ver') %>'",
           },
         ],
       },
